@@ -816,6 +816,103 @@
           </div>
         </article>
 
+        <!-- ───── PATHFINDING VISUALIZER ───── -->
+        <article class="card">
+
+          <div class="card-media-dual">
+            <div class="media-item">
+              <img src="images/pathfinding-bfs.gif" alt="BFS visualization" />
+              <div class="media-label">Breadth-First Search</div>
+            </div>
+            <div class="media-item">
+              <img src="images/pathfinding-astar.gif" alt="A* visualization" />
+              <div class="media-label">A* Search</div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="card-top">
+              <div class="card-title">
+                Pathfinding Visualizer
+                <small>BFS &amp; A* &nbsp;·&nbsp; Unity 6 &nbsp;·&nbsp; Side Project</small>
+              </div>
+              <div class="tags">
+                <span class="tag">Algorithms</span>
+                <span class="tag">Zero Allocation</span>
+                <span class="tag">Pure C#</span>
+              </div>
+            </div>
+
+            <p class="card-desc">
+              Real-time interactive visualizer for <strong>BFS</strong> and <strong>A*</strong> running on a live grid.
+              Click to set start/end nodes, toggle walls, and watch each algorithm explore step by step.
+              Built around a strict zero-allocation architecture to eliminate GC pressure in the hot path.
+            </p>
+
+            <table class="hl-table">
+              <thead>
+                <tr>
+                  <th>System</th>
+                  <th>Approach</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>BFS queue</td>
+                  <td><code>int[]</code> ring buffer with head/tail pointers — no <code>Queue&lt;T&gt;</code>
+                    allocation.</td>
+                </tr>
+                <tr>
+                  <td>A* open set</td>
+                  <td>Hand-rolled binary min-heap with <code>openHeapPosByIndex[]</code> for O(log n) DecreaseKey.</td>
+                </tr>
+                <tr>
+                  <td>Visited tracking</td>
+                  <td>Visit-stamp technique — single <code>int</code> counter per run; no boolean array cleared per
+                    frame.</td>
+                </tr>
+                <tr>
+                  <td>Visual reset</td>
+                  <td><code>coloredIndicesThisRun</code> tracks only painted cells — reset is O(k) not O(n).</td>
+                </tr>
+                <tr>
+                  <td>Maze generation</td>
+                  <td>Stochastic wall placement + BFS validity check; retries up to N times, guarantees a solvable
+                    layout.</td>
+                </tr>
+                <tr>
+                  <td>Architecture</td>
+                  <td>Strict separation: <code>GridManager</code> owns data, <code>Pathfinder</code> owns search,
+                    <code>InputController</code> owns input (29 lines, zero game logic).
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="feature-grid">
+              <div class="feature-item">BFS — guaranteed shortest path (unweighted)</div>
+              <div class="feature-item">A* — Manhattan heuristic, admissible &amp; optimal</div>
+              <div class="feature-item">Coroutine-safe with OnDisable / OnDestroy guard</div>
+              <div class="feature-item">Configurable step delay — watch each frame live</div>
+              <div class="feature-item">Random maze at user-controlled wall density</div>
+              <div class="feature-item">WaitForSeconds cached, recreated only on change</div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="card-footer">
+              <div class="stack">
+                <span class="stack-item">Unity 6</span>
+                <span class="stack-item">C#</span>
+                <span class="stack-item">Min-Heap</span>
+                <span class="stack-item">Coroutines</span>
+                <span class="stack-item">ScriptableObject</span>
+              </div>
+              <a class="btn btn-ghost" href="https://github.com/yunusburkut/Pathfinding" target="_blank">GitHub ↗</a>
+            </div>
+          </div>
+        </article>
+
         <!-- ───── ZYNGA ───── -->
         <article class="card">
 
@@ -847,7 +944,8 @@
 
             <p class="card-desc">
               Worked as a <strong>Mobile Game Engineer</strong> on two of Zynga's live card game titles.
-              Contributed to feature client side development, UI systems, and legacy code maintenance on large-scale production
+              Contributed to feature client side development, UI systems, and legacy code maintenance on large-scale
+              production
               projects
               with real active player bases.
             </p>
