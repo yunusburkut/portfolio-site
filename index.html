@@ -187,6 +187,17 @@
       color: var(--text);
     }
 
+    .btn-steam {
+      background: #1b2838;
+      border: 1px solid #2a475e;
+      color: #c7d5e0;
+    }
+
+    .btn-steam:hover {
+      background: #2a475e;
+      color: #fff;
+    }
+
     /* ── SECTION HEADER ── */
     .section-label {
       font-size: .78rem;
@@ -474,6 +485,94 @@
 
       <div class="projects">
 
+        <!-- ───── MAGIC SORT ───── -->
+        <article class="card">
+
+          <div class="card-media">
+            <img src="images/magic-sort.gif" alt="Magic Sort gameplay" />
+          </div>
+
+          <div class="card-body">
+            <div class="card-top">
+              <div class="card-title">
+                🧪 Magic Sort Clone
+                <small>Water Sort Puzzle &nbsp;·&nbsp; Unity 6</small>
+              </div>
+              <div class="tags">
+                <span class="tag">Game Feel</span>
+                <span class="tag">Clean Architecture</span>
+                <span class="tag">Haptics</span>
+              </div>
+            </div>
+
+            <p class="card-desc">
+              A Water Sort puzzle clone built with <strong>game feel as the primary engineering constraint</strong> —
+              not the puzzle logic. Wired through a manual composition root with no DI framework; a lightweight EventBus
+              decouples layers without hard dependencies. Every interaction point has a dedicated animation pass
+              grounded
+              in Disney's 12 Principles of Animation.
+            </p>
+
+            <table class="hl-table">
+              <thead>
+                <tr>
+                  <th>Interaction</th>
+                  <th>Technique</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tube select</td>
+                  <td>Anticipation dip → lift with <code>OutBack</code> ease.</td>
+                </tr>
+                <tr>
+                  <td>Invalid move</td>
+                  <td>Procedural shake with exponential decay.</td>
+                </tr>
+                <tr>
+                  <td>Pour arc</td>
+                  <td>Two-phase path (<code>OutSine</code> → <code>InSine</code>) + tilt with <code>OutBack</code>.</td>
+                </tr>
+                <tr>
+                  <td>Tube solved</td>
+                  <td>Squash &amp; Stretch — elastic bounce (1.15× / 0.85y).</td>
+                </tr>
+                <tr>
+                  <td>Level enter</td>
+                  <td>Staggered slide-in from off-screen so the player reads the board first.</td>
+                </tr>
+                <tr>
+                  <td>Fill VFX</td>
+                  <td>Particle colour matched to solved tube colour at runtime.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="feature-grid">
+              <div class="feature-item">Manual composition root — no DI framework</div>
+              <div class="feature-item">Strict one-way layer dependency (Data → View)</div>
+              <div class="feature-item">Platform-aware haptics — iOS &amp; Android API 26+</div>
+              <div class="feature-item">TweenScope — zero DOTween memory leaks</div>
+              <div class="feature-item">All animation params in one ScriptableObject</div>
+              <div class="feature-item">Pour speed multiplier for back-to-back momentum</div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="card-footer">
+              <div class="stack">
+                <span class="stack-item">Unity 6</span>
+                <span class="stack-item">C#</span>
+                <span class="stack-item">DOTween Pro</span>
+                <span class="stack-item">ScriptableObjects</span>
+                <span class="stack-item">EventBus</span>
+                <span class="stack-item">Android VibrationEffect</span>
+              </div>
+              <a class="btn btn-ghost" href="#" target="_blank">GitHub ↗</a>
+            </div>
+          </div>
+        </article>
+
         <!-- ───── BLOKFIT ───── -->
         <article class="card">
 
@@ -568,94 +667,6 @@
           </div>
         </article>
 
-        <!-- ───── MAGIC SORT ───── -->
-        <article class="card">
-
-          <div class="card-media">
-            <img src="images/magic-sort.gif" alt="Magic Sort gameplay" />
-          </div>
-
-          <div class="card-body">
-            <div class="card-top">
-              <div class="card-title">
-                🧪 Magic Sort Clone
-                <small>Water Sort Puzzle &nbsp;·&nbsp; Unity 6</small>
-              </div>
-              <div class="tags">
-                <span class="tag">Game Feel</span>
-                <span class="tag">Clean Architecture</span>
-                <span class="tag">Haptics</span>
-              </div>
-            </div>
-
-            <p class="card-desc">
-              A Water Sort puzzle clone built with <strong>game feel as the primary engineering constraint</strong> —
-              not the puzzle logic. Wired through a manual composition root with no DI framework; a lightweight EventBus
-              decouples layers without hard dependencies. Every interaction point has a dedicated animation pass
-              grounded
-              in Disney's 12 Principles of Animation.
-            </p>
-
-            <table class="hl-table">
-              <thead>
-                <tr>
-                  <th>Interaction</th>
-                  <th>Technique</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Tube select</td>
-                  <td>Anticipation dip → lift with <code>OutBack</code> ease.</td>
-                </tr>
-                <tr>
-                  <td>Invalid move</td>
-                  <td>Procedural shake with exponential decay.</td>
-                </tr>
-                <tr>
-                  <td>Pour arc</td>
-                  <td>Two-phase path (<code>OutSine</code> → <code>InSine</code>) + tilt with <code>OutBack</code>.</td>
-                </tr>
-                <tr>
-                  <td>Tube solved</td>
-                  <td>Squash &amp; Stretch — elastic bounce (1.15× / 0.85y).</td>
-                </tr>
-                <tr>
-                  <td>Level enter</td>
-                  <td>Staggered slide-in from off-screen so the player reads the board first.</td>
-                </tr>
-                <tr>
-                  <td>Fill VFX</td>
-                  <td>Particle colour matched to solved tube colour at runtime.</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div class="feature-grid">
-              <div class="feature-item">Manual composition root — no DI framework</div>
-              <div class="feature-item">Strict one-way layer dependency (Data → View)</div>
-              <div class="feature-item">Platform-aware haptics — iOS &amp; Android API 26+</div>
-              <div class="feature-item">TweenScope — zero DOTween memory leaks</div>
-              <div class="feature-item">All animation params in one ScriptableObject</div>
-              <div class="feature-item">Pour speed multiplier for back-to-back momentum</div>
-            </div>
-
-            <hr class="divider" />
-
-            <div class="card-footer">
-              <div class="stack">
-                <span class="stack-item">Unity 6</span>
-                <span class="stack-item">C#</span>
-                <span class="stack-item">DOTween Pro</span>
-                <span class="stack-item">ScriptableObjects</span>
-                <span class="stack-item">EventBus</span>
-                <span class="stack-item">Android VibrationEffect</span>
-              </div>
-              <a class="btn btn-ghost" href="#" target="_blank">GitHub ↗</a>
-            </div>
-          </div>
-        </article>
-
         <!-- ───── HIT AND BOOM ───── -->
         <article class="card">
 
@@ -734,6 +745,13 @@
                 <span class="stack-item">Multiplayer / RPC</span>
                 <span class="stack-item">Replication</span>
               </div>
+              <a class="btn btn-steam" href="https://store.steampowered.com/app/2024080/Hit_and_Boom/" target="_blank">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.52 3.74 10.19 8.89 11.54L12 12h3a3 3 0 0 0 0-6h-3L9.12 2.09A11.97 11.97 0 0 1 12 0zm-1.07 13.37 2.3 4.99a6 6 0 0 1-7.6-3.47l3.13 1.3a1.75 1.75 0 1 0 2.17-2.82zm7.32-4.62a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-4.5-3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+                </svg>
+                Steam ↗
+              </a>
             </div>
           </div>
         </article>
