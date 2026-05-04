@@ -98,7 +98,7 @@
     }
 
     /* ── HERO ── */
-    #hero {
+    #me {
       padding: 5rem 0 2.5rem;
       display: flex;
       flex-direction: row;
@@ -176,29 +176,29 @@
       background: var(--accent);
     }
 
-    #hero h1 {
+    #me h1 {
       font-size: clamp(2rem, 5vw, 3rem);
       font-weight: 800;
       letter-spacing: -.04em;
       line-height: 1.15;
     }
 
-    #hero h1 span {
+    #me h1 span {
       color: var(--accent);
     }
 
-    #hero p {
+    #me p {
       color: var(--muted);
       font-size: 1.05rem;
       max-width: 520px;
       line-height: 1.75;
     }
 
-    #hero p+p {
+    #me p+p {
       margin-top: .65rem;
     }
 
-    #hero p strong {
+    #me p strong {
       color: var(--text);
       font-weight: 600;
     }
@@ -557,7 +557,7 @@
     }
 
     @media (max-width: 580px) {
-      #hero {
+      #me {
         flex-direction: column-reverse;
         align-items: flex-start;
       }
@@ -585,8 +585,9 @@
     <div class="inner">
       <span>YUNUS BURKUT PORTFOLIO</span></a>
       <ul>
-        <li><a href="#">Me</a></li>
-        <li><a href="#projects">Projects</a></li>
+        <li><a href="#me">Me</a></li>
+        <li><a href="#personal">Personal Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </div>
@@ -594,7 +595,7 @@
 
   <!-- ── HERO ── -->
   <div class="container">
-    <section id="hero">
+    <section id="me">
 
       <div class="hero-text">
         <h1>
@@ -637,7 +638,7 @@
   <!-- ── PROJECTS ── -->
   <div class="container">
     <section id="projects">
-      <p class="section-label">Personal Projects</p>
+      <p class="section-label" id="personal">Personal Projects</p>
       <h2 class="section-title">Kişisel Projeler</h2>
       <p class="section-sub">Side projects I built to explore algorithms, game feel, and system design.</p>
       <div class="projects">
@@ -927,7 +928,7 @@
 
       <div class="section-divider"></div>
 
-      <p class="section-label">Work Experience</p>
+      <p class="section-label" id="experience">Work Experience</p>
       <h2 class="section-title">İş Tecrübesi</h2>
       <p class="section-sub">Professional roles at game studios — live titles, production codebases, real player bases.</p>
       <div class="projects">
