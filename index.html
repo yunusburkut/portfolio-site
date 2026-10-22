@@ -377,6 +377,19 @@
       display: block;
     }
 
+    /* playable game in place of a gameplay GIF: full card width, landscape */
+    .card-media .game-frame {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+    }
+
+    /* the hover lift would shift the game under the cursor while playing */
+    .card:has(.game-frame):hover {
+      transform: none;
+    }
+
     .card-media .placeholder {
       display: flex;
       flex-direction: column;
@@ -646,7 +659,9 @@
         <article class="card">
 
           <div class="card-media">
-            <img src="images/magic-sort.gif" alt="Magic Sort gameplay" />
+            <iframe class="game-frame" src="https://itch.io/embed-upload/19939345?color=0a0a0d"
+              title="Magic Sort Clone — play in browser" allow="autoplay; fullscreen" allowfullscreen
+              loading="lazy"><a href="https://yunusburkut.itch.io/magicx">Play Magic Sort Clone on itch.io</a></iframe>
           </div>
 
           <div class="card-body">
