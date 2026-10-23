@@ -386,6 +386,11 @@
       border: 0;
     }
 
+    /* the side bars take the game's own background colour so the portrait frame blends into the card */
+    .card-media:has(.game-frame) {
+      background: #1d2035;
+    }
+
     /* the hover lift would shift the game under the cursor while playing */
     .card:has(.game-frame):hover {
       transform: none;
