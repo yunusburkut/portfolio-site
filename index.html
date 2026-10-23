@@ -377,11 +377,12 @@
       display: block;
     }
 
-    /* playable game in place of a gameplay GIF: full card width, landscape */
+    /* playable game in place of a gameplay GIF: the game is portrait, so the frame is too, centered on the dark card background */
     .card-media .game-frame {
       display: block;
-      width: 100%;
-      aspect-ratio: 16 / 9;
+      width: min(100%, calc(min(80vh, 760px) * 9 / 16));
+      aspect-ratio: 9 / 16;
+      margin: 0 auto;
       border: 0;
     }
 
