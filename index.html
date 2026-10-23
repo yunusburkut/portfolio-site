@@ -377,20 +377,7 @@
       display: block;
     }
 
-    /* playable game in place of a gameplay GIF: the game is portrait, so the frame is too, centered on the dark card background */
-    .card-media .game-frame {
-      display: block;
-      width: min(100%, calc(min(80vh, 760px) * 9 / 16));
-      aspect-ratio: 9 / 16;
-      margin: 0 auto;
-      border: 0;
-    }
-
-    /* the side bars take the game's own background colour so the portrait frame blends into the card */
-    .card-media:has(.game-frame) {
-      background: #1d2035;
-    }
-
+/* playable game in place of a gameplay GIF: full card width, landscape; the game fits its board to the window */    .card-media .game-frame {      display: block;      width: 100%;      aspect-ratio: 16 / 9;      border: 0;    }
     /* the hover lift would shift the game under the cursor while playing */
     .card:has(.game-frame):hover {
       transform: none;
@@ -665,7 +652,7 @@
         <article class="card">
 
           <div class="card-media">
-            <iframe class="game-frame" src="https://itch.io/embed-upload/19940288?color=0a0a0d"
+            <iframe class="game-frame" src="https://itch.io/embed-upload/19962064?color=0a0a0d"
               title="Magic Sort Clone — play in browser" allow="autoplay; fullscreen" allowfullscreen
               loading="lazy"><a href="https://yunusburkut.itch.io/magicx">Play Magic Sort Clone on itch.io</a></iframe>
           </div>
