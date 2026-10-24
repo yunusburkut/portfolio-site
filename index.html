@@ -4,14 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yunus Burkut — Game Developer</title>
+  <title>Yunus Burkut · Game Developer</title>
   <meta name="description"
     content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Magic Sort in the browser." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-    rel="stylesheet" />
   <style>
     *,
     *::before,
@@ -21,28 +16,45 @@
       padding: 0;
     }
 
+    /* Two skins, like the editors: dark by default for dark-mode systems, the grey "personal" skin otherwise.
+       Text pairs pass WCAG AA (4.5:1) on their panel colour in both. */
     :root {
-      --bg: #f7f5f0;
-      --surface: #ffffff;
-      --border: #e3dfd5;
-      --text: #1d1b16;
-      --muted: #6b665b;
-      --accent: #c9501f;
-      --tag-bg: #eeeae1;
-      --radius: 10px;
-      --mono: 'IBM Plex Mono', ui-monospace, monospace;
+      --frame: #a3a3a3;
+      --panel: #dedede;
+      --bar: #cbcbcb;
+      --tab: #bababa;
+      --field: #f2f2f2;
+      --line: #9a9a9a;
+      --text: #141414;
+      --muted: #4d4d4d;
+      --link: #1a5aa0;
+      --select: #3a72b0;
+      --on-select: #ffffff;
+      --play-tint: #b3c2d9;
+      --info: #3a72b0;
+      --warn: #b58300;
+      --error: #c4362c;
+      --tb-h: 46px;
+      --mono: ui-monospace, 'Cascadia Mono', Consolas, Menlo, monospace;
       color-scheme: light;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #151412;
-        --surface: #1c1b18;
-        --border: #2f2d28;
-        --text: #ece9e2;
-        --muted: #a39e92;
-        --accent: #f07a48;
-        --tag-bg: #26241f;
+        --frame: #161616;
+        --panel: #333333;
+        --bar: #3c3c3c;
+        --tab: #282828;
+        --field: #262626;
+        --line: #222222;
+        --text: #d6d6d6;
+        --muted: #a3a3a3;
+        --link: #6cb0f5;
+        --select: #2c5d87;
+        --play-tint: #36435a;
+        --info: #a3a3a3;
+        --warn: #e0b030;
+        --error: #e05b50;
         color-scheme: dark;
       }
     }
@@ -53,20 +65,19 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 4.5rem;
+      scroll-padding-top: calc(var(--tb-h) + 12px);
     }
 
     body {
-      background: var(--bg);
+      background: var(--frame);
       color: var(--text);
-      font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-      font-size: 17px;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
       line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
     }
 
     a {
-      color: inherit;
+      color: var(--link);
     }
 
     img {
@@ -74,145 +85,269 @@
       max-width: 100%;
     }
 
-    .wrap {
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 0 1.25rem;
+    :focus-visible {
+      outline: 2px solid var(--link);
+      outline-offset: 2px;
     }
 
-    .meta {
-      font-family: var(--mono);
-      font-size: .8rem;
-      color: var(--muted);
+    .i {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
     }
 
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .4rem 1.25rem;
+    .skip {
+      position: absolute;
+      left: .5rem;
+      top: -3rem;
+      z-index: 30;
+      padding: .4rem .8rem;
+      background: var(--select);
+      color: var(--on-select);
     }
 
-    .links a {
-      color: var(--accent);
-      font-weight: 500;
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
+    .skip:focus {
+      top: .5rem;
     }
 
-    .links a:hover {
-      border-bottom-color: currentColor;
-    }
-
-    /* ── HEADER ── */
-    .top {
+    /* ── TOOLBAR ── */
+    .toolbar {
       position: sticky;
       top: 0;
-      z-index: 10;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
+      z-index: 20;
+      height: var(--tb-h);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 .75rem;
+      background: var(--bar);
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
     }
 
-    .top .wrap {
+    .title {
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .title strong {
+      font-size: 15px;
+    }
+
+    .title span {
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .transport {
+      display: flex;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .transport button {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 26px;
+      border: 0;
+      background: var(--field);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .transport button:hover {
+      background: var(--panel);
+    }
+
+    .transport button[aria-pressed="true"] {
+      background: var(--select);
+      color: var(--on-select);
+    }
+
+    .tb-right {
+      justify-self: end;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .4rem;
+      min-height: 30px;
+      padding: 0 .9rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--field);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      border-color: var(--text);
+    }
+
+    /* Play mode tints the editor, as Unity does */
+    body.playing {
+      --bar: var(--play-tint);
+      --tab: var(--play-tint);
+    }
+
+    /* ── LAYOUT ── */
+    .editor {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 340px;
+      grid-template-areas: "hier center insp";
+      gap: 3px;
+      padding: 3px;
+      align-items: start;
+      max-width: 1680px;
+      margin: 0 auto;
+    }
+
+    .hierarchy {
+      grid-area: hier;
+    }
+
+    .center {
+      grid-area: center;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .inspector {
+      grid-area: insp;
+    }
+
+    .hierarchy,
+    .inspector {
+      position: sticky;
+      top: calc(var(--tb-h) + 3px);
+      max-height: calc(100vh - var(--tb-h) - 6px);
+      overflow-y: auto;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--tab);
+      font-size: 13px;
+    }
+
+    .tab {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding-top: .8rem;
-      padding-bottom: .8rem;
+      gap: .4rem;
+      padding: .3rem .8rem;
+      color: var(--muted);
+      white-space: nowrap;
     }
 
-    .top .name {
+    .tab.is-active {
+      background: var(--panel);
+      color: var(--text);
       font-weight: 600;
-      text-decoration: none;
+      border-top: 2px solid var(--select);
     }
 
-    .top nav ul {
-      list-style: none;
+    .bar {
       display: flex;
       flex-wrap: wrap;
-      gap: .25rem 1.25rem;
+      align-items: center;
+      gap: .25rem 1rem;
+      padding: .45rem .9rem;
+      background: var(--bar);
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
     }
 
-    .top nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: .92rem;
+    .bar h2 {
+      font-size: 16px;
     }
 
-    .top nav a:hover {
-      color: var(--text);
-    }
-
-    /* ── INTRO ── */
-    .intro {
-      padding: 4rem 0 3rem;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 2rem;
-      align-items: start;
-    }
-
-    .intro h1 {
-      font-size: 2.6rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      line-height: 1.1;
-      margin-bottom: 1rem;
-    }
-
-    .intro p {
-      max-width: 560px;
-      margin-bottom: .9rem;
-    }
-
-    .intro p.quiet {
+    .bar .muted {
       color: var(--muted);
     }
 
-    .intro .links {
-      margin-top: 1.5rem;
+    .bar .spacer {
+      flex: 1;
     }
 
-    .intro .photo {
-      width: 128px;
-      height: 128px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid var(--border);
-    }
-
-    /* ── SECTIONS ── */
-    section {
-      padding: 3rem 0;
-      border-top: 1px solid var(--border);
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -.01em;
-      margin-bottom: .35rem;
-    }
-
-    .section-note {
-      color: var(--muted);
-      margin-bottom: 2rem;
-    }
-
-    h3 {
-      font-size: 1.2rem;
+    .bar a {
       font-weight: 600;
-      line-height: 1.3;
     }
 
-    /* ── PLAYER ── */
+    .pad {
+      padding: 1.25rem 1.25rem 1.5rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .mono {
+      font-family: var(--mono);
+      font-size: 12.5px;
+    }
+
+    /* ── HIERARCHY ── */
+    .tree {
+      list-style: none;
+      padding: .3rem 0 .6rem;
+      font-size: 13.5px;
+    }
+
+    .tree a {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .18rem .6rem .18rem calc(.6rem + var(--depth, 0) * 1rem);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .tree a:hover {
+      background: color-mix(in srgb, var(--select) 25%, transparent);
+    }
+
+    .tree a[aria-current="true"] {
+      background: var(--select);
+      color: var(--on-select);
+    }
+
+    .tree .fold {
+      width: .7rem;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .tree a[aria-current="true"] .fold {
+      color: inherit;
+    }
+
+    /* ── GAME VIEW ── */
     .player {
-      position: relative;
       aspect-ratio: 16 / 9;
       background: #0a0a0d;
-      border-radius: var(--radius);
-      overflow: hidden;
-      margin-bottom: 1.25rem;
     }
 
     .player iframe {
@@ -222,116 +357,167 @@
       border: 0;
     }
 
-    .featured .meta {
-      margin: .25rem 0 1rem;
+    .lead {
+      font-size: 18px;
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+      max-width: 60ch;
     }
 
-    .featured p {
-      margin-bottom: .9rem;
+    .notes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 2rem;
     }
 
-    .featured .links {
+    .notes h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: .25rem;
+    }
+
+    .stack {
       margin-top: 1.25rem;
     }
 
-    /* ── SMALL PROJECTS ── */
-    .more-title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin: 3rem 0 1rem;
-    }
-
-    .projects {
+    /* ── PROJECT WINDOW ── */
+    .assets {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
     }
 
-    .project {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
+    .asset {
       display: flex;
       flex-direction: column;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
     }
 
-    .project img {
+    .asset img {
       width: 100%;
       aspect-ratio: 16 / 10;
       object-fit: cover;
       background: #0a0a0d;
     }
 
-    .project .body {
-      padding: 1.1rem 1.2rem 1.25rem;
+    .asset .body {
       display: flex;
       flex-direction: column;
       flex: 1;
+      padding: .8rem .9rem 1rem;
     }
 
-    .project .meta {
-      margin: .2rem 0 .7rem;
+    .asset h3 {
+      font-size: 16px;
     }
 
-    .project p {
-      font-size: .95rem;
-      margin-bottom: 1rem;
+    .asset .mono {
+      color: var(--muted);
+      margin-bottom: .5rem;
     }
 
-    .project .links {
+    .asset p {
+      font-size: 14px;
+      margin-bottom: .8rem;
+    }
+
+    .asset .body>a {
       margin-top: auto;
-      font-size: .95rem;
+      font-weight: 600;
+      font-size: 14px;
     }
 
-    /* ── WORK ── */
-    .jobs {
+    /* ── CONSOLE ── */
+    .counts {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .counts span {
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .log {
       list-style: none;
     }
 
-    .job {
+    .log>li:nth-child(even) summary {
+      background: color-mix(in srgb, var(--text) 4%, transparent);
+    }
+
+    .log summary {
       display: grid;
-      grid-template-columns: 9.5rem 1fr;
-      gap: 1.5rem;
-      padding: 1.75rem 0;
-      border-bottom: 1px solid var(--border);
+      grid-template-columns: 16px 10.5rem 1fr;
+      align-items: baseline;
+      gap: .7rem;
+      padding: .55rem .9rem;
+      cursor: pointer;
+      list-style: none;
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
     }
 
-    .job:first-child {
-      padding-top: 0;
+    .log summary::-webkit-details-marker {
+      display: none;
     }
 
-    .job:last-child {
-      border-bottom: 0;
+    .log summary .i {
+      align-self: center;
+      color: var(--info);
     }
 
-    .job .when {
-      padding-top: .2rem;
+    .log summary:hover {
+      background: color-mix(in srgb, var(--select) 20%, transparent);
     }
 
-    .job .role {
-      color: var(--muted);
-      margin: .1rem 0 .75rem;
+    .log details[open] summary {
+      background: var(--select);
+      color: var(--on-select);
     }
 
-    .job p {
-      margin-bottom: .75rem;
+    .log details[open] summary .muted,
+    .log details[open] summary .i {
+      color: inherit;
     }
 
-    .job ul {
+    .log summary strong {
+      font-size: 16px;
+    }
+
+    .trace {
+      padding: 1rem 1.25rem 1.4rem calc(1.25rem + 16px + .7rem);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .trace p {
+      margin-bottom: .7rem;
+    }
+
+    .trace ul {
       padding-left: 1.1rem;
       margin-bottom: .9rem;
     }
 
-    .job li {
+    .trace li {
       margin-bottom: .3rem;
+    }
+
+    .trace .links a {
+      margin-right: 1.25rem;
+      font-weight: 600;
     }
 
     .shots {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: .75rem;
+      gap: .6rem;
+      max-width: 720px;
       margin: 1rem 0;
     }
 
@@ -344,47 +530,176 @@
       display: block;
       width: 100%;
       height: auto;
-      border-radius: 8px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       background: #0a0a0d;
     }
 
-    /* ── SKILLS ── */
-    .skills {
+    /* ── INSPECTOR ── */
+    .obj {
       display: grid;
-      grid-template-columns: 9.5rem 1fr;
-      gap: .9rem 1.5rem;
+      grid-template-columns: 64px 1fr;
+      gap: .75rem;
+      align-items: center;
+      padding: .8rem .9rem;
+      border-bottom: 1px solid var(--line);
     }
 
-    .skills dt {
-      font-family: var(--mono);
-      font-size: .85rem;
-      color: var(--muted);
-      padding-top: .15rem;
+    .obj img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border: 1px solid var(--line);
     }
 
-    /* ── CONTACT ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 3rem 0 4rem;
+    .namerow {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: .35rem;
     }
 
-    footer p {
-      margin-bottom: 1rem;
+    .namerow h1 {
+      flex: 1;
+      min-width: 0;
+      padding: .1rem .45rem;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      font-size: 17px;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
-    footer .big {
-      font-size: 1.35rem;
+    .check {
+      display: inline-grid;
+      place-items: center;
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+    }
+
+    .check::after {
+      content: "";
+      width: 7px;
+      height: 4px;
+      border-left: 2px solid var(--text);
+      border-bottom: 2px solid var(--text);
+      transform: translateY(-1px) rotate(-45deg);
+    }
+
+    .tagrow {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: .2rem .5rem;
+      align-items: center;
+      font-size: 12.5px;
+    }
+
+    .field {
+      padding: 0 .45rem;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow-wrap: anywhere;
+    }
+
+    .comp {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comp summary {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .4rem .7rem;
+      background: var(--bar);
+      font-size: 13.5px;
       font-weight: 600;
+      cursor: pointer;
+      list-style: none;
     }
 
-    footer .big a {
-      color: var(--accent);
-      text-decoration: none;
+    .comp summary::-webkit-details-marker {
+      display: none;
     }
 
-    footer .big a:hover {
-      text-decoration: underline;
+    .comp summary::before {
+      content: "▸";
+      width: .7rem;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .comp[open] summary::before {
+      content: "▾";
+    }
+
+    .comp summary .kind {
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .props {
+      display: grid;
+      grid-template-columns: 7.5rem 1fr;
+      gap: .3rem .6rem;
+      align-items: center;
+      padding: .6rem .9rem .8rem;
+      font-size: 13.5px;
+    }
+
+    .props>.lbl {
+      color: var(--muted);
+    }
+
+    .props .full {
+      grid-column: 1 / -1;
+    }
+
+    .props .indent {
+      padding-left: .8rem;
+    }
+
+    .about p {
+      font-size: 14.5px;
+      margin-bottom: .6rem;
+    }
+
+    .about p:last-child {
+      margin-bottom: 0;
+    }
+
+    .wide-btn {
+      display: flex;
+      margin: .9rem auto 1rem;
+      width: calc(100% - 3rem);
+      min-height: 34px;
+    }
+
+    /* ── STATUS BAR ── */
+    .status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .4rem 1rem;
+      padding: .45rem .9rem;
+      background: var(--bar);
+      font-size: 13px;
+      max-width: 1680px;
+      margin: 0 auto 3px;
+      width: calc(100% - 6px);
+      border-radius: 3px;
+    }
+
+    .status .i {
+      color: var(--info);
+    }
+
+    .status .spacer {
+      flex: 1;
     }
 
     /* ── LEETCODE (switched off with data-enabled on #leetcode-block) ── */
@@ -392,17 +707,14 @@
       --lc-easy: #00a693;
       --lc-medium: #e5a800;
       --lc-hard: #e0453c;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
+      padding: 1.25rem;
     }
 
     .lc-top {
       display: flex;
       align-items: center;
       gap: 2.5rem;
-      margin-bottom: 1.75rem;
+      margin-bottom: 1.5rem;
     }
 
     .lc-ring {
@@ -424,7 +736,7 @@
     }
 
     .lc-ring-track {
-      stroke: var(--tag-bg);
+      stroke: var(--field);
     }
 
     .lc-arc {
@@ -462,7 +774,7 @@
 
     .lc-ring-label span {
       color: var(--muted);
-      font-size: .75rem;
+      font-size: 12px;
     }
 
     .lc-bars {
@@ -476,9 +788,9 @@
     .lc-bar-head {
       display: flex;
       justify-content: space-between;
-      font-size: .85rem;
+      font-size: 13px;
       color: var(--muted);
-      margin-bottom: .35rem;
+      margin-bottom: .3rem;
     }
 
     .lc-bar-head strong {
@@ -488,15 +800,13 @@
 
     .lc-bar-track {
       height: 8px;
-      border-radius: 999px;
-      background: var(--tag-bg);
+      background: var(--field);
       overflow: hidden;
     }
 
     .lc-bar-fill {
       height: 100%;
       width: 0;
-      border-radius: inherit;
       transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
     }
 
@@ -523,15 +833,16 @@
 
     .lc-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: .75rem;
-      margin-bottom: 1.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: .5rem;
+      margin-bottom: 1.5rem;
     }
 
     .lc-stat {
-      background: var(--tag-bg);
-      border-radius: 8px;
-      padding: .7rem .9rem;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: .5rem .75rem;
       display: flex;
       flex-direction: column;
     }
@@ -544,7 +855,7 @@
 
     .lc-stat span {
       color: var(--muted);
-      font-size: .78rem;
+      font-size: 12px;
     }
 
     .lc-heatmap {
@@ -556,8 +867,7 @@
 
     .lc-cell {
       aspect-ratio: 1;
-      border-radius: 2px;
-      background: var(--tag-bg);
+      background: var(--field);
       opacity: 0;
       transform: scale(.3);
       transition: opacity .35s ease, transform .35s ease;
@@ -565,19 +875,19 @@
     }
 
     .lc-cell[data-l="1"] {
-      background: color-mix(in srgb, var(--accent) 30%, transparent);
+      background: color-mix(in srgb, var(--link) 35%, transparent);
     }
 
     .lc-cell[data-l="2"] {
-      background: color-mix(in srgb, var(--accent) 55%, transparent);
+      background: color-mix(in srgb, var(--link) 60%, transparent);
     }
 
     .lc-cell[data-l="3"] {
-      background: color-mix(in srgb, var(--accent) 80%, transparent);
+      background: color-mix(in srgb, var(--link) 80%, transparent);
     }
 
     .lc-cell[data-l="4"] {
-      background: var(--accent);
+      background: var(--link);
     }
 
     .lc-cell.is-future {
@@ -591,8 +901,8 @@
 
     .lc-heatmap-label {
       color: var(--muted);
-      font-size: .8rem;
-      margin-bottom: .5rem;
+      font-size: 12.5px;
+      margin-bottom: .4rem;
     }
 
     .lc-footer {
@@ -600,11 +910,18 @@
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
-      margin-top: 1.25rem;
-      font-size: .9rem;
+      margin-top: 1rem;
+      font-size: 13px;
+    }
+
+    .lc-footer a {
+      font-weight: 600;
     }
 
     @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
 
       .lc-arc,
       .lc-bar-fill,
@@ -613,346 +930,629 @@
       }
     }
 
-    /* ── PHONE ── */
-    @media (max-width: 640px) {
-      body {
-        font-size: 16px;
+    /* ── NARROWER: the hierarchy becomes a strip of tabs under the toolbar ── */
+    @media (max-width: 1100px) {
+      html {
+        scroll-padding-top: calc(var(--tb-h) + 48px);
       }
 
-      .top .wrap {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: .3rem;
+      .editor {
+        grid-template-columns: minmax(0, 1fr) 320px;
+        grid-template-areas:
+          "hier hier"
+          "center insp";
       }
 
-      .intro {
+      .hierarchy {
+        top: var(--tb-h);
+        z-index: 15;
+        max-height: none;
+        overflow: visible;
+        border-radius: 0;
+        margin: -3px -3px 0;
+      }
+
+      .hierarchy .tabs,
+      .tree [data-depth="2"],
+      .tree [data-depth="0"] {
+        display: none;
+      }
+
+      .tree {
+        display: flex;
+        overflow-x: auto;
+        padding: 0;
+        scrollbar-width: none;
+      }
+
+      .tree a {
+        padding: .55rem .9rem;
+        white-space: nowrap;
+      }
+
+      .tree .fold {
+        display: none;
+      }
+
+      .inspector {
+        top: calc(var(--tb-h) + 44px);
+        max-height: calc(100vh - var(--tb-h) - 47px);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .editor {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+          "hier"
+          "insp"
+          "center";
+      }
+
+      .inspector {
+        position: static;
+        max-height: none;
+      }
+
+      .title span {
+        display: none;
+      }
+
+      .notes {
         grid-template-columns: 1fr;
-        padding-top: 2.5rem;
       }
 
-      .intro .photo {
-        grid-row: 1;
-        width: 88px;
-        height: 88px;
+      .log summary {
+        grid-template-columns: 16px 1fr;
+        gap: .1rem .6rem;
       }
 
-      .intro h1 {
-        font-size: 2.1rem;
+      .log summary .when {
+        grid-column: 2;
+        grid-row: 2;
       }
 
-      .projects {
-        grid-template-columns: 1fr;
-      }
-
-      .job,
-      .skills {
-        grid-template-columns: 1fr;
-        gap: .25rem;
-      }
-
-      .skills dd {
-        margin-bottom: .75rem;
+      .trace {
+        padding-left: 1rem;
       }
 
       .lc-top {
         flex-direction: column;
         align-items: stretch;
-        gap: 1.75rem;
+        gap: 1.5rem;
       }
 
       .lc-ring {
         align-self: center;
       }
     }
+
+    @media (max-width: 420px) {
+      .toolbar {
+        gap: .5rem;
+        padding: 0 .5rem;
+      }
+
+      .transport button {
+        width: 28px;
+      }
+
+      .tb-right .button {
+        padding: 0 .6rem;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-cube" viewBox="0 0 16 16">
+      <path d="M8 1.5 14 4.5v7L8 14.5 2 11.5v-7zM2 4.5 8 7.5l6-3M8 7.5v7" fill="none" stroke="currentColor"
+        stroke-width="1.2" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-tree" viewBox="0 0 16 16">
+      <path d="M2 3h7M3.5 3v9h2.5M3.5 7.5h2.5M7 7.5h7M7 12h7" fill="none" stroke="currentColor" stroke-width="1.4" />
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 16 16">
+      <path d="M5 3v10l8-5z" fill="currentColor" />
+    </symbol>
+    <symbol id="i-pause" viewBox="0 0 16 16">
+      <path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor" />
+    </symbol>
+    <symbol id="i-step" viewBox="0 0 16 16">
+      <path d="M3 3v10l7-5zM11 3h2v10h-2z" fill="currentColor" />
+    </symbol>
+    <symbol id="i-pad" viewBox="0 0 16 16">
+      <path
+        d="M4.5 4.5h7a3 3 0 0 1 3 3v1a2.5 2.5 0 0 1-4.4 1.6L9.4 9.5H6.6l-.7.6A2.5 2.5 0 0 1 1.5 8.5v-1a3 3 0 0 1 3-3z"
+        fill="currentColor" />
+    </symbol>
+    <symbol id="i-folder" viewBox="0 0 16 16">
+      <path d="M1.5 3h5l1.5 1.5h6.5V13h-13z" fill="currentColor" />
+    </symbol>
+    <symbol id="i-list" viewBox="0 0 16 16">
+      <path d="M2 4h12M2 8h12M2 12h8" fill="none" stroke="currentColor" stroke-width="1.6" />
+    </symbol>
+    <symbol id="i-chart" viewBox="0 0 16 16">
+      <path d="M2 14V9h3v5zM6.5 14V5h3v9zM11 14V2h3v12z" fill="currentColor" />
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 16 16">
+      <path d="M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM7.2 7v5h1.6V7zm0-3v1.6h1.6V4z" fill="currentColor"
+        fill-rule="evenodd" />
+    </symbol>
+    <symbol id="i-warn" viewBox="0 0 16 16">
+      <path d="M8 1.5 15 14H1zM7.2 6v4h1.6V6zm0 5v1.6h1.6V11z" fill="currentColor" fill-rule="evenodd" />
+    </symbol>
+    <symbol id="i-error" viewBox="0 0 16 16">
+      <path d="M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM5.5 4.4 4.4 5.5 6.9 8l-2.5 2.5 1.1 1.1L8 9.1l2.5 2.5 1.1-1.1L9.1 8l2.5-2.5-1.1-1.1L8 6.9z"
+        fill="currentColor" fill-rule="evenodd" />
+    </symbol>
+    <symbol id="i-script" viewBox="0 0 16 16">
+      <path d="M3.5 1.5h6l3 3v10h-9zM5.5 8h5M5.5 10.5h5" fill="none" stroke="currentColor" stroke-width="1.2" />
+    </symbol>
+  </svg>
 
-  <header class="top">
-    <div class="wrap">
-      <a class="name" href="#">Yunus Burkut</a>
-      <nav>
-        <ul>
-          <li><a href="#games">Games</a></li>
-          <li data-lc-nav hidden><a href="#leetcode">LeetCode</a></li>
-          <li><a href="#work">Work</a></li>
-          <li><a href="#skills">Skills</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
+  <a class="skip" href="#games">Skip to content</a>
+
+  <!-- ── TOOLBAR ── -->
+  <header class="toolbar">
+    <div class="title"><strong>Yunus Burkut</strong><span>Game Developer · Istanbul</span></div>
+    <div class="transport">
+      <button type="button" data-play aria-pressed="false" title="Play: jump to Magic Sort"
+        aria-label="Play: jump to Magic Sort"><svg class="i">
+          <use href="#i-play" />
+        </svg></button>
+      <button type="button" data-pause title="Pause: leave play mode" aria-label="Pause: leave play mode"><svg
+          class="i">
+          <use href="#i-pause" />
+        </svg></button>
+      <button type="button" data-step title="Step: next panel" aria-label="Step: next panel"><svg class="i">
+          <use href="#i-step" />
+        </svg></button>
     </div>
+    <div class="tb-right"><a class="button" href="YunusBurkutCV.pdf" download>Download CV</a></div>
   </header>
 
-  <main class="wrap">
+  <div class="editor">
 
-    <!-- ── INTRO ── -->
-    <div class="intro">
-      <div>
-        <h1>Yunus Burkut</h1>
-        <p>
-          I'm a game developer in Istanbul. For nearly five years I've built gameplay, UI and tools in
-          Unity and Unreal Engine, on a multiplayer action game for Steam and on two of Zynga's mobile card games.
-        </p>
-        <p class="quiet">
-          I played American football for five years. These days I coach my university's flag football team.
-        </p>
-        <div class="links">
-          <a href="mailto:yunus.burkut@outlook.com">Email</a>
-          <a href="https://github.com/yunusburkut" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://www.linkedin.com/in/yunusburkut/" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="YunusBurkutCV.pdf" download>CV (PDF)</a>
+    <!-- ── HIERARCHY (navigation) ── -->
+    <nav class="panel hierarchy" aria-label="Sections">
+      <div class="tabs"><span class="tab is-active"><svg class="i">
+            <use href="#i-tree" />
+          </svg>Hierarchy</span></div>
+      <ul class="tree">
+        <li data-depth="0"><a href="#about"><span class="fold">▾</span><svg class="i">
+              <use href="#i-cube" />
+            </svg>Yunus Burkut</a></li>
+        <li data-depth="1"><a href="#games" data-group="games" style="--depth:1"><span class="fold">▾</span>Games</a>
+        </li>
+        <li data-depth="2"><a href="#games" style="--depth:2"><svg class="i">
+              <use href="#i-cube" />
+            </svg>Magic Sort</a></li>
+        <li data-depth="2"><a href="#blokfit" style="--depth:2"><svg class="i">
+              <use href="#i-cube" />
+            </svg>Blokfit</a></li>
+        <li data-depth="2"><a href="#pathfinding" style="--depth:2"><svg class="i">
+              <use href="#i-cube" />
+            </svg>Pathfinding Visualizer</a></li>
+        <li data-depth="1" data-lc-nav hidden><a href="#leetcode" data-group="leetcode" style="--depth:1"><span
+              class="fold"></span>LeetCode</a></li>
+        <li data-depth="1"><a href="#work" data-group="work" style="--depth:1"><span class="fold">▾</span>Work</a></li>
+        <li data-depth="2"><a href="#zynga" style="--depth:2"><svg class="i">
+              <use href="#i-cube" />
+            </svg>Zynga Turkey</a></li>
+        <li data-depth="2"><a href="#frostline" style="--depth:2"><svg class="i">
+              <use href="#i-cube" />
+            </svg>Frostline Games</a></li>
+        <li data-depth="2"><a href="#funverse" style="--depth:2"><svg class="i">
+              <use href="#i-cube" />
+            </svg>Funverse Games</a></li>
+        <li data-depth="2"><a href="#funmoth" style="--depth:2"><svg class="i">
+              <use href="#i-cube" />
+            </svg>Funmoth Games</a></li>
+        <li data-depth="1"><a href="#skills" style="--depth:1"><span class="fold"></span>Skills</a></li>
+        <li data-depth="1"><a href="#contact" style="--depth:1"><span class="fold"></span>Contact</a></li>
+      </ul>
+    </nav>
+
+    <main class="center">
+
+      <!-- ── GAME VIEW ── -->
+      <section class="panel" id="games" data-group="games" aria-labelledby="games-title">
+        <div class="tabs">
+          <span class="tab is-active"><svg class="i">
+              <use href="#i-pad" />
+            </svg>Game</span>
+          <span class="tab">Scene</span>
         </div>
-      </div>
-      <img class="photo" src="images/photo.jpeg" alt="Yunus Burkut" />
-    </div>
-
-    <!-- ── GAMES ── -->
-    <section id="games">
-      <h2>Games</h2>
-      <p class="section-note">Things I built on my own. The first one runs right here in the browser.</p>
-
-      <article class="featured">
+        <div class="bar">
+          <h2 id="games-title">Magic Sort</h2>
+          <span class="muted">Playable right here · 16:9</span>
+          <span class="spacer"></span>
+          <a href="https://yunusburkut.itch.io/magicx" target="_blank" rel="noopener">itch.io ↗</a>
+          <a href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener">Source ↗</a>
+        </div>
         <div class="player">
           <iframe src="https://itch.io/embed-upload/19962064?color=0a0a0d" title="Magic Sort, playable in the browser"
             allow="autoplay; fullscreen" allowfullscreen></iframe>
         </div>
-
-        <h3>Magic Sort</h3>
-        <p class="meta">Water sort puzzle · Unity 6 · C# · DOTween</p>
-        <p>
-          The puzzle itself is simple, so I spent most of the time on how each move feels. A tube dips and
-          then lifts when you pick it, shakes when the move isn't allowed, pours along an arc and bounces once
-          it's full. Every level slides in tube by tube so you can read the board before you play.
-        </p>
-        <p>
-          The code has no DI framework: one composition root wires everything, and a small event bus keeps the
-          game logic and the visuals apart. All animation timings sit in one ScriptableObject, so I can tune the
-          feel without touching code. Phones get haptic feedback on iOS and Android.
-        </p>
-        <div class="links">
-          <a href="https://yunusburkut.itch.io/magicx" target="_blank" rel="noopener">Open on itch.io ↗</a>
-          <a href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener">Source code ↗</a>
+        <div class="pad">
+          <p class="lead">A water sort puzzle I made on my own, where most of the work went into how each move feels.</p>
+          <div class="notes">
+            <div>
+              <h3>Game feel</h3>
+              <p>
+                A tube dips and then lifts when you pick it, shakes when the move isn't allowed, pours along an arc
+                and bounces once it's full. Every level slides in tube by tube so you can read the board before you
+                play.
+              </p>
+            </div>
+            <div>
+              <h3>Code</h3>
+              <p>
+                No DI framework: one composition root wires everything, and a small event bus keeps the game logic
+                and the visuals apart. All animation timings sit in one ScriptableObject, so I can tune the feel
+                without touching code. Phones get haptic feedback on iOS and Android.
+              </p>
+            </div>
+          </div>
+          <p class="stack mono muted">Unity 6 · C# · DOTween</p>
         </div>
-      </article>
+      </section>
 
-      <h3 class="more-title">More projects</h3>
-      <div class="projects">
-        <article class="project">
-          <img src="images/blokfit.gif" alt="Blokfit gameplay" loading="lazy" decoding="async" />
-          <div class="body">
-            <h3>Blokfit</h3>
-            <p class="meta">Procedural puzzle · Unity 6 · C#</p>
-            <p>
-              Drag oddly shaped pieces onto a grid made of triangles. There are no hand-made levels: each one is
-              generated when you start it, by splitting the grid with a flood fill. Has undo, a level editor window
-              and unit tests.
-            </p>
-            <div class="links">
+      <!-- ── PROJECT WINDOW ── -->
+      <section class="panel" id="projects" data-group="games" aria-labelledby="projects-title">
+        <div class="tabs"><span class="tab is-active"><svg class="i">
+              <use href="#i-folder" />
+            </svg>Project</span></div>
+        <div class="bar">
+          <h2 id="projects-title">More projects</h2>
+          <span class="muted mono">Assets › Projects</span>
+        </div>
+        <div class="pad assets">
+          <article class="asset" id="blokfit">
+            <img src="images/blokfit.gif" alt="Blokfit gameplay" loading="lazy" decoding="async" />
+            <div class="body">
+              <h3>Blokfit</h3>
+              <p class="mono">Procedural puzzle · Unity 6 · C#</p>
+              <p>
+                Drag oddly shaped pieces onto a grid made of triangles. There are no hand-made levels: each one is
+                generated when you start it, by splitting the grid with a flood fill. Has undo, a level editor window
+                and unit tests.
+              </p>
               <a href="https://github.com/yunusburkut/Procedural-Block-Fit" target="_blank" rel="noopener">Source
                 code ↗</a>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article class="project">
-          <img src="images/pathfinding-astar.gif" alt="A* search running on a grid" loading="lazy"
-            decoding="async" />
-          <div class="body">
-            <h3>Pathfinding Visualizer</h3>
-            <p class="meta">BFS and A* · Unity 6 · C#</p>
-            <p>
-              Watch BFS and A* search a grid step by step. Click to place the start, the goal and walls, or
-              generate a random maze. The search code allocates no memory while it runs, so there are no garbage
-              collector spikes.
-            </p>
-            <div class="links">
+          <article class="asset" id="pathfinding">
+            <img src="images/pathfinding-astar.gif" alt="A* search running on a grid" loading="lazy"
+              decoding="async" />
+            <div class="body">
+              <h3>Pathfinding Visualizer</h3>
+              <p class="mono">BFS and A* · Unity 6 · C#</p>
+              <p>
+                Watch BFS and A* search a grid step by step. Click to place the start, the goal and walls, or
+                generate a random maze. The search code allocates no memory while it runs, so there are no garbage
+                collector spikes.
+              </p>
               <a href="https://github.com/yunusburkut/Pathfinding" target="_blank" rel="noopener">Source code ↗</a>
             </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ── CONSOLE (work history) ── -->
+      <section class="panel" id="work" data-group="work" aria-labelledby="work-title">
+        <div class="tabs"><span class="tab is-active"><svg class="i">
+              <use href="#i-list" />
+            </svg>Console</span></div>
+        <div class="bar">
+          <h2 id="work-title">Work history</h2>
+          <span class="muted">Newest first. Click a line for details.</span>
+          <span class="spacer"></span>
+          <span class="counts" role="img" aria-label="4 entries, 0 warnings, 0 errors">
+            <span><svg class="i" style="color:var(--info)">
+                <use href="#i-info" />
+              </svg>4</span>
+            <span><svg class="i" style="color:var(--warn)">
+                <use href="#i-warn" />
+              </svg>0</span>
+            <span><svg class="i" style="color:var(--error)">
+                <use href="#i-error" />
+              </svg>0</span>
+          </span>
+        </div>
+
+        <ol class="log">
+          <li>
+            <details id="zynga" open>
+              <summary><svg class="i">
+                  <use href="#i-info" />
+                </svg><span class="when mono muted">Apr 2025 – Jan 2026</span><span><strong>Zynga Turkey</strong>
+                  · Mobile Game Engineer · Unity</span></summary>
+              <div class="trace">
+                <p>Client-side work on Spades Plus and Gin Rummy Plus, two live card games with a large player base.
+                </p>
+                <ul>
+                  <li>Refactored the player profile screens and flows.</li>
+                  <li>Improved the shop and built in-game pop-up, inbox and player report flows.</li>
+                  <li>Fixed bugs and added features in a large legacy codebase without breaking what was there.</li>
+                </ul>
+                <div class="shots">
+                  <img src="images/gin.jpg" alt="Gin Rummy Plus" loading="lazy" decoding="async" />
+                  <img src="images/spades.jpg" alt="Spades Plus" loading="lazy" decoding="async" />
+                </div>
+                <p class="links">
+                  <a href="https://apps.apple.com/cy/app/gin-rummy-plus-fun-card-game/id1068095192?l=tr"
+                    target="_blank" rel="noopener">Gin Rummy Plus ↗</a>
+                  <a href="https://apps.apple.com/us/app/spades-plus-card-game/id834185106" target="_blank"
+                    rel="noopener">Spades Plus ↗</a>
+                </p>
+              </div>
+            </details>
+          </li>
+
+          <li>
+            <details id="frostline">
+              <summary><svg class="i">
+                  <use href="#i-info" />
+                </svg><span class="when mono muted">May 2024 – Mar 2025</span><span><strong>Frostline
+                    Games</strong> · Senior Unreal Engine Developer · UE5</span></summary>
+              <div class="trace">
+                <p>Heroes of the Dark Ages, a multiplayer third-person MOBA.</p>
+                <ul>
+                  <li>Optimized how character abilities run on the Gameplay Ability System.</li>
+                  <li>Built tools and base classes for the team. The same tasks took about 20% less time afterwards.
+                  </li>
+                  <li>Worked with the CI/CD pipeline.</li>
+                </ul>
+              </div>
+            </details>
+          </li>
+
+          <li>
+            <details id="funverse">
+              <summary><svg class="i">
+                  <use href="#i-info" />
+                </svg><span class="when mono muted">Mar 2022 – May 2024</span><span><strong>Funverse Games</strong>
+                  · Lead Gameplay Developer · UE4</span></summary>
+              <div class="trace">
+                <p>Hit and Boom, a multiplayer MOBA / battle royale game on Steam.</p>
+                <ul>
+                  <li>Built abilities with the Gameplay Ability System: cooldowns, effects, cancel rules and server
+                    checks.</li>
+                  <li>Kept gameplay in sync between server and clients with RPCs and replication.</li>
+                  <li>Worked on zone logic, the game loop, UI and animation, and kept tuning how combat feels.</li>
+                  <li>Led gameplay development on the project.</li>
+                </ul>
+                <div class="shots single">
+                  <video class="autoplay" muted loop playsinline preload="none" poster="images/hit-and-boom.jpg"
+                    aria-label="Hit and Boom gameplay">
+                    <source src="images/hit-and-boom.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <p class="links">
+                  <a href="https://store.steampowered.com/app/2024080/Hit_and_Boom/" target="_blank"
+                    rel="noopener">Hit and Boom on Steam ↗</a>
+                </p>
+              </div>
+            </details>
+          </li>
+
+          <li>
+            <details id="funmoth">
+              <summary><svg class="i">
+                  <use href="#i-info" />
+                </svg><span class="when mono muted">Mar 2021 – Mar 2022</span><span><strong>Funmoth Games</strong>
+                  · Game Developer · UE4</span></summary>
+              <div class="trace">
+                <p>Started on Hit and Boom as a gameplay developer.</p>
+              </div>
+            </details>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ── PROFILER (LeetCode, filled from data/leetcode.json; stays hidden if it is missing) ──
+           To turn the section on or off, set data-enabled to "true" or "false". -->
+      <section class="panel" id="leetcode-block" data-group="leetcode" data-enabled="true" hidden
+        aria-labelledby="leetcode">
+        <div class="tabs"><span class="tab is-active"><svg class="i">
+              <use href="#i-chart" />
+            </svg>Profiler</span></div>
+        <div class="bar">
+          <h2 id="leetcode">LeetCode</h2>
+          <span class="muted">Algorithm practice, updated every day</span>
+        </div>
+
+        <div class="lc-card">
+          <div class="lc-top">
+            <div class="lc-ring">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="lc-ring-track" cx="60" cy="60" r="52" />
+                <circle class="lc-arc" data-level="easy" cx="60" cy="60" r="52" />
+                <circle class="lc-arc" data-level="medium" cx="60" cy="60" r="52" />
+                <circle class="lc-arc" data-level="hard" cx="60" cy="60" r="52" />
+              </svg>
+              <div class="lc-ring-label">
+                <strong data-lc="solved">0</strong>
+                <span>of <span data-lc="total">0</span> solved</span>
+              </div>
+            </div>
+
+            <div class="lc-bars">
+              <div class="lc-bar" data-level="easy">
+                <div class="lc-bar-head"><span>Easy</span><span><strong data-lc="easy">0</strong> / <span
+                      data-lc="easy-total">0</span></span></div>
+                <div class="lc-bar-track">
+                  <div class="lc-bar-fill"></div>
+                </div>
+              </div>
+              <div class="lc-bar" data-level="medium">
+                <div class="lc-bar-head"><span>Medium</span><span><strong data-lc="medium">0</strong> / <span
+                      data-lc="medium-total">0</span></span></div>
+                <div class="lc-bar-track">
+                  <div class="lc-bar-fill"></div>
+                </div>
+              </div>
+              <div class="lc-bar" data-level="hard">
+                <div class="lc-bar-head"><span>Hard</span><span><strong data-lc="hard">0</strong> / <span
+                      data-lc="hard-total">0</span></span></div>
+                <div class="lc-bar-track">
+                  <div class="lc-bar-fill"></div>
+                </div>
+              </div>
+            </div>
           </div>
-        </article>
+
+          <div class="lc-stats">
+            <div class="lc-stat"><strong data-lc="ranking">0</strong><span>Global ranking</span></div>
+            <div class="lc-stat"><strong data-lc="active">0</strong><span>Active days this year</span></div>
+            <div class="lc-stat"><strong data-lc="streak">0</strong><span>Max streak (days)</span></div>
+            <div class="lc-stat" data-lc-contest hidden><strong data-lc="rating">0</strong><span>Contest
+                rating</span>
+            </div>
+          </div>
+
+          <p class="lc-heatmap-label" data-lc="heatmap-label"></p>
+          <div class="lc-heatmap"></div>
+
+          <div class="lc-footer">
+            <span class="mono muted" data-lc="updated"></span>
+            <a data-lc="profile" href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode profile ↗</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ── INSPECTOR (about, skills, contact) ── -->
+    <aside class="panel inspector" id="about" aria-label="About Yunus Burkut">
+      <div class="tabs"><span class="tab is-active"><svg class="i">
+            <use href="#i-info" />
+          </svg>Inspector</span></div>
+
+      <div class="obj">
+        <img src="images/photo.jpeg" alt="Yunus Burkut" />
+        <div>
+          <div class="namerow"><span class="check" aria-hidden="true"></span>
+            <h1>Yunus Burkut</h1>
+          </div>
+          <div class="tagrow">
+            <span class="muted">Tag</span><span class="field">Game Developer</span>
+            <span class="muted">Layer</span><span class="field">Istanbul</span>
+          </div>
+        </div>
       </div>
-    </section>
 
-    <!-- ── LEETCODE (filled from data/leetcode.json; stays hidden if it is missing) ──
-         To turn the section on or off, set data-enabled to "true" or "false". -->
-    <section id="leetcode-block" data-enabled="true" hidden>
-      <h2 id="leetcode">LeetCode</h2>
-      <p class="section-note">Algorithm practice. Updated every day from my LeetCode profile.</p>
-
-      <div class="lc-card">
-        <div class="lc-top">
-          <div class="lc-ring">
-            <svg viewBox="0 0 120 120" aria-hidden="true">
-              <circle class="lc-ring-track" cx="60" cy="60" r="52" />
-              <circle class="lc-arc" data-level="easy" cx="60" cy="60" r="52" />
-              <circle class="lc-arc" data-level="medium" cx="60" cy="60" r="52" />
-              <circle class="lc-arc" data-level="hard" cx="60" cy="60" r="52" />
-            </svg>
-            <div class="lc-ring-label">
-              <strong data-lc="solved">0</strong>
-              <span>of <span data-lc="total">0</span> solved</span>
-            </div>
-          </div>
-
-          <div class="lc-bars">
-            <div class="lc-bar" data-level="easy">
-              <div class="lc-bar-head"><span>Easy</span><span><strong data-lc="easy">0</strong> / <span
-                    data-lc="easy-total">0</span></span></div>
-              <div class="lc-bar-track">
-                <div class="lc-bar-fill"></div>
-              </div>
-            </div>
-            <div class="lc-bar" data-level="medium">
-              <div class="lc-bar-head"><span>Medium</span><span><strong data-lc="medium">0</strong> / <span
-                    data-lc="medium-total">0</span></span></div>
-              <div class="lc-bar-track">
-                <div class="lc-bar-fill"></div>
-              </div>
-            </div>
-            <div class="lc-bar" data-level="hard">
-              <div class="lc-bar-head"><span>Hard</span><span><strong data-lc="hard">0</strong> / <span
-                    data-lc="hard-total">0</span></span></div>
-              <div class="lc-bar-track">
-                <div class="lc-bar-fill"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lc-stats">
-          <div class="lc-stat"><strong data-lc="ranking">0</strong><span>Global ranking</span></div>
-          <div class="lc-stat"><strong data-lc="active">0</strong><span>Active days this year</span></div>
-          <div class="lc-stat"><strong data-lc="streak">0</strong><span>Max streak (days)</span></div>
-          <div class="lc-stat" data-lc-contest hidden><strong data-lc="rating">0</strong><span>Contest rating</span>
-          </div>
-        </div>
-
-        <p class="lc-heatmap-label" data-lc="heatmap-label"></p>
-        <div class="lc-heatmap"></div>
-
-        <div class="lc-footer">
-          <span class="meta" data-lc="updated"></span>
-          <span class="links"><a data-lc="profile" href="https://leetcode.com/" target="_blank"
-              rel="noopener">LeetCode profile ↗</a></span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── WORK ── -->
-    <section id="work">
-      <h2>Work</h2>
-      <p class="section-note">Studios I've worked at, newest first.</p>
-
-      <ol class="jobs">
-        <li class="job">
-          <p class="meta when">Apr 2025 – Jan 2026</p>
-          <div>
-            <h3>Zynga Turkey</h3>
-            <p class="role">Mobile Game Engineer · Unity</p>
-            <p>
-              Client-side work on Spades Plus and Gin Rummy Plus, two live card games with a large player base.
+      <details class="comp about" open>
+        <summary><svg class="i">
+            <use href="#i-script" />
+          </svg>About <span class="kind">(Script)</span></summary>
+        <div class="props">
+          <div class="full">
+            <p>I build gameplay, UI and tools in Unity and Unreal Engine.</p>
+            <p class="muted">
+              For nearly five years I've worked on a multiplayer action game for Steam and on two of Zynga's mobile
+              card games. I played American football for five years, and these days I coach my university's flag
+              football team.
             </p>
-            <ul>
-              <li>Refactored the player profile screens and flows.</li>
-              <li>Improved the shop and built in-game pop-up, inbox and player report flows.</li>
-              <li>Fixed bugs and added features in a large legacy codebase without breaking what was there.</li>
-            </ul>
-            <div class="shots">
-              <img src="images/gin.jpg" alt="Gin Rummy Plus" loading="lazy" decoding="async" />
-              <img src="images/spades.jpg" alt="Spades Plus" loading="lazy" decoding="async" />
-            </div>
-            <div class="links">
-              <a href="https://apps.apple.com/cy/app/gin-rummy-plus-fun-card-game/id1068095192?l=tr" target="_blank"
-                rel="noopener">Gin Rummy Plus ↗</a>
-              <a href="https://apps.apple.com/us/app/spades-plus-card-game/id834185106" target="_blank"
-                rel="noopener">Spades Plus ↗</a>
-            </div>
           </div>
-        </li>
+          <span class="lbl">Making games</span><span class="field">since 2021</span>
+          <span class="lbl">Studios</span><span class="field">4</span>
+        </div>
+      </details>
 
-        <li class="job">
-          <p class="meta when">May 2024 – Mar 2025</p>
-          <div>
-            <h3>Frostline Games</h3>
-            <p class="role">Senior Unreal Engine Developer · Unreal Engine 5</p>
-            <p>Heroes of the Dark Ages, a multiplayer third-person MOBA.</p>
-            <ul>
-              <li>Optimized how character abilities run on the Gameplay Ability System.</li>
-              <li>Built tools and base classes for the team. The same tasks took about 20% less time afterwards.</li>
-              <li>Worked with the CI/CD pipeline.</li>
-            </ul>
+      <div id="skills">
+        <details class="comp" open data-fold-on-phone>
+          <summary><svg class="i">
+              <use href="#i-script" />
+            </svg>Engines</summary>
+          <div class="props">
+            <span class="lbl">Unity</span><span class="check" aria-hidden="true"></span>
+            <span class="lbl">Unreal Engine 4</span><span class="check" aria-hidden="true"></span>
+            <span class="lbl">Unreal Engine 5</span><span class="check" aria-hidden="true"></span>
           </div>
-        </li>
+        </details>
 
-        <li class="job">
-          <p class="meta when">Mar 2022 – May 2024</p>
-          <div>
-            <h3>Funverse Games</h3>
-            <p class="role">Lead Gameplay Developer · Unreal Engine 4</p>
-            <p>Hit and Boom, a multiplayer MOBA / battle royale game on Steam.</p>
-            <ul>
-              <li>Built abilities with the Gameplay Ability System: cooldowns, effects, cancel rules and server
-                checks.</li>
-              <li>Kept gameplay in sync between server and clients with RPCs and replication.</li>
-              <li>Worked on zone logic, the game loop, UI and animation, and kept tuning how combat feels.</li>
-              <li>Led gameplay development on the project.</li>
-            </ul>
-            <div class="shots single">
-              <video class="autoplay" muted loop playsinline preload="none" poster="images/hit-and-boom.jpg"
-                aria-label="Hit and Boom gameplay">
-                <source src="images/hit-and-boom.mp4" type="video/mp4" />
-              </video>
-            </div>
-            <div class="links">
-              <a href="https://store.steampowered.com/app/2024080/Hit_and_Boom/" target="_blank" rel="noopener">Hit
-                and Boom on Steam ↗</a>
-            </div>
+        <details class="comp" open data-fold-on-phone>
+          <summary><svg class="i">
+              <use href="#i-script" />
+            </svg>Languages</summary>
+          <div class="props">
+            <span class="lbl">C#</span><span class="check" aria-hidden="true"></span>
+            <span class="lbl">C++</span><span class="check" aria-hidden="true"></span>
           </div>
-        </li>
+        </details>
 
-        <li class="job">
-          <p class="meta when">Mar 2021 – Mar 2022</p>
-          <div>
-            <h3>Funmoth Games</h3>
-            <p class="role">Game Developer · Unreal Engine 4</p>
-            <p>Started on Hit and Boom as a gameplay developer.</p>
+        <details class="comp" open data-fold-on-phone>
+          <summary><svg class="i">
+              <use href="#i-script" />
+            </svg>Gameplay</summary>
+          <div class="props">
+            <span class="lbl">Size</span><span class="field">5</span>
+            <span class="lbl indent">Element 0</span><span class="field">Gameplay Ability System</span>
+            <span class="lbl indent">Element 1</span><span class="field">Multiplayer and replication</span>
+            <span class="lbl indent">Element 2</span><span class="field">3Cs</span>
+            <span class="lbl indent">Element 3</span><span class="field">Animation and game feel</span>
+            <span class="lbl indent">Element 4</span><span class="field">UI systems</span>
           </div>
-        </li>
-      </ol>
-    </section>
+        </details>
 
-    <!-- ── SKILLS ── -->
-    <section id="skills">
-      <h2>Skills</h2>
-      <p class="section-note">What I use day to day.</p>
-      <dl class="skills">
-        <dt>Engines</dt>
-        <dd>Unity, Unreal Engine 4 and 5</dd>
-        <dt>Languages</dt>
-        <dd>C#, C++</dd>
-        <dt>Gameplay</dt>
-        <dd>Gameplay Ability System, multiplayer and replication, 3Cs, animation and game feel, UI systems</dd>
-        <dt>Tools</dt>
-        <dd>Editor tools, CI/CD, Git, Plastic SCM, Unreal Insights, Jira</dd>
-        <dt>Education</dt>
-        <dd>B.Eng. in Computer Engineering, minor in Game Development, Bahçeşehir University</dd>
-      </dl>
-    </section>
+        <details class="comp" open data-fold-on-phone>
+          <summary><svg class="i">
+              <use href="#i-script" />
+            </svg>Tools</summary>
+          <div class="props">
+            <span class="lbl">Size</span><span class="field">6</span>
+            <span class="lbl indent">Element 0</span><span class="field">Editor tools</span>
+            <span class="lbl indent">Element 1</span><span class="field">CI/CD</span>
+            <span class="lbl indent">Element 2</span><span class="field">Git</span>
+            <span class="lbl indent">Element 3</span><span class="field">Plastic SCM</span>
+            <span class="lbl indent">Element 4</span><span class="field">Unreal Insights</span>
+            <span class="lbl indent">Element 5</span><span class="field">Jira</span>
+          </div>
+        </details>
 
-  </main>
-
-  <!-- ── CONTACT ── -->
-  <footer id="contact">
-    <div class="wrap">
-      <p class="big">Want to talk? Email me at <a href="mailto:yunus.burkut@outlook.com">yunus.burkut@outlook.com</a>
-      </p>
-      <div class="links">
-        <a href="https://github.com/yunusburkut" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://www.linkedin.com/in/yunusburkut/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://yunusburkut.itch.io/" target="_blank" rel="noopener">itch.io</a>
+        <details class="comp" open data-fold-on-phone>
+          <summary><svg class="i">
+              <use href="#i-script" />
+            </svg>Education</summary>
+          <div class="props">
+            <span class="lbl">Degree</span><span class="field">B.Eng. Computer Engineering</span>
+            <span class="lbl">Minor</span><span class="field">Game Development</span>
+            <span class="lbl">School</span><span class="field">Bahçeşehir University</span>
+          </div>
+        </details>
       </div>
-    </div>
+
+      <details class="comp" id="contact" open>
+        <summary><svg class="i">
+            <use href="#i-script" />
+          </svg>Contact</summary>
+        <div class="props">
+          <span class="lbl">Email</span><a class="field" href="mailto:yunus.burkut@outlook.com">yunus.burkut@outlook.com</a>
+          <span class="lbl">GitHub</span><a class="field" href="https://github.com/yunusburkut" target="_blank"
+            rel="noopener">yunusburkut ↗</a>
+          <span class="lbl">LinkedIn</span><a class="field" href="https://www.linkedin.com/in/yunusburkut/"
+            target="_blank" rel="noopener">yunusburkut ↗</a>
+          <span class="lbl">itch.io</span><a class="field" href="https://yunusburkut.itch.io/" target="_blank"
+            rel="noopener">yunusburkut ↗</a>
+        </div>
+      </details>
+
+      <a class="button wide-btn" href="mailto:yunus.burkut@outlook.com">Send Email</a>
+    </aside>
+  </div>
+
+  <!-- ── STATUS BAR ── -->
+  <footer class="status">
+    <svg class="i">
+      <use href="#i-info" />
+    </svg>
+    <span>Want to talk? <a href="mailto:yunus.burkut@outlook.com">yunus.burkut@outlook.com</a></span>
+    <span class="spacer"></span>
+    <span class="muted">© 2026 Yunus Burkut</span>
   </footer>
 
   <script>
@@ -968,6 +1568,76 @@
         });
       }, { threshold: .25 });
       videos.forEach((video) => clips.observe(video));
+    }
+
+    // The itch.io build focuses itself once it loads, which makes the browser jump down to it.
+    // Until the visitor scrolls, taps or types, that jump is undone and focus goes back to the page.
+    const game = document.querySelector('.player iframe');
+    let settledY = scrollY;
+    let touched = false;
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
+      addEventListener(type, () => { touched = true; }, { passive: true, once: true });
+    });
+    const undoJump = () => {
+      if (touched || document.activeElement !== game) return;
+      scrollTo(0, settledY);
+      window.focus();
+    };
+    addEventListener('scroll', () => {
+      if (!touched && document.activeElement !== game) settledY = scrollY;
+      else undoJump();
+    }, { passive: true });
+    // The page loses focus to the iframe a moment before the browser scrolls to it
+    addEventListener('blur', () => {
+      undoJump();
+      requestAnimationFrame(undoJump);
+    });
+
+    // Toolbar: play jumps to the game and tints the editor, pause leaves play mode, step goes to the next panel
+    const playButton = document.querySelector('[data-play]');
+    const setPlaying = (on) => {
+      document.body.classList.toggle('playing', on);
+      playButton.setAttribute('aria-pressed', on);
+    };
+    playButton.addEventListener('click', () => {
+      setPlaying(true);
+      document.getElementById('games').scrollIntoView();
+      game.focus();
+    });
+    document.querySelector('[data-pause]').addEventListener('click', () => setPlaying(false));
+    document.querySelector('[data-step]').addEventListener('click', () => {
+      const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + 4;
+      const panels = [...document.querySelectorAll('.center > .panel:not([hidden])')];
+      const next = panels.find((panel) => panel.getBoundingClientRect().top > offset) || panels[0];
+      next.scrollIntoView();
+    });
+
+    // Links into a folded console line or inspector component unfold it first
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', () => {
+        const target = document.querySelector(link.hash);
+        if (!target) return;
+        const fold = target.closest('details');
+        if (fold) fold.open = true;
+        target.querySelectorAll('[data-fold-on-phone]').forEach((inner) => { inner.open = true; });
+      });
+    });
+
+    // On phones the inspector sits above the game, so its skill components start folded
+    if (matchMedia('(max-width: 760px)').matches) {
+      document.querySelectorAll('[data-fold-on-phone]').forEach((fold) => { fold.open = false; });
+    }
+
+    // Hierarchy highlight: marks the group whose panel crosses the middle of the screen
+    if ('IntersectionObserver' in window) {
+      const groupLinks = [...document.querySelectorAll('.tree a[data-group]')];
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach(({ target, isIntersecting }) => {
+          if (!isIntersecting) return;
+          groupLinks.forEach((link) => link.setAttribute('aria-current', link.dataset.group === target.dataset.group));
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      document.querySelectorAll('.center > .panel').forEach((panel) => spy.observe(panel));
     }
   </script>
 
