@@ -1188,8 +1188,9 @@
 
       </div>
 
-      <!-- ───── LEETCODE (filled from data/leetcode.json; stays hidden if it is missing) ───── -->
-      <div id="leetcode-block" hidden>
+      <!-- ───── LEETCODE (filled from data/leetcode.json; stays hidden if it is missing) ─────
+           To turn the section on or off, set data-enabled to "true" or "false". -->
+      <div id="leetcode-block" data-enabled="false" hidden>
         <div class="section-divider"></div>
 
         <h2 class="section-title" id="leetcode">LeetCode</h2>
@@ -1486,6 +1487,7 @@
     // LeetCode stats: data/leetcode.json is the raw GraphQL response, refreshed by the deploy workflow
     (function () {
       const block = document.getElementById('leetcode-block');
+      if (block.dataset.enabled !== 'true') return;
       const card = block.querySelector('.lc-card');
       const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const RING = 2 * Math.PI * 52;
