@@ -9,6 +9,13 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Redeploys daily so the LeetCode stats stay current
+  schedule:
+    - cron: "0 4 * * *"
+
+env:
+  LEETCODE_USERNAME: "yburkut"
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -33,6 +40,19 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      # LeetCode blocks browser requests (no CORS), so the stats are fetched here.
+      # On failure the committed data/leetcode.json is published as it is.
+      - name: Fetch LeetCode stats
+        continue-on-error: true
+        run: |
+          jq -n --rawfile q scripts/leetcode.graphql --arg u "$LEETCODE_USERNAME" \
+              '{query: $q, variables: {username: $u}}' |
+            curl -sf --max-time 30 -X POST https://leetcode.com/graphql \
+              -H 'Content-Type: application/json' -H 'Referer: https://leetcode.com' \
+              --data @- -o "$RUNNER_TEMP/leetcode.json"
+          jq -e '.data.matchedUser' "$RUNNER_TEMP/leetcode.json" > /dev/null
+          jq --arg t "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '. + {fetchedAt: $t}' \
+            "$RUNNER_TEMP/leetcode.json" > data/leetcode.json
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

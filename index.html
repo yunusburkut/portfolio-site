@@ -569,6 +569,231 @@
       text-decoration: underline;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
+    /* ── LEETCODE ── */
+    .lc-card {
+      --lc-easy: #00b8a3;
+      --lc-medium: #ffc01e;
+      --lc-hard: #ef4743;
+    }
+
+    .lc-top {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .lc-ring {
+      position: relative;
+      flex-shrink: 0;
+      width: 150px;
+      height: 150px;
+    }
+
+    .lc-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .lc-ring circle {
+      fill: none;
+      stroke-width: 9;
+    }
+
+    .lc-ring-track {
+      stroke: var(--tag-bg);
+    }
+
+    .lc-arc {
+      stroke-linecap: butt;
+      transition: stroke-dasharray 1s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .lc-arc[data-level="easy"] {
+      stroke: var(--lc-easy);
+    }
+
+    .lc-arc[data-level="medium"] {
+      stroke: var(--lc-medium);
+    }
+
+    .lc-arc[data-level="hard"] {
+      stroke: var(--lc-hard);
+    }
+
+    .lc-ring-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
+    }
+
+    .lc-ring-label strong {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lc-ring-label span {
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    .lc-bars {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-width: 0;
+    }
+
+    .lc-bar-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: .35rem;
+    }
+
+    .lc-bar-head strong {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lc-bar-track {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--tag-bg);
+      overflow: hidden;
+    }
+
+    .lc-bar-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .lc-bar[data-level="easy"] {
+      --lc-color: var(--lc-easy);
+    }
+
+    .lc-bar[data-level="medium"] {
+      --lc-color: var(--lc-medium);
+    }
+
+    .lc-bar[data-level="hard"] {
+      --lc-color: var(--lc-hard);
+    }
+
+    .lc-bar-head span:first-child {
+      color: var(--lc-color);
+      font-weight: 600;
+    }
+
+    .lc-bar-fill {
+      background: var(--lc-color);
+    }
+
+    .lc-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: .75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .lc-stat {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .7rem .9rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lc-stat strong {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lc-stat span {
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    .lc-heatmap {
+      display: grid;
+      grid-template-rows: repeat(7, auto);
+      grid-auto-flow: column;
+      gap: 2px;
+    }
+
+    .lc-cell {
+      aspect-ratio: 1;
+      border-radius: 2px;
+      background: var(--tag-bg);
+      opacity: 0;
+      transform: scale(.3);
+      transition: opacity .35s ease, transform .35s ease;
+      transition-delay: calc(var(--col) * 18ms);
+    }
+
+    .lc-cell[data-l="1"] {
+      background: rgba(124, 106, 247, .3);
+    }
+
+    .lc-cell[data-l="2"] {
+      background: rgba(124, 106, 247, .55);
+    }
+
+    .lc-cell[data-l="3"] {
+      background: rgba(124, 106, 247, .8);
+    }
+
+    .lc-cell[data-l="4"] {
+      background: var(--accent);
+    }
+
+    .lc-cell.is-future {
+      visibility: hidden;
+    }
+
+    .lc-card.is-visible .lc-cell {
+      opacity: 1;
+      transform: none;
+    }
+
+    .lc-heatmap-label {
+      color: var(--muted);
+      font-size: .75rem;
+      margin-bottom: .5rem;
+    }
+
+    .lc-updated {
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      .lc-arc,
+      .lc-bar-fill,
+      .lc-cell {
+        transition: none;
+      }
+    }
+
     @media (max-width: 580px) {
       #me {
         flex-direction: column-reverse;
@@ -587,6 +812,28 @@
       .card-top {
         flex-direction: column;
       }
+
+      nav .inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: .4rem;
+        padding: .7rem 1.5rem;
+      }
+
+      nav ul {
+        flex-wrap: wrap;
+        gap: .35rem 1.1rem;
+      }
+
+      .lc-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.75rem;
+      }
+
+      .lc-ring {
+        align-self: center;
+      }
     }
   </style>
 </head>
@@ -600,6 +847,7 @@
       <ul>
         <li><a href="#me">Me</a></li>
         <li><a href="#personal">Personal Projects</a></li>
+        <li data-lc-nav hidden><a href="#leetcode">LeetCode</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -940,6 +1188,75 @@
 
       </div>
 
+      <!-- ───── LEETCODE (filled from data/leetcode.json; stays hidden if it is missing) ───── -->
+      <div id="leetcode-block" hidden>
+        <div class="section-divider"></div>
+
+        <h2 class="section-title" id="leetcode">LeetCode</h2>
+        <p class="section-sub">Algorithm practice outside of game code — refreshed daily from my LeetCode profile.</p>
+
+        <article class="card lc-card">
+          <div class="card-body">
+            <div class="lc-top">
+              <div class="lc-ring">
+                <svg viewBox="0 0 120 120" aria-hidden="true">
+                  <circle class="lc-ring-track" cx="60" cy="60" r="52" />
+                  <circle class="lc-arc" data-level="easy" cx="60" cy="60" r="52" />
+                  <circle class="lc-arc" data-level="medium" cx="60" cy="60" r="52" />
+                  <circle class="lc-arc" data-level="hard" cx="60" cy="60" r="52" />
+                </svg>
+                <div class="lc-ring-label">
+                  <strong data-lc="solved">0</strong>
+                  <span>of <span data-lc="total">0</span> solved</span>
+                </div>
+              </div>
+
+              <div class="lc-bars">
+                <div class="lc-bar" data-level="easy">
+                  <div class="lc-bar-head"><span>Easy</span><span><strong data-lc="easy">0</strong> / <span
+                        data-lc="easy-total">0</span></span></div>
+                  <div class="lc-bar-track">
+                    <div class="lc-bar-fill"></div>
+                  </div>
+                </div>
+                <div class="lc-bar" data-level="medium">
+                  <div class="lc-bar-head"><span>Medium</span><span><strong data-lc="medium">0</strong> / <span
+                        data-lc="medium-total">0</span></span></div>
+                  <div class="lc-bar-track">
+                    <div class="lc-bar-fill"></div>
+                  </div>
+                </div>
+                <div class="lc-bar" data-level="hard">
+                  <div class="lc-bar-head"><span>Hard</span><span><strong data-lc="hard">0</strong> / <span
+                        data-lc="hard-total">0</span></span></div>
+                  <div class="lc-bar-track">
+                    <div class="lc-bar-fill"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lc-stats">
+              <div class="lc-stat"><strong data-lc="ranking">0</strong><span>Global ranking</span></div>
+              <div class="lc-stat"><strong data-lc="active">0</strong><span>Active days this year</span></div>
+              <div class="lc-stat"><strong data-lc="streak">0</strong><span>Max streak (days)</span></div>
+              <div class="lc-stat" data-lc-contest hidden><strong data-lc="rating">0</strong><span>Contest rating</span>
+              </div>
+            </div>
+
+            <p class="lc-heatmap-label" data-lc="heatmap-label"></p>
+            <div class="lc-heatmap"></div>
+
+            <hr class="divider" />
+
+            <div class="card-footer">
+              <span class="lc-updated" data-lc="updated"></span>
+              <a class="btn btn-ghost" data-lc="profile" href="https://leetcode.com/" target="_blank">LeetCode ↗</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
       <div class="section-divider"></div>
 
       <h2 class="section-title" id="experience">Work Experience</h2>
@@ -1164,6 +1481,155 @@
       </p>
     </div>
   </footer>
+
+  <script>
+    // LeetCode stats: data/leetcode.json is the raw GraphQL response, refreshed by the deploy workflow
+    (function () {
+      const block = document.getElementById('leetcode-block');
+      const card = block.querySelector('.lc-card');
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const RING = 2 * Math.PI * 52;
+      const DAY = 86400;
+      const WEEKS = matchMedia('(max-width: 580px)').matches ? 26 : 52;
+      const LEVELS = ['Easy', 'Medium', 'Hard'];
+      const field = (key) => block.querySelector(`[data-lc="${key}"]`);
+      const byDifficulty = (list) => Object.fromEntries((list || []).map((d) => [d.difficulty, d.count]));
+      const formatNumber = (n) => n.toLocaleString('en-US');
+
+      fetch('data/leetcode.json', { cache: 'no-cache' })
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then(render)
+        .catch(() => { }); // the section stays hidden
+
+      function render(json) {
+        const data = json && json.data;
+        const user = data && data.matchedUser;
+        if (!user) return;
+
+        const totals = byDifficulty(data.allQuestionsCount);
+        const solved = byDifficulty(user.submitStatsGlobal && user.submitStatsGlobal.acSubmissionNum);
+        const calendar = user.userCalendar || {};
+        const contest = data.userContestRanking;
+        const counters = [
+          [field('solved'), solved.All || 0],
+          [field('ranking'), (user.profile && user.profile.ranking) || 0],
+          [field('active'), calendar.totalActiveDays || 0],
+          [field('streak'), calendar.streak || 0],
+        ];
+
+        field('total').textContent = formatNumber(totals.All || 0);
+        LEVELS.forEach((level) => {
+          const key = level.toLowerCase();
+          field(`${key}-total`).textContent = formatNumber(totals[level] || 0);
+          counters.push([field(key), solved[level] || 0]);
+        });
+
+        if (contest && contest.attendedContestsCount > 0) {
+          block.querySelector('[data-lc-contest]').hidden = false;
+          counters.push([field('rating'), Math.round(contest.rating)]);
+        }
+
+        field('profile').href = `https://leetcode.com/u/${encodeURIComponent(user.username)}/`;
+        if (json.fetchedAt) {
+          const date = new Date(json.fetchedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          field('updated').textContent = `Updated ${date}`;
+        }
+
+        buildHeatmap(parseCalendar(calendar.submissionCalendar));
+
+        block.hidden = false;
+        document.querySelector('[data-lc-nav]').hidden = false;
+
+        const start = () => animate(counters, totals, solved);
+        if (reduceMotion || !('IntersectionObserver' in window)) return start();
+        const observer = new IntersectionObserver((entries) => {
+          if (!entries[0].isIntersecting) return;
+          observer.disconnect();
+          start();
+        }, { threshold: .3 });
+        observer.observe(card);
+      }
+
+      function parseCalendar(raw) {
+        try {
+          return JSON.parse(raw || '{}');
+        } catch (e) {
+          return {};
+        }
+      }
+
+      // One column per week, Sunday on top, ending with the current week
+      function buildHeatmap(calendar) {
+        const countByDay = {};
+        Object.keys(calendar).forEach((ts) => {
+          const day = Math.floor(ts / DAY);
+          countByDay[day] = (countByDay[day] || 0) + calendar[ts];
+        });
+
+        const today = Math.floor(Date.now() / 1000 / DAY);
+        const weekday = new Date(today * DAY * 1000).getUTCDay();
+        const first = today - weekday - (WEEKS - 1) * 7;
+        const heatmap = block.querySelector('.lc-heatmap');
+        heatmap.style.gridTemplateColumns = `repeat(${WEEKS}, 1fr)`;
+        field('heatmap-label').textContent = WEEKS === 52 ? 'Submissions — last 12 months' : 'Submissions — last 6 months';
+
+        for (let i = 0; i < WEEKS * 7; i++) {
+          const day = first + i;
+          const count = countByDay[day] || 0;
+          const cell = document.createElement('div');
+          cell.className = 'lc-cell';
+          cell.style.setProperty('--col', Math.floor(i / 7));
+          if (day > today) {
+            cell.classList.add('is-future');
+          } else {
+            cell.dataset.l = count === 0 ? 0 : count < 3 ? 1 : count < 6 ? 2 : count < 10 ? 3 : 4;
+            const date = new Date(day * DAY * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+            cell.title = `${count} submission${count === 1 ? '' : 's'} on ${date}`;
+          }
+          heatmap.appendChild(cell);
+        }
+      }
+
+      function animate(counters, totals, solved) {
+        card.classList.add('is-visible');
+        counters.forEach(([el, target]) => countUp(el, target));
+
+        // Ring: one arc per difficulty, sized by its share of the solved problems
+        let offset = 0;
+        LEVELS.forEach((level, i) => {
+          const key = level.toLowerCase();
+          const share = solved.All ? (solved[level] || 0) / solved.All : 0;
+          const length = Math.max(share * RING - (share > 0 && share < 1 ? 2 : 0), 0);
+          const arc = block.querySelector(`.lc-arc[data-level="${key}"]`);
+          arc.style.strokeDashoffset = -offset;
+          arc.style.strokeDasharray = `0 ${RING}`;
+          arc.style.transitionDelay = `${i * .3}s`;
+          offset += share * RING;
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            arc.style.strokeDasharray = `${length} ${RING}`;
+          }));
+
+          const bar = block.querySelector(`.lc-bar[data-level="${key}"] .lc-bar-fill`);
+          bar.style.transitionDelay = `${i * .15}s`;
+          bar.style.width = `${totals[level] ? ((solved[level] || 0) / totals[level]) * 100 : 0}%`;
+        });
+      }
+
+      function countUp(el, target) {
+        if (reduceMotion) {
+          el.textContent = formatNumber(target);
+          return;
+        }
+        const startTime = performance.now();
+        const duration = 1400;
+        (function tick(now) {
+          const t = Math.min((now - startTime) / duration, 1);
+          el.textContent = formatNumber(Math.round(target * (1 - Math.pow(1 - t, 3))));
+          if (t < 1) requestAnimationFrame(tick);
+        })(startTime);
+      }
+    })();
+  </script>
 
 </body>
 

@@ -1,0 +1,10 @@
+query ($username: String!) {
+  allQuestionsCount { difficulty count }
+  matchedUser(username: $username) {
+    username
+    profile { ranking }
+    submitStatsGlobal { acSubmissionNum { difficulty count } }
+    userCalendar { streak totalActiveDays submissionCalendar }
+  }
+  userContestRanking(username: $username) { rating attendedContestsCount topPercentage }
+}
