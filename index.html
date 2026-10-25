@@ -7,6 +7,10 @@
   <title>Yunus Burkut · Game Developer</title>
   <meta name="description"
     content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Magic Sort in the browser." />
+  <!-- Inter stands in for Helvetica where it is not installed (Windows, Android); Macs keep Helvetica Neue -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&display=swap" />
   <style>
     /* ── TOKENS ── */
     :root {
@@ -19,7 +23,7 @@
       --link: #1d5fbf;
       --acc-l: .55;
       --acc-c: .14;
-      --mono: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --mono: 'Helvetica Neue', Inter, Helvetica, Arial, sans-serif;
       --head-h: 60px;
       --sel: #3a72b0;
       --scene: #c3c6cb;
@@ -67,7 +71,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-family: 'Helvetica Neue', Inter, Helvetica, Arial, sans-serif;
       font-size: 17px;
       line-height: 1.65;
     }
@@ -796,7 +800,7 @@
       }
 
       #leetcode-block .lc-stat {
-        padding: .3rem .6rem;
+        padding: .2rem .6rem;
       }
 
       #leetcode-block .lc-stat strong {
@@ -812,7 +816,8 @@
 
       #leetcode-block .lc-footer {
         margin: 0;
-        font-size: 12.5px;
+        font-size: 12px;
+        white-space: nowrap;
       }
 
       .hero .wrap {
@@ -846,7 +851,7 @@
       }
 
       .summary>div {
-        grid-template-columns: 5.75rem 1fr;
+        grid-template-columns: 6.5rem 1fr;
         padding: .2rem 0;
       }
 
