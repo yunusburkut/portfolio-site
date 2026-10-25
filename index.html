@@ -2595,11 +2595,30 @@
       min-height: 34px;
     }
 
-    /* Where it floats is set from the script, beside the demo column */
+    /* Where it floats is set from the script, beside the demo column. Floating, it sits above everything and
+       turns into a compact block in the same type: the verb on top, "anims" underneath. */
     .motion-toggle.floating {
       position: fixed;
-      z-index: 30;
+      z-index: 1000;
+      min-height: 0;
+      padding: .45rem .8rem .45rem .65rem;
+      border-radius: 10px;
       filter: drop-shadow(0 4px 10px rgb(0 0 0 / .35));
+    }
+
+    .motion-toggle.floating .label {
+      display: grid;
+      line-height: 1.1;
+      text-align: left;
+    }
+
+    .motion-toggle .short,
+    .motion-toggle.floating .full {
+      display: none;
+    }
+
+    .motion-toggle.floating .short {
+      display: inline;
     }
 
     .motion-toggle.away {
@@ -3499,7 +3518,7 @@
         <div class="toggle-dock">
           <button class="button motion-toggle" type="button" hidden><svg class="i">
               <use href="#i-pause" />
-            </svg><span>Pause animations</span></button>
+            </svg><span class="label"><span class="verb">Pause</span> <span class="what"><span class="full">animations</span><span class="short">anims</span></span></span></button>
         </div>
 
         <div class="topics">
@@ -3779,7 +3798,7 @@
         </p>
         <button class="button motion-toggle" type="button" hidden><svg class="i">
             <use href="#i-pause" />
-          </svg><span>Pause animations</span></button>
+          </svg><span class="label"><span class="verb">Pause</span> <span class="what">animations</span></span></button>
 
         <ul class="stats" aria-label="My Claude Code setup for my current Unity game">
           <li><strong>9</strong> agents</li>
@@ -4304,7 +4323,7 @@
       document.documentElement.classList.toggle('calm', calm);
       motionToggles.forEach((button) => {
         button.querySelector('use').setAttribute('href', calm ? '#i-play' : '#i-pause');
-        button.querySelector('span').textContent = calm ? 'Play animations' : 'Pause animations';
+        button.querySelector('.verb').textContent = calm ? 'Play' : 'Pause';
       });
     };
     setCalm(matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -4319,7 +4338,6 @@
     const aimsTitle = document.querySelector('#aims-title');
     if (dock && aimsTitle) {
       const dockButton = dock.querySelector('.motion-toggle');
-      const lessMotion = matchMedia('(prefers-reduced-motion: reduce)');
       let place = 'home';
       // Left of the demo column when there is room, otherwise at the bottom, lined up with the cards' left edge
       const setFloatSpot = () => {
@@ -4336,7 +4354,7 @@
         if (next === place) return;
         // Measure where it is right now, mid-flight included, then start the next move from there
         const first = dockButton.getBoundingClientRect();
-        dockButton.getAnimations().forEach((move) => move.cancel());
+        dockButton.getAnimations({ subtree: true }).forEach((move) => move.cancel());
         dockButton.classList.toggle('floating', next !== 'home');
         dockButton.classList.toggle('away', next === 'away');
         dockButton.inert = next === 'away';
@@ -4345,39 +4363,82 @@
         const last = dockButton.getBoundingClientRect();
         const x = first.left + first.width / 2 - (last.left + last.width / 2);
         const y = first.top + first.height / 2 - (last.top + last.height / 2);
-        const glide = { easing: 'cubic-bezier(.45, 0, .2, 1)' };
-        if (lessMotion.matches) {
-          // Less motion: a plain eased glide or fade, without the squash and overshoot
-          if (next === 'away') dockButton.animate([{ opacity: 1 }, { opacity: 0 }], { ...glide, duration: 250 });
-          else if (place === 'away') dockButton.animate([{ opacity: 0 }, { opacity: 1 }], { ...glide, duration: 250 });
-          else dockButton.animate([{ transform: at(x, y) }, { transform: 'none' }], { ...glide, duration: 450 });
+        // The floating shape is a different size, so the box starts at the old size and morphs into the new one
+        const sx = first.width ? first.width / last.width : 1;
+        const sy = first.height ? first.height / last.height : 1;
+        // Soft in, soft out on the way; the wobble after landing settles in smaller and smaller swings
+        const easeIn = 'cubic-bezier(.5, 0, .75, .4)';
+        const easeOut = 'cubic-bezier(.25, .6, .5, 1)';
+        const sway = 'ease-in-out';
+        // Each frame: m is how much of the way back to the old spot it still is, w and h the box's scale
+        let frames, duration;
+        if (next === 'away') {
+          // Swell, wobble, then squeeze down to nothing
+          duration = 650;
+          frames = [
+            { w: 1, h: 1, opacity: 1, easing: sway },
+            { w: 1.18, h: .86, offset: .3, easing: sway },
+            { w: .92, h: 1.1, offset: .5, easing: easeIn },
+            { w: .5, h: 1.2, opacity: .8, offset: .75, easing: easeIn },
+            { w: 0, h: 0, opacity: 0 },
+          ];
+        } else if (place === 'away') {
+          // Pop back out of nothing, then wobble until it settles
+          duration = 800;
+          frames = [
+            { m: 1, w: 0, h: 0, opacity: 0, easing: easeOut },
+            { w: 1.2, h: .85, opacity: 1, offset: .35, easing: sway },
+            { w: .9, h: 1.1, offset: .52, easing: sway },
+            { w: 1.07, h: .95, offset: .68, easing: sway },
+            { w: .97, h: 1.03, offset: .84, easing: sway },
+            { w: 1, h: 1, opacity: 1 },
+          ];
         } else {
-          if (next === 'away') {
-            // Swell, then squeeze down to nothing
-            dockButton.animate([
-              { transform: 'none', opacity: 1 },
-              { transform: 'scale(1.2, .85)', opacity: 1, offset: .35 },
-              { transform: 'scale(.6, 1.15)', opacity: .8, offset: .65 },
-              { transform: 'scale(0)', opacity: 0 },
-            ], { duration: 420, easing: 'ease-in' });
-          } else if (place === 'away') {
-            // Pop back out of nothing, overshoot, settle
-            dockButton.animate([
-              { transform: `${at(x, y)} scale(0)`, opacity: 0 },
-              { transform: 'scale(1.2, .85)', opacity: 1, offset: .55 },
-              { transform: 'scale(.92, 1.08)', offset: .8 },
-              { transform: 'none', opacity: 1 },
-            ], { duration: 480, easing: 'ease-out' });
-          } else {
-            // Squash to wind up, stretch in flight, squash on landing
-            dockButton.animate([
-              { transform: at(x, y) },
-              { transform: `${at(x, y)} scale(1.18, .82)`, offset: .18 },
-              { transform: `${at(x / 2, y / 2)} scale(.86, 1.14)`, offset: .5 },
-              { transform: 'scale(1.12, .88)', offset: .82 },
-              { transform: 'none' },
-            ], { ...glide, duration: 700 });
-          }
+          // Squash to its new size while winding up, so the new text never sticks out of the box, stretch through
+          // the flight, then wobble on landing until it settles
+          duration = 1000;
+          frames = [
+            { m: 1, w: sx, h: sy, easing: sway },
+            { m: 1, w: 1.18, h: .84, offset: .14, easing: easeIn },
+            { m: .45, w: .88, h: 1.12, offset: .34, easing: easeOut },
+            { w: 1.16, h: .86, offset: .54, easing: sway },
+            { w: .92, h: 1.08, offset: .66, easing: sway },
+            { w: 1.05, h: .96, offset: .78, easing: sway },
+            { w: .98, h: 1.02, offset: .9, easing: sway },
+            { w: 1, h: 1 },
+          ];
+        }
+        // Only the box squashes and stretches: the icon and the text get the opposite scale, so they keep their
+        // size the whole way. An opposite scale drifts between two frames, so each stretch is cut into small steps
+        // that follow its curve. A box shrunk to nothing takes the text along.
+        const curves = { [easeIn]: (p) => p * p, [easeOut]: (p) => 1 - (1 - p) ** 2, [sway]: (p) => p * p * (3 - 2 * p) };
+        const lerp = (a, b, p) => a + (b - a) * p;
+        const steps = frames.flatMap((a, i) => {
+          const b = frames[i + 1];
+          const start = { ...a, offset: a.offset ?? (i ? 1 : 0) };
+          if (!b || !a.w || !b.w) return [start];
+          const curve = curves[a.easing] ?? ((p) => p);
+          const cuts = Array.from({ length: 5 }, (_, k) => {
+            const p = (k + 1) / 6, e = curve(p);
+            return { m: lerp(a.m ?? 0, b.m ?? 0, e), w: lerp(a.w, b.w, e), h: lerp(a.h, b.h, e), offset: lerp(start.offset, b.offset ?? 1, p) };
+          });
+          return [{ ...start, easing: 'linear' }, ...cuts.map((cut) => ({ ...cut, easing: 'linear' }))];
+        });
+        dockButton.animate(steps.map(({ m = 0, w, h, opacity, offset, easing }) =>
+          ({ transform: `${at(x * m, y * m)} scale(${w}, ${h})`, ...(opacity === undefined ? {} : { opacity }), offset, easing })), { duration });
+        // Where the box is nothing, the text keeps the size of the frame beside it and fades instead
+        const parts = dockButton.querySelectorAll(':scope > .i, :scope > .label');
+        parts.forEach((part) => part.animate(steps.map(({ offset, easing }, i) => {
+          const { w, h } = steps[i].w ? steps[i] : steps[i ? i - 1 : 1];
+          return { transform: `scale(${1 / w}, ${1 / h})`, offset, easing };
+        }), { duration }));
+        if (next === 'away') {
+          parts.forEach((part) => part.animate([{ opacity: 1 }, { opacity: 1, offset: .5 }, { opacity: 0, offset: .72 }, { opacity: 0 }], { duration }));
+        } else if (place === 'away') {
+          parts.forEach((part) => part.animate([{ opacity: 0 }, { opacity: 0, offset: .18 }, { opacity: 1, offset: .35 }, { opacity: 1 }], { duration }));
+        } else {
+          // The text changes when the shape does, so it fades in once the box has wound up around it
+          dockButton.querySelector('.label').animate([{ opacity: 0 }, { opacity: 0, offset: .4 }, { opacity: 1 }], { duration: 200 });
         }
         place = next;
       };
