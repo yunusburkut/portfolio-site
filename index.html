@@ -19,8 +19,12 @@
       --link: #1d5fbf;
       --acc-l: .55;
       --acc-c: .14;
-      --mono: ui-monospace, 'Cascadia Mono', Consolas, Menlo, monospace;
+      --mono: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       --head-h: 60px;
+      --sel: #3a72b0;
+      --scene: #c3c6cb;
+      --grid-minor: rgb(0 0 0 / .06);
+      --grid-major: rgb(0 0 0 / .12);
       color-scheme: light;
     }
 
@@ -35,6 +39,10 @@
         --link: #82bcff;
         --acc-l: .76;
         --acc-c: .12;
+        --sel: #2c5d87;
+        --scene: #24262b;
+        --grid-minor: rgb(255 255 255 / .045);
+        --grid-major: rgb(255 255 255 / .09);
         color-scheme: dark;
       }
     }
@@ -59,7 +67,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       font-size: 17px;
       line-height: 1.65;
     }
@@ -227,6 +235,15 @@
         --head-h: 100px;
       }
 
+      /* A pinned title needs a solid strip behind it, as wide as the screen, so text does not show through */
+      main .sec-title {
+        top: calc(var(--head-h) - 4px);
+        padding: .5rem 0;
+        background: var(--bg);
+        box-shadow: 0 0 0 100vmax var(--bg);
+        clip-path: inset(0 -100vmax);
+      }
+
       .site-head .wrap {
         flex-wrap: wrap;
         row-gap: 0;
@@ -352,42 +369,45 @@
       margin-top: 1.5rem;
     }
 
-    /* At a glance: four numbers first, then what I know, one row per area */
-    .glance {
+    /* Summary: Inspector-style property rows, a label on the left and the fact on the right */
+    .summary {
+      margin-top: .6rem;
+      font-size: 14.5px;
+      line-height: 1.4;
+    }
+
+    .summary>div {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: 7rem 1fr;
       gap: .5rem;
-      margin-top: 1.25rem;
-      padding: 0;
-      list-style: none;
+      padding: .3rem 0;
     }
 
-    .glance li {
-      display: grid;
-      align-content: start;
-      padding: .5rem .7rem;
-      background: var(--field);
-      border-radius: 10px;
+    .summary>div+div {
+      border-top: 1px solid var(--line);
     }
 
-    .glance strong {
-      font-size: 1.25rem;
-      line-height: 1.15;
-      font-weight: 800;
-      color: var(--link);
-    }
-
-    .glance span {
-      font-size: 13.5px;
-      line-height: 1.3;
+    .summary dt {
       color: var(--muted);
     }
 
-    .know {
-      margin-top: 1.25rem;
+    .summary dd {
+      margin: 0;
+      font-weight: 600;
     }
 
-    .know-title {
+    .summary strong {
+      color: var(--link);
+      font-weight: 800;
+    }
+
+
+    /* Inspector component headers: a quiet bar with a label, nothing to click */
+    .comp {
+      margin-top: 1.25rem;
+      padding: .2rem .6rem;
+      background: var(--field);
+      border-radius: 6px;
       font-size: 12.5px;
       font-weight: 800;
       letter-spacing: .06em;
@@ -446,53 +466,397 @@
       font-weight: 600;
     }
 
-    /* Wide screens: the about stays put in a column on the left while the sections scroll beside it */
+    /* ── EDITOR PANELS ──
+       Wide screens are laid out like the Unity editor: Hierarchy on the left to move around, the sections in the
+       middle, and the profile on the right as the Inspector. Panel tabs are labels, not buttons. */
+    .panel-tab,
+    .tree-panel,
+    .crumb {
+      display: none;
+    }
+
+    .tree,
+    .tree ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tree {
+      padding: .4rem 0 .6rem;
+      font-size: 14.5px;
+    }
+
+    /* Children sit one step in, with a guide line like Unity's indent */
+    .tree ul {
+      margin-left: 1.45rem;
+      border-left: 1px solid var(--line);
+    }
+
+    .tree a {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      min-height: 30px;
+      padding: 0 1rem;
+      line-height: 1.25;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .tree a[hidden] {
+      display: none;
+    }
+
+    .tree a:hover {
+      background: var(--field);
+    }
+
+    /* The row you are reading gets Unity's selection blue */
+    .tree a[aria-current] {
+      background: var(--sel);
+      color: #fff;
+    }
+
+    .tree .i {
+      width: 16px;
+      height: 16px;
+      color: var(--acc, var(--muted));
+    }
+
+    .tree a[aria-current] .i {
+      color: #fff;
+    }
+
     @media (min-width: 1280px) {
+
+      /* Behind the panels sits Unity's 2D scene view: a flat grey field with a fine grid and a stronger line every
+         five cells. It stays put while the page scrolls, and every panel on top of it has a solid background. */
+      html {
+        background:
+          linear-gradient(var(--grid-major) 1px, transparent 1px) 0 0 / 120px 120px,
+          linear-gradient(90deg, var(--grid-major) 1px, transparent 1px) 0 0 / 120px 120px,
+          linear-gradient(var(--grid-minor) 1px, transparent 1px) 0 0 / 24px 24px,
+          linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px) 0 0 / 24px 24px,
+          var(--scene);
+        background-attachment: fixed;
+      }
+
+      body {
+        background: transparent;
+      }
+
+      .site-head {
+        background: var(--surface);
+      }
+
+      .site-head .wrap {
+        display: grid;
+        grid-template-columns: 210px minmax(0, 1fr) 336px;
+        align-items: center;
+        column-gap: 24px;
+      }
 
       .site-head .wrap,
       .footer .wrap {
-        max-width: 1260px;
+        max-width: 1472px;
+      }
+
+      .site-head .nav {
+        display: none;
+      }
+
+      .site-head .button {
+        justify-self: end;
+      }
+
+      /* Toolbar breadcrumb: where in the scene you are */
+      .crumb {
+        display: block;
+        overflow: hidden;
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--muted);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .crumb b {
+        color: var(--text);
       }
 
       main {
         display: grid;
-        grid-template-columns: 300px minmax(0, 880px);
-        column-gap: 40px;
+        grid-template-columns: 210px minmax(0, 880px) 336px;
+        column-gap: 24px;
         justify-content: center;
         align-items: start;
+        padding: 24px 16px 0;
       }
 
+      /* Spacing below each window rather than row gaps, so the empty rows the side panels span add no height,
+         and a slim footer, so at the very bottom the Inspector still has room to stay below the header */
+      main>.section {
+        margin-bottom: 24px;
+      }
+
+      body>.footer {
+        padding: 0;
+        font-size: 13px;
+        line-height: 24px;
+      }
+
+      /* Each section is a docked editor window: a title bar with its hue on top, then a plain body */
       main>.section {
         grid-column: 2;
+        padding: 0;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: clip;
       }
 
-      .hero {
-        grid-column: 1;
+      main>.section>.wrap {
+        max-width: none;
+        padding: 0 1.5rem 1.5rem;
+      }
+
+      /* Title bar: like an editor tab, with the section's hue as the active-tab line along the top */
+      .sec-title {
+        margin: 0 -1.5rem;
+        padding: .6rem 1.5rem;
+        background: var(--surface);
+        border-top: 3px solid var(--acc);
+        border-bottom: 1px solid var(--line);
+        font-size: 1.4rem;
+      }
+
+      .sec-i {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+      }
+
+      .sec-i .i {
+        width: 20px;
+        height: 20px;
+      }
+
+      .section>.wrap>.sec-sub {
+        margin-top: 1rem;
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+
+      .panel-tab {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        height: 34px;
+        padding: 0 1rem;
+        background: var(--field);
+        border-bottom: 1px solid var(--line);
+        border-radius: 10px 10px 0 0;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+
+      .tree-panel,
+      .side {
+        display: block;
         grid-row: 1 / span 20;
         position: sticky;
         top: calc(var(--head-h) + 24px);
         max-height: calc(100vh - var(--head-h) - 48px);
-        margin-top: 48px;
-        padding: 0;
         overflow-y: auto;
         scrollbar-width: thin;
       }
 
-      .hero .wrap {
+      .tree-panel {
+        grid-column: 1;
+      }
+
+      /* The right column is taller than the screen, so it scrolls along with the page until LeetCode's bottom edge
+         reaches the bottom of the screen, then stays put (--side-h is its height, set by the script) */
+      .side {
+        grid-column: 3;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        top: min(calc(var(--head-h) + 24px), calc(100vh - var(--side-h, 0px) - 24px));
+        max-height: none;
+        overflow: visible;
+      }
+
+      .hero {
         padding: 0;
       }
 
-      .hero-top {
+      /* LeetCode is a square panel: its title becomes a panel tab and the stats shrink to fit */
+      .tree a[href="#leetcode-block"] {
+        display: none;
+      }
+
+      #leetcode-block {
+        display: flex;
+        aspect-ratio: 1;
+        padding: 0;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: clip;
+      }
+
+      #leetcode-block[hidden],
+      #leetcode-block .sec-sub {
+        display: none;
+      }
+
+      #leetcode-block>.wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: none;
+        padding: 0;
+      }
+
+      #leetcode-block .sec-title {
+        position: static;
+        gap: .45rem;
+        height: 34px;
+        margin: 0;
+        padding: 0 1rem;
+        background: var(--field);
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 13.5px;
+        color: var(--muted);
+      }
+
+      #leetcode-block .sec-i {
+        width: auto;
+        height: auto;
+        background: none;
+      }
+
+      #leetcode-block .sec-i .i {
+        width: 16px;
+        height: 16px;
+      }
+
+      #leetcode-block .lc-card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 0;
+        padding: 1rem;
+        background: none;
+        border: 0;
+        border-radius: 0;
+      }
+
+      #leetcode-block .lc-top {
         gap: 1rem;
+        margin: 0;
+      }
+
+      #leetcode-block .lc-ring {
+        width: 120px;
+        height: 120px;
+      }
+
+      #leetcode-block .lc-ring-label strong {
+        font-size: 1.5rem;
+      }
+
+      #leetcode-block .lc-ring-label span {
+        font-size: 11px;
+      }
+
+      #leetcode-block .lc-bars {
+        gap: .55rem;
+      }
+
+      #leetcode-block .lc-bar-head {
+        font-size: 13px;
+        margin-bottom: .2rem;
+      }
+
+      /* Two by two, so every number and label fits on one line */
+      #leetcode-block .lc-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: .4rem;
+        margin: 0;
+      }
+
+      #leetcode-block .lc-stat {
+        padding: .3rem .6rem;
+      }
+
+      #leetcode-block .lc-stat strong {
+        font-size: 1.05rem;
+        line-height: 1.25;
+      }
+
+      #leetcode-block .lc-stat span {
+        font-size: 12px;
+        line-height: 1.3;
+        white-space: nowrap;
+      }
+
+      #leetcode-block .lc-footer {
+        margin: 0;
+        font-size: 12.5px;
+      }
+
+      .hero .wrap {
+        padding: 1rem;
+      }
+
+      /* GitHub, LinkedIn and itch.io go icon-only so the Inspector fits; the name stays for screen readers */
+      .hero .actions {
+        gap: .5rem;
+      }
+
+      .hero .btn-text {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .hero-top {
+        gap: .85rem;
+      }
+
+      .comp {
+        margin-top: .75rem;
+      }
+
+      .summary {
+        font-size: 14px;
+      }
+
+      .summary>div {
+        grid-template-columns: 5.75rem 1fr;
+        padding: .2rem 0;
       }
 
       .hero img {
-        width: 76px;
-        height: 76px;
+        width: 60px;
+        height: 60px;
       }
 
       h1 {
-        font-size: 1.9rem;
+        font-size: 1.6rem;
       }
 
       .role {
@@ -521,7 +885,11 @@
       padding: 48px 0 8px;
     }
 
+    /* The title of the section you are reading stays pinned under the header until the next section pushes it out */
     .sec-title {
+      position: sticky;
+      top: var(--head-h);
+      z-index: 2;
       display: flex;
       align-items: center;
       gap: .7rem;
@@ -543,6 +911,11 @@
     .sec-i .i {
       width: 22px;
       height: 22px;
+    }
+
+    /* A jump to a card inside a section stops below that section's pinned title */
+    .section .card[id] {
+      scroll-margin-top: 4.5rem;
     }
 
     .sec-sub {
@@ -903,7 +1276,7 @@
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 1.25rem;
+      padding: 1.25rem 1.5rem;
     }
 
     .lc-top {
@@ -1202,6 +1575,15 @@
         d="M3 1.5h10A1.5 1.5 0 0 1 14.5 3v10a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5zM4 6.6V12h1.7V6.6zm.85-3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM7.2 6.6V12h1.7V9.2c0-.7.4-1.1 1-1.1s.9.4.9 1.1V12h1.7V8.9c0-1.6-.8-2.4-2-2.4-.8 0-1.3.4-1.6.9v-.8z"
         fill="currentColor" fill-rule="evenodd" />
     </symbol>
+    <symbol id="i-list" viewBox="0 0 16 16">
+      <path d="M2 3.5h12M5 8h9M5 12.5h9M2.5 8v4.5" fill="none" stroke="currentColor" stroke-width="1.4"
+        stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.3" />
+      <path d="M8 7.2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      <circle cx="8" cy="4.9" r=".9" fill="currentColor" />
+    </symbol>
     <symbol id="i-chat" viewBox="0 0 16 16">
       <path d="M2.5 3h11v7.5h-6l-3 2.5v-2.5h-2z" fill="none" stroke="currentColor" stroke-width="1.3"
         stroke-linejoin="round" />
@@ -1240,6 +1622,7 @@
             <use href="#i-mail" />
           </svg>Contact</a>
       </nav>
+      <p class="crumb" aria-hidden="true"></p>
       <a class="button" href="YunusBurkutCV.pdf" download><svg class="i">
           <use href="#i-down" />
         </svg>CV</a>
@@ -1248,8 +1631,67 @@
 
   <main id="top">
 
+    <!-- ── HIERARCHY: the page as a scene tree, the main navigation on wide screens ── -->
+    <nav class="panel tree-panel" aria-label="Hierarchy">
+      <p class="panel-tab"><svg class="i">
+          <use href="#i-list" />
+        </svg>Hierarchy</p>
+      <ul class="tree">
+            <li><a href="#leetcode-block" data-lc-nav hidden><svg class="i">
+                  <use href="#i-chart" />
+                </svg>LeetCode</a></li>
+            <li><a href="#projects"><svg class="i">
+                  <use href="#i-folder" />
+                </svg>Projects</a>
+              <ul>
+                <li><a href="#games"><svg class="i">
+                      <use href="#i-pad" />
+                    </svg>Magic Sort</a></li>
+                <li><a href="#blokfit"><svg class="i">
+                      <use href="#i-pad" />
+                    </svg>Blokfit</a></li>
+                <li><a href="#pathfinding"><svg class="i">
+                      <use href="#i-code" />
+                    </svg>Pathfinding Visualizer</a></li>
+              </ul>
+            </li>
+            <li><a href="#work"><svg class="i">
+                  <use href="#i-case" />
+                </svg>Work</a>
+              <ul>
+                <li><a href="#zynga"><svg class="i">
+                      <use href="#i-case" />
+                    </svg>Zynga Turkey</a></li>
+                <li><a href="#frostline"><svg class="i">
+                      <use href="#i-case" />
+                    </svg>Frostline Games</a></li>
+                <li><a href="#funverse"><svg class="i">
+                      <use href="#i-case" />
+                    </svg>Funverse Games</a></li>
+                <li><a href="#funmoth"><svg class="i">
+                      <use href="#i-case" />
+                    </svg>Funmoth Games</a></li>
+              </ul>
+            </li>
+            <li><a href="#skills"><svg class="i">
+                  <use href="#i-wrench" />
+                </svg>Skills</a></li>
+            <li><a href="#current"><svg class="i">
+                  <use href="#i-eye" />
+                </svg>Staying current</a></li>
+            <li><a href="#contact"><svg class="i">
+                  <use href="#i-mail" />
+                </svg>Contact</a></li>
+      </ul>
+    </nav>
+
     <!-- ── ABOUT ── -->
-    <section class="hero" aria-labelledby="name">
+    <!-- The right-hand column on wide screens: the Inspector with the LeetCode square under it -->
+    <div class="side">
+    <section class="hero panel" aria-labelledby="name">
+      <p class="panel-tab"><svg class="i">
+          <use href="#i-info" />
+        </svg>Inspector</p>
       <div class="wrap">
         <div class="hero-top">
           <img src="images/photo.jpeg" alt="Yunus Burkut" />
@@ -1265,15 +1707,28 @@
           shifting requirements. It keeps me ahead of trends and shipping
           <strong>high-quality, player-focused</strong> games.</p>
 
-        <ul class="glance" aria-label="At a glance">
-          <li><strong>2021</strong><span>making games since</span></li>
-          <li><strong>4</strong><span>studios</span></li>
-          <li><strong>2</strong><span>multiplayer MOBAs in Unreal</span></li>
-          <li><strong>2</strong><span>Zynga mobile card games</span></li>
-        </ul>
+        <h2 class="comp">Summary</h2>
+        <dl class="summary">
+          <div>
+            <dt>Making games</dt>
+            <dd>since <strong>2021</strong></dd>
+          </div>
+          <div>
+            <dt>Studios</dt>
+            <dd><strong>4</strong> game studios</dd>
+          </div>
+          <div>
+            <dt>Unreal</dt>
+            <dd><strong>2</strong> multiplayer MOBAs</dd>
+          </div>
+          <div>
+            <dt>Unity</dt>
+            <dd><strong>2</strong> Zynga mobile card games</dd>
+          </div>
+        </dl>
 
         <div class="know">
-          <h2 class="know-title">What I know</h2>
+          <h2 class="comp">What I know</h2>
           <dl>
             <div>
               <dt><svg class="i">
@@ -1343,14 +1798,14 @@
             </svg>Email me</a>
           <a class="button" href="https://github.com/yunusburkut" target="_blank" rel="noopener"><svg class="i">
               <use href="#i-github" />
-            </svg>GitHub</a>
+            </svg><span class="btn-text">GitHub</span></a>
           <a class="button" href="https://www.linkedin.com/in/yunusburkut/" target="_blank" rel="noopener"><svg
               class="i">
               <use href="#i-linkedin" />
-            </svg>LinkedIn</a>
+            </svg><span class="btn-text">LinkedIn</span></a>
           <a class="button" href="https://yunusburkut.itch.io/" target="_blank" rel="noopener"><svg class="i">
               <use href="#i-pad" />
-            </svg>itch.io</a>
+            </svg><span class="btn-text">itch.io</span></a>
         </div>
       </div>
     </section>
@@ -1405,8 +1860,8 @@
           </div>
 
           <div class="lc-stats">
-            <div class="lc-stat"><strong data-lc="ranking">0</strong><span>Global ranking</span></div>
-            <div class="lc-stat"><strong data-lc="active">0</strong><span>Active days this year</span></div>
+            <div class="lc-stat"><strong data-lc="ranking">0</strong><span>Global rank</span></div>
+            <div class="lc-stat"><strong data-lc="active">0</strong><span>Active days</span></div>
             <div class="lc-stat"><strong data-lc="streak">0</strong><span>Max streak (days)</span></div>
             <div class="lc-stat" data-lc-contest hidden><strong data-lc="rating">0</strong><span>Contest
                 rating</span>
@@ -1423,6 +1878,7 @@
         </div>
       </div>
     </section>
+    </div>
 
     <!-- ── PROJECTS: Magic Sort always sits here, as the same card as the other projects ── -->
     <section class="section" id="projects" style="--h: 160" aria-labelledby="projects-title">
@@ -1776,54 +2232,85 @@
       requestAnimationFrame(undoJump);
     });
 
-    // The header marks the section you are reading and fills a bar as you go down the page. After a click the
-    // clicked link stays marked through the scroll, so the marker does not flick across every section on the way.
-    const nav = document.querySelector('.nav');
+    // The header links (narrow screens) and the Hierarchy (wide screens) mark what you are reading, the toolbar
+    // shows where that is, and a bar under the header fills as you go down the page. After a click the clicked
+    // row stays marked through the scroll, so the marker does not flick across every row on the way.
     const head = document.querySelector('.site-head');
-    const links = [...nav.querySelectorAll('a')];
-    const sectionOf = (link) => document.querySelector(link.hash);
-    const paint = () => links.forEach((link) => {
+    const crumb = document.querySelector('.crumb');
+    const groups = [...document.querySelectorAll('.nav, .tree')].map((box) => ({
+      box, links: [...box.querySelectorAll('a')], current: null,
+    }));
+    const targetOf = (link) => document.querySelector(link.hash);
+    const sectionOf = (link) => targetOf(link).closest('section');
+    const paint = () => groups.forEach(({ links }) => links.forEach((link) => {
       link.style.setProperty('--acc', getComputedStyle(sectionOf(link)).getPropertyValue('--acc'));
-    });
-    let current = null;
+    }));
     let clicked = null;
-    const mark = (link) => {
-      if (link === current) return;
-      current?.removeAttribute('aria-current');
+    const mark = (group, link) => {
+      if (link === group.current) return;
+      group.current?.removeAttribute('aria-current');
       link?.setAttribute('aria-current', 'location');
-      head.style.setProperty('--acc', link ? link.style.getPropertyValue('--acc') : '');
-      current = link;
+      group.current = link;
       // Keep the marked link in view when the row scrolls sideways
-      if (link && nav.scrollWidth > nav.clientWidth) {
-        nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
+      const { box } = group;
+      if (link && box.scrollWidth > box.clientWidth) {
+        box.scrollTo({ left: link.offsetLeft - (box.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
       }
     };
+    // A Hierarchy row's parent row, e.g. Projects for Magic Sort
+    const parentOf = (link) => link.parentElement.parentElement.closest('li')?.querySelector(':scope > a');
     const track = () => {
       const max = document.documentElement.scrollHeight - innerHeight;
       head.style.setProperty('--read', max > 0 ? Math.min(scrollY / max, 1) : 0);
-      if (clicked) return mark(clicked);
-      const line = head.offsetHeight + innerHeight * .3;
-      const shown = links.filter((link) => !link.hidden);
+      // The reading line sits just below the header, where a clicked row's heading lands, so a nudge of the wheel
+      // after a jump does not hand the marker to the next card already showing further down
+      const line = head.offsetHeight + 96;
       const atEnd = scrollY >= max - 2;
-      mark(atEnd ? shown.at(-1) : shown.findLast((link) => sectionOf(link).getBoundingClientRect().top <= line) ?? null);
+      const goal = clicked && targetOf(clicked);
+      // While a click scrolls, mark the clicked row (or its section in the header); otherwise the last row whose
+      // target has reached the reading line
+      const reached = (link) => goal
+        ? targetOf(link) === goal || targetOf(link).compareDocumentPosition(goal) & Node.DOCUMENT_POSITION_FOLLOWING
+        : targetOf(link).getBoundingClientRect().top <= line;
+      groups.forEach((group) => {
+        // Rows a layout hides on its own count as hidden too (LeetCode leaves the Hierarchy when it sits beside it)
+        const shown = group.links.filter((link) => !link.hidden && getComputedStyle(link).display !== 'none');
+        mark(group, !goal && atEnd ? shown.at(-1) : shown.findLast(reached) ?? null);
+      });
+      const now = groups.at(-1).current;
+      head.style.setProperty('--acc', now ? now.style.getPropertyValue('--acc') : '');
+      const parent = now && parentOf(now);
+      crumb.innerHTML = ['Portfolio', parent?.textContent.trim(), now?.textContent.trim()]
+        .filter(Boolean).map((name, i, all) => i === all.length - 1 ? `<b>${name}</b>` : name).join(' › ');
     };
     let queued = false;
+    let ownScroll = false;
     addEventListener('scroll', () => {
+      if (ownScroll) clicked = null;
       if (queued) return;
       queued = true;
       requestAnimationFrame(() => { queued = false; track(); });
     }, { passive: true });
     addEventListener('resize', track);
-    let release;
-    const letGo = () => { clicked = null; clearTimeout(release); track(); };
-    addEventListener('scrollend', letGo);
-    links.forEach((link) => link.addEventListener('click', () => {
+    // The right column's height, for the CSS that keeps its bottom on screen
+    const side = document.querySelector('.side');
+    new ResizeObserver(() => side.style.setProperty('--side-h', `${side.offsetHeight}px`)).observe(side);
+    // A clicked row stays marked until the visitor scrolls on their own: some input of theirs, then the page actually
+    // moving. Near the bottom the page cannot scroll far enough to bring a short section up to the reading line, so
+    // letting go when the jump ends, or on a wheel turn that cannot move the page further, would hand the marker to
+    // the last row (Staying current would show as Contact). Pressing another row is not scrolling on your own.
+    const letGo = (event) => {
+      if (clicked && !event.target.closest?.('.nav, .tree')) ownScroll = true;
+    };
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
+      addEventListener(type, letGo, { passive: true });
+    });
+    groups.forEach(({ links }) => links.forEach((link) => link.addEventListener('click', () => {
       clicked = link;
-      clearTimeout(release);
-      release = setTimeout(letGo, 1500);
+      ownScroll = false;
       track();
-    }));
-    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { paint(); current = null; track(); });
+    })));
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { paint(); track(); });
     paint();
     track();
   </script>
