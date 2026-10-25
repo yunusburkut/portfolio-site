@@ -96,6 +96,28 @@
       flex-shrink: 0;
     }
 
+    /* Text with a leading icon */
+    .ic {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .ic .i {
+      opacity: .85;
+    }
+
+    h3.ic {
+      display: flex;
+    }
+
+    .brand-i {
+      width: 18px;
+      height: 18px;
+      align-self: center;
+      color: var(--link);
+    }
+
     .skip {
       position: absolute;
       left: .5rem;
@@ -225,7 +247,7 @@
       grid-area: center;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 3px;
       min-width: 0;
     }
 
@@ -245,11 +267,6 @@
       background: var(--panel);
       border-radius: 3px;
       overflow: hidden;
-    }
-
-    .center>.panel {
-      border: 1px solid var(--line);
-      box-shadow: 0 6px 18px rgb(0 0 0 / .25);
     }
 
     .tabs {
@@ -279,16 +296,14 @@
       flex-wrap: wrap;
       align-items: center;
       gap: .25rem 1rem;
-      padding: .7rem 1rem .7rem .85rem;
+      padding: .45rem .9rem;
       background: var(--bar);
       border-bottom: 1px solid var(--line);
-      border-left: 4px solid var(--select);
       font-size: 13px;
     }
 
     .bar h2 {
-      font-size: 21px;
-      letter-spacing: -.01em;
+      font-size: 16px;
     }
 
     .bar .muted {
@@ -455,8 +470,8 @@
       list-style: none;
     }
 
-    .log>li+li {
-      border-top: 6px solid var(--frame);
+    .log>li:nth-child(even) summary {
+      background: color-mix(in srgb, var(--text) 4%, transparent);
     }
 
     .log summary {
@@ -484,12 +499,17 @@
     }
 
     .log details[open] summary {
-      background: var(--bar);
-      box-shadow: inset 3px 0 var(--select);
+      background: var(--select);
+      color: var(--on-select);
+    }
+
+    .log details[open] summary .muted,
+    .log details[open] summary .i {
+      color: inherit;
     }
 
     .log summary strong {
-      font-size: 17px;
+      font-size: 16px;
     }
 
     .trace {
@@ -563,9 +583,33 @@
     .namerow h1 {
       flex: 1;
       min-width: 0;
+      padding: .1rem .45rem;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
       font-size: 17px;
       font-weight: 700;
       white-space: nowrap;
+    }
+
+    .check {
+      display: inline-grid;
+      place-items: center;
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+    }
+
+    .check::after {
+      content: "";
+      width: 7px;
+      height: 4px;
+      border-left: 2px solid var(--text);
+      border-bottom: 2px solid var(--text);
+      transform: translateY(-1px) rotate(-45deg);
     }
 
     .tagrow {
@@ -574,6 +618,14 @@
       gap: .2rem .5rem;
       align-items: center;
       font-size: 12.5px;
+    }
+
+    .field {
+      padding: 0 .45rem;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow-wrap: anywhere;
     }
 
     .comp {
@@ -629,16 +681,8 @@
       grid-column: 1 / -1;
     }
 
-    .props a {
-      overflow-wrap: anywhere;
-    }
-
-    .items {
-      display: grid;
-      gap: .3rem;
-      padding: .6rem .9rem .8rem;
-      font-size: 13.5px;
-      list-style: none;
+    .props .indent {
+      padding-left: .8rem;
     }
 
     .about p {
@@ -1068,13 +1112,77 @@
     <symbol id="i-script" viewBox="0 0 16 16">
       <path d="M3.5 1.5h6l3 3v10h-9zM5.5 8h5M5.5 10.5h5" fill="none" stroke="currentColor" stroke-width="1.2" />
     </symbol>
+    <symbol id="i-grid" viewBox="0 0 16 16">
+      <path d="M2 2h12v12H2zM2 6h12M2 10h12M6 2v12M10 2v12" fill="none" stroke="currentColor" stroke-width="1.2" />
+    </symbol>
+    <symbol id="i-down" viewBox="0 0 16 16">
+      <path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.6"
+        stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-code" viewBox="0 0 16 16">
+      <path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4M9 3 7 13" fill="none" stroke="currentColor" stroke-width="1.5"
+        stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-spark" viewBox="0 0 16 16">
+      <path d="M8 1.5 9.6 6.4 14.5 8 9.6 9.6 8 14.5 6.4 9.6 1.5 8 6.4 6.4z" fill="currentColor" />
+    </symbol>
+    <symbol id="i-case" viewBox="0 0 16 16">
+      <path d="M1.5 5h13v8.5h-13zM5.5 5V3h5v2M1.5 8.5h13" fill="none" stroke="currentColor" stroke-width="1.3"
+        stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-wrench" viewBox="0 0 16 16">
+      <path d="M10.5 1.8a3.5 3.5 0 0 0-3.2 4.8L2 11.9 4.1 14l5.3-5.3a3.5 3.5 0 0 0 4.8-3.2l-2 2-2.1-.6-.6-2.1z"
+        fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-cap" viewBox="0 0 16 16">
+      <path d="M8 3 1 6.5 8 10l7-3.5zM4 8v3.5c1 1 2.5 1.5 4 1.5s3-.5 4-1.5V8M14.5 6.5v4" fill="none"
+        stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-school" viewBox="0 0 16 16">
+      <path d="M2.5 14.5V5L8 2l5.5 3v9.5M1.5 14.5h13M6.5 14.5v-3.5h3v3.5M5 7.5h1M10 7.5h1" fill="none"
+        stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-mail" viewBox="0 0 16 16">
+      <path d="M1.5 3.5h13v9h-13zM1.5 4l6.5 5 6.5-5" fill="none" stroke="currentColor" stroke-width="1.3"
+        stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-tag" viewBox="0 0 16 16">
+      <path d="M2 2.5h5.5L14 9l-5 5-6.5-6.5z" fill="none" stroke="currentColor" stroke-width="1.3"
+        stroke-linejoin="round" />
+      <circle cx="5.2" cy="5.7" r="1.1" fill="currentColor" />
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 16 16">
+      <path d="M8 14.5s-4.5-4.6-4.5-8a4.5 4.5 0 0 1 9 0c0 3.4-4.5 8-4.5 8z" fill="none" stroke="currentColor"
+        stroke-width="1.3" stroke-linejoin="round" />
+      <circle cx="8" cy="6.5" r="1.6" fill="currentColor" />
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.3" />
+      <path d="M8 4.5V8l2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-phone" viewBox="0 0 16 16">
+      <rect x="4.5" y="1.5" width="7" height="13" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3" />
+      <path d="M7 12.3h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-github" viewBox="0 0 16 16">
+      <path
+        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+        fill="currentColor" />
+    </symbol>
+    <symbol id="i-linkedin" viewBox="0 0 16 16">
+      <path
+        d="M3 1.5h10A1.5 1.5 0 0 1 14.5 3v10a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5zM4 6.6V12h1.7V6.6zm.85-3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM7.2 6.6V12h1.7V9.2c0-.7.4-1.1 1-1.1s.9.4.9 1.1V12h1.7V8.9c0-1.6-.8-2.4-2-2.4-.8 0-1.3.4-1.6.9v-.8z"
+        fill="currentColor" fill-rule="evenodd" />
+    </symbol>
   </svg>
 
   <a class="skip" href="#games">Skip to content</a>
 
   <!-- ── TOOLBAR ── -->
   <header class="toolbar">
-    <div class="title"><strong>Yunus Burkut</strong><span>Game Developer · Istanbul</span></div>
+    <div class="title"><svg class="i brand-i">
+        <use href="#i-cube" />
+      </svg><strong>Yunus Burkut</strong><span>Game Developer · Istanbul</span></div>
     <div class="transport">
       <button type="button" data-play aria-pressed="false" title="Play: jump to Magic Sort"
         aria-label="Play: jump to Magic Sort"><svg class="i">
@@ -1088,7 +1196,9 @@
           <use href="#i-step" />
         </svg></button>
     </div>
-    <div class="tb-right"><a class="button" href="YunusBurkutCV.pdf" download>Download CV</a></div>
+    <div class="tb-right"><a class="button" href="YunusBurkutCV.pdf" download><svg class="i">
+          <use href="#i-down" />
+        </svg>Download CV</a></div>
   </header>
 
   <div class="editor">
@@ -1102,7 +1212,9 @@
         <li data-depth="0"><a href="#about"><span class="fold">▾</span><svg class="i">
               <use href="#i-cube" />
             </svg>Yunus Burkut</a></li>
-        <li data-depth="1"><a href="#games" data-group="games" style="--depth:1"><span class="fold">▾</span>Games</a>
+        <li data-depth="1"><a href="#games" data-group="games" style="--depth:1"><span class="fold">▾</span><svg class="i">
+              <use href="#i-pad" />
+            </svg>Games</a>
         </li>
         <li data-depth="2"><a href="#games" style="--depth:2"><svg class="i">
               <use href="#i-cube" />
@@ -1114,8 +1226,12 @@
               <use href="#i-cube" />
             </svg>Pathfinding Visualizer</a></li>
         <li data-depth="1" data-lc-nav hidden><a href="#leetcode" data-group="leetcode" style="--depth:1"><span
-              class="fold"></span>LeetCode</a></li>
-        <li data-depth="1"><a href="#work" data-group="work" style="--depth:1"><span class="fold">▾</span>Work</a></li>
+              class="fold"></span><svg class="i">
+              <use href="#i-chart" />
+            </svg>LeetCode</a></li>
+        <li data-depth="1"><a href="#work" data-group="work" style="--depth:1"><span class="fold">▾</span><svg class="i">
+              <use href="#i-case" />
+            </svg>Work</a></li>
         <li data-depth="2"><a href="#zynga" style="--depth:2"><svg class="i">
               <use href="#i-cube" />
             </svg>Zynga Turkey</a></li>
@@ -1128,8 +1244,12 @@
         <li data-depth="2"><a href="#funmoth" style="--depth:2"><svg class="i">
               <use href="#i-cube" />
             </svg>Funmoth Games</a></li>
-        <li data-depth="1"><a href="#skills" style="--depth:1"><span class="fold"></span>Skills</a></li>
-        <li data-depth="1"><a href="#contact" style="--depth:1"><span class="fold"></span>Contact</a></li>
+        <li data-depth="1"><a href="#skills" style="--depth:1"><span class="fold"></span><svg class="i">
+              <use href="#i-wrench" />
+            </svg>Skills</a></li>
+        <li data-depth="1"><a href="#contact" style="--depth:1"><span class="fold"></span><svg class="i">
+              <use href="#i-mail" />
+            </svg>Contact</a></li>
       </ul>
     </nav>
 
@@ -1141,13 +1261,21 @@
           <span class="tab is-active"><svg class="i">
               <use href="#i-pad" />
             </svg>Game</span>
+          <span class="tab"><svg class="i">
+              <use href="#i-grid" />
+            </svg>Scene</span>
         </div>
         <div class="bar">
           <h2 id="games-title">Magic Sort</h2>
           <span class="muted">Playable right here · 16:9</span>
           <span class="spacer"></span>
-          <a href="https://yunusburkut.itch.io/magicx" target="_blank" rel="noopener">itch.io ↗</a>
-          <a href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener">Source ↗</a>
+          <a class="ic" href="https://yunusburkut.itch.io/magicx" target="_blank" rel="noopener"><svg class="i">
+              <use href="#i-pad" />
+            </svg>itch.io ↗</a>
+          <a class="ic" href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener"><svg
+              class="i">
+              <use href="#i-github" />
+            </svg>Source ↗</a>
         </div>
         <div class="player">
           <iframe src="https://itch.io/embed-upload/19962064?color=0a0a0d" title="Magic Sort, playable in the browser"
@@ -1157,7 +1285,9 @@
           <p class="lead">A water sort puzzle I made on my own, where most of the work went into how each move feels.</p>
           <div class="notes">
             <div>
-              <h3>Game feel</h3>
+              <h3 class="ic"><svg class="i">
+                  <use href="#i-spark" />
+                </svg>Game feel</h3>
               <p>
                 A tube dips and then lifts when you pick it, shakes when the move isn't allowed, pours along an arc
                 and bounces once it's full. Every level slides in tube by tube so you can read the board before you
@@ -1165,7 +1295,9 @@
               </p>
             </div>
             <div>
-              <h3>Code</h3>
+              <h3 class="ic"><svg class="i">
+                  <use href="#i-code" />
+                </svg>Code</h3>
               <p>
                 No DI framework: one composition root wires everything, and a small event bus keeps the game logic
                 and the visuals apart. All animation timings sit in one ScriptableObject, so I can tune the feel
@@ -1197,8 +1329,10 @@
                 generated when you start it, by splitting the grid with a flood fill. Has undo, a level editor window
                 and unit tests.
               </p>
-              <a href="https://github.com/yunusburkut/Procedural-Block-Fit" target="_blank" rel="noopener">Source
-                code ↗</a>
+              <a class="ic" href="https://github.com/yunusburkut/Procedural-Block-Fit" target="_blank"
+                rel="noopener"><svg class="i">
+                  <use href="#i-github" />
+                </svg>Source code ↗</a>
             </div>
           </article>
 
@@ -1213,7 +1347,10 @@
                 generate a random maze. The search code allocates no memory while it runs, so there are no garbage
                 collector spikes.
               </p>
-              <a href="https://github.com/yunusburkut/Pathfinding" target="_blank" rel="noopener">Source code ↗</a>
+              <a class="ic" href="https://github.com/yunusburkut/Pathfinding" target="_blank" rel="noopener"><svg
+                  class="i">
+                  <use href="#i-github" />
+                </svg>Source code ↗</a>
             </div>
           </article>
         </div>
@@ -1226,7 +1363,7 @@
             </svg>Console</span></div>
         <div class="bar">
           <h2 id="work-title">Work history</h2>
-          <span class="muted">Newest first</span>
+          <span class="muted">Newest first. Click a line for details.</span>
           <span class="spacer"></span>
           <span class="counts" role="img" aria-label="4 entries, 0 warnings, 0 errors">
             <span><svg class="i" style="color:var(--info)">
@@ -1261,17 +1398,21 @@
                   <img src="images/spades.jpg" alt="Spades Plus" loading="lazy" decoding="async" />
                 </div>
                 <p class="links">
-                  <a href="https://apps.apple.com/cy/app/gin-rummy-plus-fun-card-game/id1068095192?l=tr"
-                    target="_blank" rel="noopener">Gin Rummy Plus ↗</a>
-                  <a href="https://apps.apple.com/us/app/spades-plus-card-game/id834185106" target="_blank"
-                    rel="noopener">Spades Plus ↗</a>
+                  <a class="ic" href="https://apps.apple.com/cy/app/gin-rummy-plus-fun-card-game/id1068095192?l=tr"
+                    target="_blank" rel="noopener"><svg class="i">
+                      <use href="#i-phone" />
+                    </svg>Gin Rummy Plus ↗</a>
+                  <a class="ic" href="https://apps.apple.com/us/app/spades-plus-card-game/id834185106"
+                    target="_blank" rel="noopener"><svg class="i">
+                      <use href="#i-phone" />
+                    </svg>Spades Plus ↗</a>
                 </p>
               </div>
             </details>
           </li>
 
           <li>
-            <details id="frostline" open>
+            <details id="frostline">
               <summary><svg class="i">
                   <use href="#i-info" />
                 </svg><span class="when mono muted">May 2024 – Mar 2025</span><span><strong>Frostline
@@ -1289,7 +1430,7 @@
           </li>
 
           <li>
-            <details id="funverse" open>
+            <details id="funverse">
               <summary><svg class="i">
                   <use href="#i-info" />
                 </svg><span class="when mono muted">Mar 2022 – May 2024</span><span><strong>Funverse Games</strong>
@@ -1310,15 +1451,17 @@
                   </video>
                 </div>
                 <p class="links">
-                  <a href="https://store.steampowered.com/app/2024080/Hit_and_Boom/" target="_blank"
-                    rel="noopener">Hit and Boom on Steam ↗</a>
+                  <a class="ic" href="https://store.steampowered.com/app/2024080/Hit_and_Boom/" target="_blank"
+                    rel="noopener"><svg class="i">
+                      <use href="#i-pad" />
+                    </svg>Hit and Boom on Steam ↗</a>
                 </p>
               </div>
             </details>
           </li>
 
           <li>
-            <details id="funmoth" open>
+            <details id="funmoth">
               <summary><svg class="i">
                   <use href="#i-info" />
                 </svg><span class="when mono muted">Mar 2021 – Mar 2022</span><span><strong>Funmoth Games</strong>
@@ -1397,7 +1540,10 @@
 
           <div class="lc-footer">
             <span class="mono muted" data-lc="updated"></span>
-            <a data-lc="profile" href="https://leetcode.com/" target="_blank" rel="noopener">LeetCode profile ↗</a>
+            <a class="ic" data-lc="profile" href="https://leetcode.com/" target="_blank" rel="noopener"><svg
+                class="i">
+                <use href="#i-chart" />
+              </svg>LeetCode profile ↗</a>
           </div>
         </div>
       </section>
@@ -1412,12 +1558,12 @@
       <div class="obj">
         <img src="images/photo.jpeg" alt="Yunus Burkut" />
         <div>
-          <div class="namerow">
+          <div class="namerow"><span class="check" aria-hidden="true"></span>
             <h1>Yunus Burkut</h1>
           </div>
           <div class="tagrow">
-            <span class="muted">Tag</span><span>Game Developer</span>
-            <span class="muted">Layer</span><span>Istanbul</span>
+            <span class="muted ic"><svg class="i"><use href="#i-tag" /></svg>Tag</span><span class="field">Game Developer</span>
+            <span class="muted ic"><svg class="i"><use href="#i-pin" /></svg>Layer</span><span class="field">Istanbul</span>
           </div>
         </div>
       </div>
@@ -1435,88 +1581,90 @@
               football team.
             </p>
           </div>
-          <span class="lbl">Making games</span><span>since 2021</span>
-          <span class="lbl">Studios</span><span>4</span>
+          <span class="lbl ic"><svg class="i"><use href="#i-clock" /></svg>Making games</span><span class="field">since 2021</span>
+          <span class="lbl ic"><svg class="i"><use href="#i-case" /></svg>Studios</span><span class="field">4</span>
         </div>
       </details>
 
       <div id="skills">
-        <details class="comp" open>
+        <details class="comp" open data-fold-on-phone>
           <summary><svg class="i">
-              <use href="#i-script" />
+              <use href="#i-cube" />
             </svg>Engines</summary>
-          <ul class="items">
-            <li>Unity</li>
-            <li>Unreal Engine 4</li>
-            <li>Unreal Engine 5</li>
-          </ul>
+          <div class="props">
+            <span class="lbl ic"><svg class="i"><use href="#i-cube" /></svg>Unity</span><span class="check" aria-hidden="true"></span>
+            <span class="lbl ic"><svg class="i"><use href="#i-cube" /></svg>Unreal Engine 4</span><span class="check" aria-hidden="true"></span>
+            <span class="lbl ic"><svg class="i"><use href="#i-cube" /></svg>Unreal Engine 5</span><span class="check" aria-hidden="true"></span>
+          </div>
         </details>
 
-        <details class="comp" open>
+        <details class="comp" open data-fold-on-phone>
           <summary><svg class="i">
-              <use href="#i-script" />
+              <use href="#i-code" />
             </svg>Languages</summary>
-          <ul class="items">
-            <li>C#</li>
-            <li>C++</li>
-          </ul>
+          <div class="props">
+            <span class="lbl ic"><svg class="i"><use href="#i-code" /></svg>C#</span><span class="check" aria-hidden="true"></span>
+            <span class="lbl ic"><svg class="i"><use href="#i-code" /></svg>C++</span><span class="check" aria-hidden="true"></span>
+          </div>
         </details>
 
-        <details class="comp" open>
+        <details class="comp" open data-fold-on-phone>
           <summary><svg class="i">
-              <use href="#i-script" />
+              <use href="#i-pad" />
             </svg>Gameplay</summary>
-          <ul class="items">
-            <li>Gameplay Ability System</li>
-            <li>Multiplayer and replication</li>
-            <li>3Cs</li>
-            <li>Animation and game feel</li>
-            <li>UI systems</li>
-          </ul>
+          <div class="props">
+            <span class="lbl">Size</span><span class="field">5</span>
+            <span class="lbl indent">Element 0</span><span class="field">Gameplay Ability System</span>
+            <span class="lbl indent">Element 1</span><span class="field">Multiplayer and replication</span>
+            <span class="lbl indent">Element 2</span><span class="field">3Cs</span>
+            <span class="lbl indent">Element 3</span><span class="field">Animation and game feel</span>
+            <span class="lbl indent">Element 4</span><span class="field">UI systems</span>
+          </div>
         </details>
 
-        <details class="comp" open>
+        <details class="comp" open data-fold-on-phone>
           <summary><svg class="i">
-              <use href="#i-script" />
+              <use href="#i-wrench" />
             </svg>Tools</summary>
-          <ul class="items">
-            <li>Editor tools</li>
-            <li>CI/CD</li>
-            <li>Git</li>
-            <li>Plastic SCM</li>
-            <li>Unreal Insights</li>
-            <li>Jira</li>
-          </ul>
+          <div class="props">
+            <span class="lbl">Size</span><span class="field">6</span>
+            <span class="lbl indent">Element 0</span><span class="field">Editor tools</span>
+            <span class="lbl indent">Element 1</span><span class="field">CI/CD</span>
+            <span class="lbl indent">Element 2</span><span class="field">Git</span>
+            <span class="lbl indent">Element 3</span><span class="field">Plastic SCM</span>
+            <span class="lbl indent">Element 4</span><span class="field">Unreal Insights</span>
+            <span class="lbl indent">Element 5</span><span class="field">Jira</span>
+          </div>
         </details>
 
-        <details class="comp" open>
+        <details class="comp" open data-fold-on-phone>
           <summary><svg class="i">
-              <use href="#i-script" />
+              <use href="#i-cap" />
             </svg>Education</summary>
           <div class="props">
-            <span class="lbl">Degree</span><span>B.Eng. Computer Engineering</span>
-            <span class="lbl">Minor</span><span>Game Development</span>
-            <span class="lbl">School</span><span>Bahçeşehir University</span>
+            <span class="lbl ic"><svg class="i"><use href="#i-cap" /></svg>Degree</span><span class="field">B.Eng. Computer Engineering</span>
+            <span class="lbl ic"><svg class="i"><use href="#i-pad" /></svg>Minor</span><span class="field">Game Development</span>
+            <span class="lbl ic"><svg class="i"><use href="#i-school" /></svg>School</span><span class="field">Bahçeşehir University</span>
           </div>
         </details>
       </div>
 
       <details class="comp" id="contact" open>
         <summary><svg class="i">
-            <use href="#i-script" />
+            <use href="#i-mail" />
           </svg>Contact</summary>
         <div class="props">
-          <span class="lbl">Email</span><a href="mailto:yunus.burkut@outlook.com">yunus.burkut@outlook.com</a>
-          <span class="lbl">GitHub</span><a href="https://github.com/yunusburkut" target="_blank"
+          <span class="lbl ic"><svg class="i"><use href="#i-mail" /></svg>Email</span><a class="field" href="mailto:yunus.burkut@outlook.com">yunus.burkut@outlook.com</a>
+          <span class="lbl ic"><svg class="i"><use href="#i-github" /></svg>GitHub</span><a class="field" href="https://github.com/yunusburkut" target="_blank"
             rel="noopener">yunusburkut ↗</a>
-          <span class="lbl">LinkedIn</span><a href="https://www.linkedin.com/in/yunusburkut/"
+          <span class="lbl ic"><svg class="i"><use href="#i-linkedin" /></svg>LinkedIn</span><a class="field" href="https://www.linkedin.com/in/yunusburkut/"
             target="_blank" rel="noopener">yunusburkut ↗</a>
-          <span class="lbl">itch.io</span><a href="https://yunusburkut.itch.io/" target="_blank"
+          <span class="lbl ic"><svg class="i"><use href="#i-pad" /></svg>itch.io</span><a class="field" href="https://yunusburkut.itch.io/" target="_blank"
             rel="noopener">yunusburkut ↗</a>
         </div>
       </details>
 
-      <a class="button wide-btn" href="mailto:yunus.burkut@outlook.com">Send Email</a>
+      <a class="button wide-btn" href="mailto:yunus.burkut@outlook.com"><svg class="i"><use href="#i-mail" /></svg>Send Email</a>
     </aside>
   </div>
 
@@ -1594,8 +1742,14 @@
         if (!target) return;
         const fold = target.closest('details');
         if (fold) fold.open = true;
+        target.querySelectorAll('[data-fold-on-phone]').forEach((inner) => { inner.open = true; });
       });
     });
+
+    // On phones the inspector sits above the game, so its skill components start folded
+    if (matchMedia('(max-width: 760px)').matches) {
+      document.querySelectorAll('[data-fold-on-phone]').forEach((fold) => { fold.open = false; });
+    }
 
     // Hierarchy highlight: marks the group whose panel crosses the middle of the screen
     if ('IntersectionObserver' in window) {
