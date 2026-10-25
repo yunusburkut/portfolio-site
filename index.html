@@ -161,9 +161,11 @@
       color: var(--link);
     }
 
+    /* Section links: the one you are reading is a pill in its section's colour, and a bar under the header shows how
+       far down the page you are */
     .nav {
       display: flex;
-      gap: 1rem;
+      gap: .2rem;
       overflow-x: auto;
       scrollbar-width: none;
       font-size: 15px;
@@ -171,13 +173,82 @@
     }
 
     .nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      min-height: 34px;
+      padding: 0 .6rem;
+      border-radius: 8px;
       color: var(--muted);
       text-decoration: none;
       white-space: nowrap;
     }
 
+    .nav a[hidden] {
+      display: none;
+    }
+
     .nav a:hover {
+      background: var(--field);
       color: var(--text);
+    }
+
+    .nav a[aria-current] {
+      background: color-mix(in srgb, var(--acc, var(--link)) 20%, transparent);
+      color: var(--text);
+    }
+
+    .nav .i {
+      display: none;
+      color: var(--acc, var(--link));
+    }
+
+    .site-head::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--acc, var(--link));
+      transform: scaleX(var(--read, 0));
+      transform-origin: left;
+    }
+
+    @media (min-width: 1280px) {
+      .nav .i {
+        display: block;
+      }
+    }
+
+    /* Narrower screens: the links get their own row under the name, scrolling sideways with faded edges */
+    @media (max-width: 1279px) {
+      :root {
+        --head-h: 100px;
+      }
+
+      .site-head .wrap {
+        flex-wrap: wrap;
+        row-gap: 0;
+        height: auto;
+      }
+
+      .brand {
+        min-height: 54px;
+      }
+
+      .site-head .button {
+        min-height: 36px;
+        margin: 9px 0 9px auto;
+      }
+
+      .nav {
+        order: 3;
+        flex-basis: calc(100% + 40px);
+        margin: 0 -20px;
+        padding: 0 20px 8px;
+        mask-image: linear-gradient(90deg, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+      }
     }
 
     .button {
@@ -284,11 +355,116 @@
       margin-top: 1.5rem;
     }
 
+    /* What I focus on, each line linking to the section that shows it */
+    .focus {
+      display: grid;
+      gap: .45rem;
+      margin-top: 1rem;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+    }
+
+    .focus li {
+      display: flex;
+      align-items: flex-start;
+      gap: .55rem;
+    }
+
+    .focus li[hidden] {
+      display: none;
+    }
+
+    .focus .i {
+      flex: none;
+      margin-top: .2em;
+      color: var(--link);
+    }
+
+    .focus a {
+      font-weight: 700;
+    }
+
+    /* Wide screens: the about stays put in a column on the left while the sections scroll beside it */
+    @media (min-width: 1280px) {
+
+      .site-head .wrap,
+      .footer .wrap {
+        max-width: 1260px;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 880px);
+        column-gap: 40px;
+        justify-content: center;
+        align-items: start;
+      }
+
+      main>.section {
+        grid-column: 2;
+      }
+
+      .hero {
+        grid-column: 1;
+        grid-row: 1 / span 20;
+        position: sticky;
+        top: calc(var(--head-h) + 24px);
+        max-height: calc(100vh - var(--head-h) - 48px);
+        margin-top: 48px;
+        padding: 0;
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+
+      .hero .wrap {
+        padding: 0;
+      }
+
+      .hero-top {
+        gap: 1rem;
+      }
+
+      .hero img {
+        width: 76px;
+        height: 76px;
+      }
+
+      h1 {
+        font-size: 1.9rem;
+      }
+
+      .role {
+        font-size: 1rem;
+      }
+
+      .lead {
+        margin-top: 1.25rem;
+        font-size: 1.15rem;
+      }
+
+      .hero p.about,
+      .focus {
+        font-size: 15.5px;
+      }
+
+      .facts li {
+        padding: .25rem .7rem;
+        font-size: 14px;
+      }
+
+      .hero .actions .button {
+        min-height: 36px;
+        padding: 0 .8rem;
+        font-size: 14.5px;
+      }
+    }
+
     /* ── SECTIONS ──
        Each section gets one hue for its title icon and accents: six hues 60° apart in OKLCH at one lightness and
-       chroma. Down the page (Projects 160, Staying current 340, LeetCode 100, Game feel 280, Claude 40, Work 220,
-       Skills 100, Contact 280)
-       every step is 120° or 180°, so neighbouring sections never look alike. */
+       chroma. Down the page (Projects 160, Work 280, Skills 100, Staying current 340, Contact 220)
+       every step is 120° or 180°, so neighbouring sections never look alike. LeetCode, on top, keeps
+       LeetCode's own colours instead. */
     .section {
       --acc: oklch(var(--acc-l) var(--acc-c) var(--h));
       padding: 48px 0 8px;
@@ -384,595 +560,6 @@
       font-weight: 650;
     }
 
-    /* ── CLAUDE CODE: counts, then one card per thing I set up, each with a looping demo beside the text ── */
-    .stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-      padding: 0;
-      list-style: none;
-    }
-
-    .stats li {
-      padding: .3rem .8rem;
-      background: var(--field);
-      border-radius: 999px;
-      font-size: 15.5px;
-    }
-
-    .stats strong {
-      color: var(--acc);
-      font-size: 1.1em;
-    }
-
-    .caps {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .cap {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    }
-
-    .cap .demo {
-      --me: oklch(var(--acc-l) var(--acc-c) 250);
-      height: auto;
-      min-height: 224px;
-      margin: 0;
-      border-bottom: 0;
-      border-right: 1px solid var(--line);
-    }
-
-    /* The demo is as tall as the text beside it, so the static demos centre their content instead of pinning it */
-    .cap .d-pipe,
-    .cap .d-skills,
-    .cap .d-rules {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 12px;
-      padding: 34px 12px 14px;
-    }
-
-    .cap .d-pipe>*:not(.demo-label),
-    .cap .d-skills>*:not(.demo-label),
-    .cap .d-rules>*:not(.demo-label) {
-      position: static;
-    }
-
-    .cap-body {
-      padding: 1.1rem 1.25rem 1.25rem;
-    }
-
-    .cap-body h3 {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      font-size: 1.15rem;
-      line-height: 1.3;
-    }
-
-    .cap-body h3 .i {
-      color: var(--acc);
-    }
-
-    .cap-body p {
-      margin-top: .5rem;
-    }
-
-    .cap-body code {
-      font-family: var(--mono);
-      font-size: .9em;
-    }
-
-    .names {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .35rem;
-      margin-top: .85rem;
-      padding: 0;
-      list-style: none;
-    }
-
-    .names li {
-      padding: .05rem .5rem;
-      background: var(--field);
-      border-radius: 5px;
-      font-family: var(--mono);
-      font-size: 13px;
-    }
-
-    .tools {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: .6rem 1.25rem;
-      padding: 1rem 1.25rem;
-    }
-
-    .tools h3 {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      font-size: 1.05rem;
-    }
-
-    .tools h3 .i {
-      color: var(--acc);
-    }
-
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
-      gap: 1rem;
-    }
-
-    .tool {
-      padding: 1.1rem 1.25rem 1.25rem;
-    }
-
-    .tool h3 {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      font-size: 1.1rem;
-    }
-
-    .tool h3 .i {
-      color: var(--acc);
-    }
-
-    .tool p {
-      margin-top: .4rem;
-      color: var(--muted);
-    }
-
-    /* Asset chain: a token stops at each station in turn while the caption below says what happens there */
-    .cap .d-assets {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 10px;
-      padding: 34px 12px 14px;
-    }
-
-    .stations {
-      display: flex;
-    }
-
-    .stations span {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--muted);
-    }
-
-    .stations b {
-      display: grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      color: var(--text);
-      animation: station 6s infinite;
-    }
-
-    .stations span:nth-child(2) b { animation-delay: 1.2s; }
-    .stations span:nth-child(3) b { animation-delay: 2.4s; }
-    .stations span:nth-child(4) b { animation-delay: 3.6s; }
-    .stations span:nth-child(5) b { animation-delay: 4.8s; }
-
-    .track {
-      position: relative;
-      height: 16px;
-      margin: 0 10%;
-      border-top: 2px dashed var(--ground);
-      margin-top: 6px;
-    }
-
-    .token {
-      position: absolute;
-      top: -9px;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      margin-left: -8px;
-      border-radius: 50%;
-      background: var(--acc);
-      opacity: 0;
-      animation: token 6s infinite;
-    }
-
-    .steps {
-      display: grid;
-      font-size: 13.5px;
-      font-weight: 650;
-      text-align: center;
-    }
-
-    .steps span {
-      grid-area: 1 / 1;
-      opacity: 0;
-      animation: step-cap 6s infinite;
-    }
-
-    .steps span:nth-child(2) { animation-delay: 1.2s; }
-    .steps span:nth-child(3) { animation-delay: 2.4s; }
-    .steps span:nth-child(4) { animation-delay: 3.6s; }
-    .steps span:nth-child(5) { animation-delay: 4.8s; }
-
-    /* The token is a dot until Blender makes it a block, and turns green once it is committed */
-    @keyframes token {
-      0% { left: 0%; opacity: 0; border-radius: 50%; background: var(--acc); }
-      3%, 14% { left: 0%; opacity: 1; }
-      20%, 34% { left: 25%; border-radius: 50%; }
-      40%, 54% { left: 50%; border-radius: 3px; background: var(--e); }
-      60%, 74% { left: 75%; background: var(--e); }
-      80%, 95% { left: 100%; opacity: 1; border-radius: 3px; background: oklch(var(--acc-l) var(--acc-c) 150); }
-      99%, 100% { left: 100%; opacity: 0; }
-    }
-
-    @keyframes station {
-      0%, 17% { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 18%, var(--surface)); }
-      21%, 100% { border-color: var(--line); background: var(--surface); }
-    }
-
-    @keyframes step-cap {
-      0%, 19% { opacity: 1; }
-      20%, 100% { opacity: 0; }
-    }
-
-    /* Pipeline: each step lights up in turn; my two steps use their own colour */
-    .pipe {
-      position: absolute;
-      top: 34px;
-      left: 14px;
-      right: 12px;
-      padding: 0;
-      list-style: none;
-    }
-
-    .pipe li {
-      --c: var(--acc);
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      height: 29px;
-      color: var(--ground);
-      opacity: .5;
-      font-size: 14px;
-      font-weight: 650;
-      animation: 8s infinite;
-    }
-
-    .pipe li::before {
-      content: '';
-      width: 12px;
-      height: 12px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .pipe span {
-      color: var(--text);
-    }
-
-    .pipe .mine {
-      --c: var(--me);
-    }
-
-    .pipe .mine span::after {
-      content: 'me';
-      margin-left: .45rem;
-      padding: 0 .35rem;
-      border-radius: 4px;
-      background: color-mix(in srgb, var(--me) 25%, transparent);
-      font-size: 11px;
-    }
-
-    .pipe li:nth-child(1) { animation-name: st1; }
-    .pipe li:nth-child(2) { animation-name: st2; }
-    .pipe li:nth-child(3) { animation-name: st3; }
-    .pipe li:nth-child(4) { animation-name: st4; }
-    .pipe li:nth-child(5) { animation-name: st5; }
-    .pipe li:nth-child(6) { animation-name: st6; }
-
-    @keyframes st1 { 0%, 3% { color: var(--ground); opacity: .5 } 6%, 92% { color: var(--c); opacity: 1 } 97%, 100% { color: var(--ground); opacity: .5 } }
-    @keyframes st2 { 0%, 16% { color: var(--ground); opacity: .5 } 19%, 92% { color: var(--c); opacity: 1 } 97%, 100% { color: var(--ground); opacity: .5 } }
-    @keyframes st3 { 0%, 29% { color: var(--ground); opacity: .5 } 32%, 92% { color: var(--c); opacity: 1 } 97%, 100% { color: var(--ground); opacity: .5 } }
-    @keyframes st4 { 0%, 42% { color: var(--ground); opacity: .5 } 45%, 92% { color: var(--c); opacity: 1 } 97%, 100% { color: var(--ground); opacity: .5 } }
-    @keyframes st5 { 0%, 55% { color: var(--ground); opacity: .5 } 58%, 92% { color: var(--c); opacity: 1 } 97%, 100% { color: var(--ground); opacity: .5 } }
-    @keyframes st6 { 0%, 68% { color: var(--ground); opacity: .5 } 71%, 92% { color: var(--c); opacity: 1 } 97%, 100% { color: var(--ground); opacity: .5 } }
-
-    /* Routing: a task card flies to the agent built for it, which lights up */
-    .agent-row,
-    .task {
-      position: absolute;
-      height: 46px;
-      border-radius: 8px;
-      font-size: 12.5px;
-      line-height: 1.25;
-    }
-
-    .agent-row {
-      top: var(--row);
-      left: 52%;
-      right: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      padding: 0 10px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      animation: row-hit 6s infinite;
-    }
-
-    .agent-row b {
-      font-family: var(--mono);
-    }
-
-    .agent-row i {
-      padding: 0 .35rem;
-      border-radius: 4px;
-      background: color-mix(in srgb, var(--acc) 22%, transparent);
-      font-size: 11px;
-      font-style: normal;
-      font-weight: 700;
-    }
-
-    .task {
-      top: 44%;
-      left: 4%;
-      width: 42%;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      background: var(--surface);
-      border: 1px dashed var(--acc);
-      font-weight: 650;
-      opacity: 0;
-      animation: route 6s infinite;
-    }
-
-    .t2,
-    .r2 {
-      animation-delay: 2s;
-    }
-
-    .t3,
-    .r3 {
-      animation-delay: 4s;
-    }
-
-    @keyframes route {
-      0% { left: 4%; top: 44%; opacity: 0; }
-      6%, 16% { left: 4%; top: 44%; opacity: 1; animation-timing-function: ease-in-out; }
-      28% { left: 52%; top: var(--row); opacity: 1; }
-      33%, 100% { left: 52%; top: var(--row); opacity: 0; }
-    }
-
-    @keyframes row-hit {
-      0%, 26%, 52%, 100% { border-color: var(--line); background: var(--surface); }
-      30%, 45% { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 16%, var(--surface)); }
-    }
-
-    /* Skills: a request arrives, two of the skills light up and load, the rest stay dim */
-    .ask {
-      position: absolute;
-      top: 32px;
-      left: 12px;
-      right: 12px;
-      color: var(--acc);
-      font-family: var(--mono);
-      font-size: 12.5px;
-      font-weight: 700;
-      opacity: 0;
-      animation: ask 6s infinite;
-    }
-
-    .cloud {
-      position: absolute;
-      top: 60px;
-      left: 12px;
-      right: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      padding: 0;
-      list-style: none;
-    }
-
-    .cloud li {
-      padding: 0 .4rem;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 4px;
-      font-family: var(--mono);
-      font-size: 11px;
-      line-height: 1.6;
-      opacity: .6;
-      animation: skill-dim 6s infinite;
-    }
-
-    .cloud .hit {
-      animation-name: skill-hit;
-    }
-
-    .loaded {
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      color: var(--acc);
-      font-size: 13px;
-      font-weight: 700;
-      opacity: 0;
-      animation: loaded 6s infinite;
-    }
-
-    @keyframes ask { 0%, 3% { opacity: 0 } 8%, 92% { opacity: 1 } 97%, 100% { opacity: 0 } }
-    @keyframes skill-dim { 0%, 22%, 97%, 100% { opacity: .6 } 28%, 92% { opacity: .3 } }
-    @keyframes skill-hit {
-      0%, 22%, 97%, 100% { opacity: .6; border-color: var(--line); background: var(--surface); }
-      28%, 92% { opacity: 1; border-color: var(--acc); background: color-mix(in srgb, var(--acc) 20%, var(--surface)); }
-    }
-    @keyframes loaded { 0%, 36% { opacity: 0 } 42%, 92% { opacity: 1 } 97%, 100% { opacity: 0 } }
-
-    /* Rules: the open file decides which rule files are in context */
-    .tree {
-      position: absolute;
-      top: 34px;
-      left: 12px;
-      right: 12px;
-      padding: 0;
-      list-style: none;
-      font-family: var(--mono);
-      font-size: 12.5px;
-    }
-
-    .tree li {
-      padding: 4px 8px;
-      border-radius: 6px;
-      overflow-wrap: anywhere;
-    }
-
-    .tree .f1 {
-      animation: file-a 6s infinite;
-    }
-
-    .tree .f2 {
-      animation: file-b 6s infinite;
-    }
-
-    .ctx {
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      bottom: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      font-family: var(--mono);
-      font-size: 12px;
-    }
-
-    .ctx span {
-      padding: 1px 7px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 5px;
-    }
-
-    .ctx .ctx-label {
-      flex-basis: 100%;
-      padding: 0;
-      background: none;
-      border: 0;
-      color: var(--muted);
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      font-weight: 700;
-    }
-
-    .ctx .net {
-      border-color: var(--acc);
-      background: color-mix(in srgb, var(--acc) 18%, var(--surface));
-      opacity: 0;
-      animation: rule-in 6s infinite;
-    }
-
-    @keyframes file-a {
-      0%, 44%, 100% { background: color-mix(in srgb, var(--acc) 18%, transparent); }
-      48%, 96% { background: transparent; }
-    }
-
-    @keyframes file-b {
-      0%, 46%, 98%, 100% { background: transparent; }
-      50%, 96% { background: color-mix(in srgb, var(--acc) 18%, transparent); }
-    }
-
-    @keyframes rule-in {
-      0%, 50%, 97%, 100% { opacity: 0; transform: translateY(6px); }
-      55%, 94% { opacity: 1; transform: none; }
-    }
-
-    /* Permissions: each command drops into the lane that handles it */
-    .cmd {
-      position: absolute;
-      top: 34px;
-      left: 50%;
-      padding: 2px 8px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      font-family: var(--mono);
-      font-size: 11.5px;
-      white-space: nowrap;
-      transform: translateX(-50%);
-      opacity: 0;
-      animation: drop 8s infinite;
-    }
-
-    .c2 { animation-delay: 2s; }
-    .c3 { animation-delay: 4s; }
-    .c4 { animation-delay: 6s; }
-
-    .bin {
-      position: absolute;
-      bottom: 14px;
-      width: 29%;
-      height: 58px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding-bottom: 6px;
-      border: 2px dashed currentColor;
-      border-radius: 10px;
-      font-size: 12.5px;
-      font-weight: 750;
-    }
-
-    .b1 { left: 3.5%; color: oklch(var(--acc-l) var(--acc-c) 150); animation: bin-a 8s infinite; }
-    .b2 { left: 35.5%; color: oklch(var(--acc-l) var(--acc-c) 85); animation: bin-b 8s infinite; }
-    .b3 { left: 67.5%; color: oklch(var(--acc-l) var(--acc-c) 25); animation: bin-c 8s infinite; }
-
-    @keyframes drop {
-      0% { left: 50%; top: 34px; opacity: 0; }
-      3%, 6% { left: 50%; top: 34px; opacity: 1; animation-timing-function: ease-in; }
-      12% { left: var(--bx); top: calc(100% - 64px); opacity: 1; }
-      15%, 100% { left: var(--bx); top: calc(100% - 64px); opacity: 0; }
-    }
-
-    @keyframes bin-a { 0%, 11%, 21%, 100% { background: transparent; } 12%, 19% { background: color-mix(in srgb, currentColor 18%, transparent); } }
-    @keyframes bin-b { 0%, 36%, 46%, 100% { background: transparent; } 37%, 44% { background: color-mix(in srgb, currentColor 18%, transparent); } }
-    @keyframes bin-c {
-      0%, 61%, 71%, 86%, 96%, 100% { background: transparent; }
-      62%, 69%, 87%, 94% { background: color-mix(in srgb, currentColor 18%, transparent); }
-    }
-
-    .callout {
-      display: flex;
-      gap: .75rem;
-      padding: 1.1rem 1.25rem;
-      background: color-mix(in srgb, var(--acc) 12%, var(--surface));
-      border: 1px solid color-mix(in srgb, var(--acc) 45%, var(--line));
-      border-radius: 12px;
-    }
-
-    .callout .i {
-      margin-top: .25rem;
-      color: var(--acc);
-    }
-
     /* Highlight boxes: a border that runs through three hues 120° apart at the page's accent lightness */
     .glow {
       --g1: oklch(var(--acc-l) var(--acc-c) 340);
@@ -986,66 +573,45 @@
       border-radius: 14px;
     }
 
-    .pledge-big {
-      font-size: 1.45rem;
-      font-weight: 800;
-      line-height: 1.3;
-    }
-
-    .pledge .up,
-    .pledge .down {
-      padding: 0 .3rem;
-      border-radius: 6px;
-      white-space: nowrap;
-    }
-
-    .pledge .up {
-      background: color-mix(in srgb, oklch(var(--acc-l) var(--acc-c) 150) 24%, transparent);
-      color: oklch(var(--acc-l) var(--acc-c) 150);
-    }
-
-    .pledge .down {
-      padding: 0;
-      color: var(--muted);
-      text-decoration: line-through;
-      text-decoration-thickness: 2px;
-    }
-
-    .pledge-big+p {
-      margin-top: .6rem;
-      color: var(--muted);
-    }
-
-    .habits {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .5rem;
-      margin-top: 1rem;
+    /* Staying current: three numbered steps joined by a line, side by side or stacked on narrow screens */
+    .loop {
+      display: grid;
+      gap: 1.5rem;
       padding: 0;
       list-style: none;
+      counter-reset: step;
     }
 
-    .habits li {
-      display: inline-flex;
-      align-items: center;
-      gap: .45rem;
-      padding: .35rem .85rem;
-      background: color-mix(in srgb, oklch(var(--acc-l) var(--acc-c) var(--k)) 16%, transparent);
-      border: 1px solid oklch(var(--acc-l) var(--acc-c) var(--k));
-      border-radius: 14px;
-      font-size: 15.5px;
-      font-weight: 650;
+    .loop li {
+      position: relative;
+      counter-increment: step;
     }
 
-    .habits .i {
-      color: oklch(var(--acc-l) var(--acc-c) var(--k));
+    .loop .stay-tag::before {
+      content: counter(step) " · ";
     }
 
-    /* Staying current: one card for the product side, one for the development side */
-    .sides {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
-      gap: 1rem;
+    .loop li+li::before {
+      content: '';
+      position: absolute;
+      top: calc(-1.5rem - 2px);
+      left: 2rem;
+      width: 2px;
+      height: 1.5rem;
+      background: var(--acc);
+    }
+
+    @media (min-width: 760px) {
+      .loop {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .loop li+li::before {
+        top: 50%;
+        left: calc(-1.5rem - 2px);
+        width: 1.5rem;
+        height: 2px;
+      }
     }
 
     .stay-tag {
@@ -1078,1148 +644,6 @@
 
     .stay a {
       font-weight: 700;
-    }
-
-    /* Two looping demos above the examples: agents working in parallel, and a session where a skill and a hook
-       do their jobs */
-    .claude-demos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
-      gap: 1rem;
-    }
-
-    .demo-card {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .demo-cap {
-      padding: .85rem 1.25rem 1.1rem;
-      color: var(--muted);
-    }
-
-    .demo-cap strong {
-      color: var(--text);
-    }
-
-    .flow {
-      --ground: color-mix(in srgb, var(--text) 30%, transparent);
-      flex: 1;
-      width: 100%;
-      padding: 12px;
-      background: var(--field);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .flow .links {
-      fill: none;
-      stroke: var(--ground);
-      stroke-width: 1.5;
-      stroke-dasharray: 3 4;
-    }
-
-    .flow rect {
-      fill: var(--surface);
-      stroke: var(--line);
-      stroke-width: 1.5;
-    }
-
-    .flow .lead rect {
-      stroke: var(--acc);
-    }
-
-    .flow text {
-      fill: var(--text);
-      font-size: 13px;
-      font-weight: 650;
-      text-anchor: middle;
-    }
-
-    .flow .agent rect {
-      animation: agent-busy 5s infinite;
-    }
-
-    .flow .dot {
-      fill: var(--acc);
-      opacity: 0;
-    }
-
-    .flow .d0 {
-      animation: dot-brief 5s infinite;
-    }
-
-    .flow .d1 {
-      --y: 34px;
-    }
-
-    .flow .d2 {
-      --y: 100px;
-    }
-
-    .flow .d3 {
-      --y: 166px;
-    }
-
-    .flow .d1,
-    .flow .d2,
-    .flow .d3 {
-      animation: dot-agent 5s infinite;
-    }
-
-    .flow .done {
-      opacity: 0;
-      animation: done 5s infinite;
-    }
-
-    .flow .done circle {
-      fill: oklch(var(--acc-l) var(--acc-c) 150);
-    }
-
-    .flow .done path {
-      fill: none;
-      stroke: var(--bg);
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    @keyframes dot-brief {
-      0% {
-        transform: translate(72px, 100px);
-        opacity: 0;
-      }
-
-      2% {
-        transform: translate(72px, 100px);
-        opacity: 1;
-      }
-
-      14% {
-        transform: translate(104px, 100px);
-        opacity: 1;
-      }
-
-      15%,
-      79% {
-        transform: translate(104px, 100px);
-        opacity: 0;
-      }
-
-      80% {
-        transform: translate(104px, 100px);
-        opacity: 1;
-      }
-
-      92% {
-        transform: translate(72px, 100px);
-        opacity: 1;
-      }
-
-      94%,
-      100% {
-        transform: translate(72px, 100px);
-        opacity: 0;
-      }
-    }
-
-    @keyframes dot-agent {
-
-      0%,
-      15% {
-        transform: translate(190px, 100px);
-        opacity: 0;
-      }
-
-      16% {
-        transform: translate(190px, 100px);
-        opacity: 1;
-      }
-
-      36% {
-        transform: translate(226px, var(--y));
-        opacity: 1;
-      }
-
-      37%,
-      61% {
-        transform: translate(226px, var(--y));
-        opacity: 0;
-      }
-
-      62% {
-        transform: translate(226px, var(--y));
-        opacity: 1;
-      }
-
-      78% {
-        transform: translate(190px, 100px);
-        opacity: 1;
-      }
-
-      79%,
-      100% {
-        transform: translate(190px, 100px);
-        opacity: 0;
-      }
-    }
-
-    @keyframes agent-busy {
-
-      0%,
-      36%,
-      62%,
-      100% {
-        fill: var(--surface);
-        stroke: var(--line);
-      }
-
-      38%,
-      60% {
-        fill: color-mix(in srgb, var(--acc) 18%, var(--surface));
-        stroke: var(--acc);
-      }
-    }
-
-    @keyframes done {
-
-      0%,
-      92%,
-      100% {
-        opacity: 0;
-      }
-
-      94%,
-      99% {
-        opacity: 1;
-      }
-    }
-
-    /* The terminal stays dark in both themes, like a real one. Lines appear one by one, then the loop restarts. */
-    .term {
-      flex: 1;
-      min-height: 236px;
-      padding: 14px 16px;
-      background: #0e1014;
-      border-bottom: 1px solid var(--line);
-      color: #dfe2e8;
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .term span {
-      display: block;
-      white-space: pre-wrap;
-      opacity: 0;
-      animation: 10s infinite;
-    }
-
-    .term .you {
-      color: #8fc1ff;
-    }
-
-    .term .dim {
-      color: #969ca8;
-    }
-
-    .term .bad {
-      color: oklch(.76 .14 25);
-    }
-
-    .term span:nth-child(1) {
-      animation-name: tl1;
-    }
-
-    .term span:nth-child(2) {
-      animation-name: tl2;
-    }
-
-    .term span:nth-child(3) {
-      animation-name: tl3;
-    }
-
-    .term span:nth-child(4) {
-      animation-name: tl4;
-    }
-
-    .term span:nth-child(5) {
-      animation-name: tl5;
-    }
-
-    .term span:nth-child(6) {
-      animation-name: tl6;
-    }
-
-    .term span:nth-child(7) {
-      animation-name: tl7;
-    }
-
-    .term span:nth-child(8),
-    .term span:nth-child(9) {
-      animation-name: tl8;
-    }
-
-    .term span:nth-child(10) {
-      animation-name: tl9;
-    }
-
-    @keyframes tl1 { 0%, 3% { opacity: 0 } 5%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl2 { 0%, 12% { opacity: 0 } 14%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl3 { 0%, 17% { opacity: 0 } 19%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl4 { 0%, 21% { opacity: 0 } 23%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl5 { 0%, 25% { opacity: 0 } 27%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl6 { 0%, 38% { opacity: 0 } 40%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl7 { 0%, 47% { opacity: 0 } 49%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl8 { 0%, 50% { opacity: 0 } 52%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-    @keyframes tl9 { 0%, 64% { opacity: 0 } 66%, 94% { opacity: 1 } 98%, 100% { opacity: 0 } }
-
-    /* ── GAME FEEL ── */
-    .topics {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 1rem;
-    }
-
-    .topic {
-      padding: 1.1rem 1.25rem 1.25rem;
-    }
-
-    .topic h3 {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      font-size: 1.1rem;
-      line-height: 1.3;
-    }
-
-    .topic h3 .i {
-      color: var(--acc);
-    }
-
-    .topic ul {
-      margin-top: .6rem;
-    }
-
-    .topic li+li {
-      margin-top: .4rem;
-    }
-
-    .timings {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: .45rem 1rem;
-      margin-top: .7rem;
-    }
-
-    .timings dt {
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .timings dd {
-      color: var(--muted);
-    }
-
-    .sub-title {
-      font-size: 1.3rem;
-    }
-
-    .section>.wrap>.sub-title {
-      margin-top: 2.25rem;
-    }
-
-    .section>.wrap>.aims {
-      margin-top: .75rem;
-    }
-
-    .aims li {
-      max-width: 72ch;
-    }
-
-    .aims li+li {
-      margin-top: .5rem;
-    }
-
-    /* Looping demos on top of each card. Plain CSS animations instead of GIFs, so they stay sharp and follow
-       the light or dark theme. --p is the player colour, --e the enemy or pickup colour. */
-    .demo {
-      --p: var(--acc);
-      --e: oklch(var(--acc-l) var(--acc-c) 40);
-      --ground: color-mix(in srgb, var(--text) 22%, transparent);
-      position: relative;
-      height: 136px;
-      margin: -1.1rem -1.25rem 1rem;
-      background: var(--field);
-      border-bottom: 1px solid var(--line);
-      overflow: hidden;
-    }
-
-    .demo-label {
-      position: absolute;
-      top: 8px;
-      left: 12px;
-      z-index: 1;
-      font-size: 12.5px;
-      font-weight: 700;
-      line-height: 1.2;
-      white-space: nowrap;
-      color: var(--muted);
-    }
-
-    .demo .ground {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 30px;
-      height: 2px;
-      background: var(--ground);
-    }
-
-    .demo .world {
-      position: absolute;
-      inset: 0;
-    }
-
-    .split {
-      display: flex;
-    }
-
-    .split>div {
-      position: relative;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .split>div+div {
-      border-left: 1px dashed var(--ground);
-    }
-
-    .actor {
-      position: absolute;
-      left: 50%;
-      bottom: 32px;
-      width: 24px;
-      height: 24px;
-      margin-left: -12px;
-      border-radius: 5px;
-      background: var(--p);
-      transform-origin: 50% 100%;
-    }
-
-    /* Response: the same key press, answered after 100 ms on the left and 300 ms on the right */
-    .key {
-      position: absolute;
-      left: 50%;
-      bottom: 4px;
-      transform: translateX(-50%);
-      padding: 0 .5rem;
-      background: var(--surface);
-      border: 1px solid var(--ground);
-      border-bottom-width: 3px;
-      border-radius: 4px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 18px;
-      animation: key-press 1.6s infinite;
-    }
-
-    .d-delay .actor {
-      animation: delay-jump 1.6s infinite;
-    }
-
-    .d-delay .late .actor {
-      animation-delay: .2s;
-    }
-
-    @keyframes key-press {
-
-      0%,
-      5%,
-      15%,
-      100% {
-        border-bottom-width: 3px;
-      }
-
-      6%,
-      14% {
-        border-bottom-width: 1px;
-        color: var(--p);
-      }
-    }
-
-    @keyframes delay-jump {
-
-      0%,
-      11% {
-        transform: none;
-        animation-timing-function: ease-out;
-      }
-
-      13% {
-        transform: translateY(-8px) scale(.85, 1.2);
-        animation-timing-function: ease-out;
-      }
-
-      27% {
-        transform: translateY(-50px) scale(1);
-        animation-timing-function: ease-in;
-      }
-
-      41% {
-        transform: translateY(0) scale(.9, 1.1);
-      }
-
-      44% {
-        transform: scale(1.25, .75);
-        animation-timing-function: ease-out;
-      }
-
-      52%,
-      100% {
-        transform: none;
-      }
-    }
-
-    /* Squash and stretch: a rigid ball next to one that stretches as it falls and squashes on landing */
-    .ball {
-      position: absolute;
-      left: 50%;
-      bottom: 32px;
-      width: 26px;
-      height: 26px;
-      margin-left: -13px;
-      border-radius: 50%;
-      background: var(--p);
-      transform-origin: 50% 100%;
-      animation: ball-rigid 1.2s infinite;
-    }
-
-    .ss .ball {
-      animation-name: ball-ss;
-    }
-
-    @keyframes ball-rigid {
-
-      0%,
-      100% {
-        transform: translateY(-54px);
-        animation-timing-function: cubic-bezier(.55, 0, 1, .45);
-      }
-
-      50% {
-        transform: none;
-        animation-timing-function: cubic-bezier(0, .55, .45, 1);
-      }
-    }
-
-    @keyframes ball-ss {
-
-      0%,
-      100% {
-        transform: translateY(-54px);
-        animation-timing-function: cubic-bezier(.55, 0, 1, .45);
-      }
-
-      46% {
-        transform: translateY(-4px) scale(.8, 1.25);
-        animation-timing-function: linear;
-      }
-
-      50% {
-        transform: scale(1.4, .62);
-        animation-timing-function: ease-out;
-      }
-
-      56% {
-        transform: translateY(-8px) scale(.82, 1.2);
-        animation-timing-function: cubic-bezier(0, .55, .45, 1);
-      }
-    }
-
-    /* Feedback: dash, 100 ms hit stop, 80 ms white flash, 0.24 s shake, knockback */
-    .d-hit .world {
-      animation: hit-shake 2s infinite;
-    }
-
-    .d-hit .row {
-      position: absolute;
-      left: 50%;
-      bottom: 32px;
-      width: 220px;
-      height: 24px;
-      margin-left: -110px;
-    }
-
-    .d-hit .actor {
-      left: 0;
-      bottom: 0;
-      margin: 0;
-      animation: hit-dash 2s infinite;
-    }
-
-    .foe {
-      position: absolute;
-      left: 150px;
-      bottom: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 5px;
-      background: var(--e);
-      transform-origin: 50% 100%;
-      animation: hit-foe 2s infinite;
-    }
-
-    @keyframes hit-dash {
-
-      0%,
-      12% {
-        transform: none;
-        animation-timing-function: cubic-bezier(.6, 0, 1, 1);
-      }
-
-      24%,
-      29% {
-        transform: translateX(126px) scale(1.15, .88);
-        animation-timing-function: ease-out;
-      }
-
-      40%,
-      70% {
-        transform: translateX(100px);
-        animation-timing-function: ease-in-out;
-      }
-
-      90%,
-      100% {
-        transform: none;
-      }
-    }
-
-    @keyframes hit-foe {
-
-      0%,
-      23.9% {
-        transform: none;
-        background: var(--e);
-      }
-
-      24%,
-      27.9% {
-        transform: none;
-        background: #fff;
-        box-shadow: 0 0 0 1px var(--ground);
-      }
-
-      28%,
-      29% {
-        transform: none;
-        background: var(--e);
-        animation-timing-function: cubic-bezier(0, .6, .4, 1);
-      }
-
-      38% {
-        transform: translateX(44px) scale(1.2, .8);
-      }
-
-      46%,
-      70% {
-        transform: translateX(44px);
-        animation-timing-function: ease-in-out;
-      }
-
-      90%,
-      100% {
-        transform: none;
-      }
-    }
-
-    @keyframes hit-shake {
-
-      0%,
-      29%,
-      41%,
-      100% {
-        transform: none;
-      }
-
-      31% {
-        transform: translate(-5px, 2px) rotate(-1deg);
-      }
-
-      33% {
-        transform: translate(4px, -2px) rotate(.8deg);
-      }
-
-      35% {
-        transform: translate(-3px, 1px);
-      }
-
-      37% {
-        transform: translate(2px, -1px);
-      }
-
-      39% {
-        transform: translate(-1px, 0);
-      }
-    }
-
-    /* Juice: the same pickup with no feedback, a balanced pop, and so much that the pickup gets lost */
-    .gem,
-    .ring {
-      position: absolute;
-      left: 50%;
-      bottom: 42px;
-      width: 20px;
-      height: 20px;
-      margin-left: -10px;
-    }
-
-    .gem {
-      background: var(--e);
-      border-radius: 3px;
-      transform: rotate(45deg);
-      animation: gem-none 1.8s infinite;
-    }
-
-    .ring {
-      border: 2px solid var(--e);
-      border-radius: 50%;
-      opacity: 0;
-      animation: ring 1.8s ease-out infinite;
-    }
-
-    .mid .gem {
-      animation-name: gem-mid;
-    }
-
-    .max .gem {
-      animation-name: gem-max;
-    }
-
-    .max .ring {
-      animation-name: ring-max;
-    }
-
-    .max .r2 {
-      animation-delay: .15s;
-    }
-
-    .max .world {
-      animation: shake-max 1.8s infinite;
-    }
-
-    .flash {
-      position: absolute;
-      inset: 0;
-      background: #fff;
-      opacity: 0;
-      animation: flash-max 1.8s infinite;
-    }
-
-    @keyframes gem-none {
-
-      0%,
-      19.9%,
-      86%,
-      100% {
-        opacity: 1;
-      }
-
-      20%,
-      85% {
-        opacity: 0;
-      }
-    }
-
-    @keyframes gem-mid {
-
-      0%,
-      20% {
-        transform: translateY(0) rotate(45deg) scale(1);
-        opacity: 1;
-        animation-timing-function: ease-out;
-      }
-
-      25% {
-        transform: translateY(-6px) rotate(45deg) scale(1.35);
-        opacity: 1;
-        animation-timing-function: ease-in;
-      }
-
-      34%,
-      84% {
-        transform: translateY(-14px) rotate(45deg) scale(0);
-        opacity: 0;
-      }
-
-      85% {
-        transform: translateY(0) rotate(45deg) scale(0);
-        opacity: 1;
-        animation-timing-function: cubic-bezier(.3, 1.6, .6, 1);
-      }
-
-      95%,
-      100% {
-        transform: translateY(0) rotate(45deg) scale(1);
-        opacity: 1;
-      }
-    }
-
-    @keyframes gem-max {
-
-      0%,
-      20% {
-        transform: translateY(0) rotate(45deg) scale(1);
-        opacity: 1;
-        filter: hue-rotate(0deg);
-      }
-
-      28% {
-        transform: translateY(-34px) rotate(405deg) scale(3);
-        filter: hue-rotate(180deg);
-      }
-
-      40% {
-        transform: translateY(-20px) rotate(585deg) scale(2.2);
-        filter: hue-rotate(360deg);
-      }
-
-      55%,
-      84% {
-        transform: translateY(-40px) rotate(765deg) scale(0);
-        opacity: 0;
-      }
-
-      85% {
-        transform: translateY(0) rotate(45deg) scale(0);
-        opacity: 1;
-        filter: hue-rotate(0deg);
-      }
-
-      95%,
-      100% {
-        transform: translateY(0) rotate(45deg) scale(1);
-        opacity: 1;
-      }
-    }
-
-    @keyframes ring {
-
-      0%,
-      20% {
-        transform: scale(.4);
-        opacity: 0;
-      }
-
-      21% {
-        transform: scale(.6);
-        opacity: .9;
-      }
-
-      40%,
-      100% {
-        transform: scale(2.6);
-        opacity: 0;
-      }
-    }
-
-    @keyframes ring-max {
-
-      0%,
-      20% {
-        transform: scale(.4);
-        opacity: 0;
-      }
-
-      21% {
-        transform: scale(.8);
-        opacity: 1;
-      }
-
-      45%,
-      100% {
-        transform: scale(6);
-        opacity: 0;
-      }
-    }
-
-    @keyframes shake-max {
-
-      0%,
-      20%,
-      60%,
-      100% {
-        transform: none;
-      }
-
-      23% {
-        transform: translate(-7px, 4px);
-      }
-
-      26% {
-        transform: translate(6px, -5px);
-      }
-
-      29% {
-        transform: translate(-6px, -3px);
-      }
-
-      32% {
-        transform: translate(7px, 4px);
-      }
-
-      35% {
-        transform: translate(-5px, 5px);
-      }
-
-      38% {
-        transform: translate(5px, -4px);
-      }
-
-      42% {
-        transform: translate(-4px, 2px);
-      }
-
-      46% {
-        transform: translate(3px, -3px);
-      }
-
-      50% {
-        transform: translate(-2px, 2px);
-      }
-
-      55% {
-        transform: translate(1px, -1px);
-      }
-    }
-
-    @keyframes flash-max {
-
-      0%,
-      20%,
-      27%,
-      31%,
-      37%,
-      100% {
-        opacity: 0;
-      }
-
-      21%,
-      25% {
-        opacity: .9;
-      }
-
-      32%,
-      35% {
-        opacity: .7;
-      }
-    }
-
-    /* Colour: six hues in HSL and in OKLCH. Take the colour away and only the OKLCH row stays one even grey. */
-    .swatches {
-      position: absolute;
-      top: 34px;
-      right: 12px;
-      bottom: 14px;
-      left: 12px;
-      display: grid;
-      grid-template-columns: auto repeat(6, 1fr);
-      gap: 8px 5px;
-      animation: desaturate 4s infinite;
-    }
-
-    .swatches span {
-      border-radius: 5px;
-    }
-
-    .swatches .row-name {
-      align-self: center;
-      padding-right: .4rem;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .c-off {
-      position: absolute;
-      left: 0;
-      opacity: 0;
-      animation: label-off 4s infinite;
-    }
-
-    .c-on {
-      animation: label-on 4s infinite;
-    }
-
-    @keyframes desaturate {
-
-      0%,
-      35%,
-      95%,
-      100% {
-        filter: none;
-      }
-
-      45%,
-      85% {
-        filter: grayscale(1);
-      }
-    }
-
-    @keyframes label-on {
-
-      0%,
-      38%,
-      92%,
-      100% {
-        opacity: 1;
-      }
-
-      42%,
-      88% {
-        opacity: 0;
-      }
-    }
-
-    @keyframes label-off {
-
-      0%,
-      38%,
-      92%,
-      100% {
-        opacity: 0;
-      }
-
-      42%,
-      88% {
-        opacity: 1;
-      }
-    }
-
-    /* Comfort: a screen shake slider going 100%, 50%, off, and the scene calming down with it */
-    @property --amp {
-      syntax: '<length>';
-      inherits: true;
-      initial-value: 0px;
-    }
-
-    .d-comfort {
-      animation: shake-amount 4.5s infinite;
-    }
-
-    .d-comfort .world {
-      animation: jitter .2s linear infinite;
-    }
-
-    .level {
-      display: inline-grid;
-    }
-
-    .level span {
-      grid-area: 1 / 1;
-      opacity: 0;
-      animation: level 4.5s infinite;
-    }
-
-    .level span:nth-child(2) {
-      animation-delay: 1.5s;
-    }
-
-    .level span:nth-child(3) {
-      animation-delay: 3s;
-    }
-
-    .slider {
-      position: absolute;
-      top: 34px;
-      left: 12px;
-      width: 120px;
-      height: 4px;
-      border-radius: 2px;
-      background: var(--ground);
-    }
-
-    .thumb {
-      position: absolute;
-      top: -5px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--p);
-      animation: thumb 4.5s infinite;
-    }
-
-    @keyframes shake-amount {
-
-      0%,
-      32%,
-      100% {
-        --amp: 6px;
-      }
-
-      34%,
-      65% {
-        --amp: 3px;
-      }
-
-      67%,
-      98% {
-        --amp: 0px;
-      }
-    }
-
-    @keyframes jitter {
-
-      0%,
-      100% {
-        transform: none;
-      }
-
-      25% {
-        transform: translate(var(--amp), calc(var(--amp) * -.6));
-      }
-
-      50% {
-        transform: translate(calc(var(--amp) * -1), calc(var(--amp) * .4));
-      }
-
-      75% {
-        transform: translate(calc(var(--amp) * .6), var(--amp));
-      }
-    }
-
-    @keyframes level {
-
-      0%,
-      33% {
-        opacity: 1;
-      }
-
-      33.4%,
-      100% {
-        opacity: 0;
-      }
-    }
-
-    @keyframes thumb {
-
-      0%,
-      30%,
-      100% {
-        left: calc(100% - 14px);
-      }
-
-      34%,
-      63% {
-        left: calc(50% - 7px);
-      }
-
-      67%,
-      96% {
-        left: 0;
-      }
     }
 
     /* ── WORK ── */
@@ -2351,14 +775,30 @@
       font-size: 15px;
     }
 
-    /* ── LEETCODE (switched off with data-enabled on #leetcode-block) ── */
+    /* ── LEETCODE (switched off with data-enabled on #leetcode-block) ──
+       LeetCode's own colours: its orange for the section, its green, yellow and red for the three levels. Light
+       theme gets slightly darker shades so text stays readable. */
+    #leetcode-block {
+      --acc: #c97800;
+      --lc-easy: #00a693;
+      --lc-medium: #c98f00;
+      --lc-hard: #e0453c;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #leetcode-block {
+        --acc: #ffa116;
+        --lc-easy: #00b8a3;
+        --lc-medium: #ffc01e;
+        --lc-hard: #ff375f;
+      }
+    }
+
     .lc-card {
+      margin-top: 1.25rem;
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: 12px;
-      --lc-easy: #00a693;
-      --lc-medium: #e5a800;
-      --lc-hard: #e0453c;
       padding: 1.25rem;
     }
 
@@ -2527,19 +967,19 @@
     }
 
     .lc-cell[data-l="1"] {
-      background: color-mix(in srgb, var(--link) 35%, transparent);
+      background: color-mix(in srgb, var(--lc-easy) 35%, transparent);
     }
 
     .lc-cell[data-l="2"] {
-      background: color-mix(in srgb, var(--link) 60%, transparent);
+      background: color-mix(in srgb, var(--lc-easy) 60%, transparent);
     }
 
     .lc-cell[data-l="3"] {
-      background: color-mix(in srgb, var(--link) 80%, transparent);
+      background: color-mix(in srgb, var(--lc-easy) 80%, transparent);
     }
 
     .lc-cell[data-l="4"] {
-      background: var(--link);
+      background: var(--lc-easy);
     }
 
     .lc-cell.is-future {
@@ -2582,438 +1022,14 @@
       }
     }
 
-    /* The demos can be paused. Paused (and by default for visitors who ask for less motion) each one shows a
-       still frame with every line showing. */
-    .section>.wrap>.motion-toggle,
-    .section>.wrap>.toggle-dock {
-      margin-top: 1rem;
-    }
-
-    /* In Game feel the button leaves its dock while you scroll through the demos and waits at the bottom left.
-       The dock keeps its height, so the page does not jump. */
-    .toggle-dock {
-      min-height: 34px;
-    }
-
-    /* Where it floats is set from the script, beside the demo column. Floating, it sits above everything and
-       turns into a compact block in the same type: the verb on top, "anims" underneath. */
-    .motion-toggle.floating {
-      position: fixed;
-      z-index: 1000;
-      min-height: 0;
-      padding: .45rem .8rem .45rem .65rem;
-      border-radius: 10px;
-      filter: drop-shadow(0 4px 10px rgb(0 0 0 / .35));
-    }
-
-    .motion-toggle.floating .label {
-      display: grid;
-      line-height: 1.1;
-      text-align: left;
-    }
-
-    .motion-toggle .short,
-    .motion-toggle.floating .full {
-      display: none;
-    }
-
-    .motion-toggle.floating .short {
-      display: inline;
-    }
-
-    .motion-toggle.away {
-      transform: scale(0);
-      opacity: 0;
-    }
-
-    .motion-toggle {
-      min-height: 34px;
-      background: var(--acc);
-      border-color: var(--acc);
-      color: var(--bg);
-      font-size: 14.5px;
-      font-weight: 750;
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--acc) 22%, transparent);
-    }
-
-    /* While paused, the Play button pulses to invite a click, unless the visitor asked for less motion */
-    @media (prefers-reduced-motion: no-preference) {
-      .calm .motion-toggle {
-        animation: invite 1.8s ease-out infinite;
-      }
-    }
-
-    @keyframes invite {
-      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--acc) 55%, transparent); }
-      70%, 100% { box-shadow: 0 0 0 12px transparent; }
-    }
-
-    /* Key words in the Game feel and Claude Code text take the section colour */
-    #feel .sec-sub strong,
-    #claude .sec-sub strong,
-    .topic strong,
-    .aims strong,
-    .callout strong,
-    .cap-body strong,
-    .tool strong,
-    .demo-cap strong,
+    /* Key words in Staying current take the section colour */
     #current .sec-sub strong,
     .stay strong {
       color: var(--acc);
     }
 
-    /* Why it feels good. --lit counts how many bars or stamps are on, and also drives the counters */
-    @property --lit {
-      syntax: '<integer>';
-      inherits: true;
-      initial-value: 0;
-    }
-
-    .d-pitch {
-      animation: combo 4s infinite;
-    }
-
-    .notes {
-      position: absolute;
-      left: 50%;
-      bottom: 32px;
-      display: flex;
-      align-items: flex-end;
-      gap: 10px;
-      transform: translateX(-50%);
-    }
-
-    .notes span {
-      width: 20px;
-      height: calc(10px + var(--i) * 10px);
-      border-radius: 4px 4px 2px 2px;
-      background: var(--p);
-      opacity: calc(.2 + .8 * clamp(0, var(--lit) - var(--i) + 1, 1));
-    }
-
-    .combo,
-    .tally {
-      position: absolute;
-      top: 8px;
-      right: 12px;
-      font-size: 12.5px;
-      font-weight: 800;
-      line-height: 1.2;
-      color: var(--acc);
-    }
-
-    .combo {
-      counter-reset: combo var(--lit);
-    }
-
-    .combo::after {
-      content: "Combo ×" counter(combo);
-    }
-
-    @keyframes combo {
-      0% { --lit: 0; }
-      8% { --lit: 1; }
-      70%, 92% { --lit: 6; }
-      93%, 100% { --lit: 0; }
-    }
-
-    .d-agency>div::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 30px;
-      height: 2px;
-      background: var(--ground);
-    }
-
-    .keycap {
-      position: absolute;
-      left: 24%;
-      bottom: 32px;
-      display: grid;
-      place-items: center;
-      width: 26px;
-      height: 26px;
-      margin-left: -13px;
-      border: 1px solid var(--line);
-      border-bottom-width: 3px;
-      border-radius: 6px;
-      background: var(--surface);
-      font-size: 12px;
-      font-weight: 800;
-      animation: keycap 1.6s infinite;
-    }
-
-    .d-agency .actor {
-      left: 66%;
-      animation: answer 1.6s infinite;
-    }
-
-    .d-agency .mute .actor {
-      animation: none;
-    }
-
-    .huh,
-    .plus {
-      position: absolute;
-      left: 66%;
-      bottom: 62px;
-      font-weight: 800;
-      opacity: 0;
-    }
-
-    .huh {
-      font-size: 20px;
-      color: var(--muted);
-      transform: translateX(-50%);
-      animation: huh 1.6s infinite;
-    }
-
-    .plus {
-      font-size: 14px;
-      color: var(--e);
-      animation: plus 1.6s infinite;
-    }
-
-    .burst {
-      position: absolute;
-      left: 66%;
-      bottom: 44px;
-      width: 40px;
-      height: 40px;
-      margin: 0 0 -20px -20px;
-      border: 2px solid var(--e);
-      border-radius: 50%;
-      opacity: 0;
-      animation: burst 1.6s infinite;
-    }
-
-    .side {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    @keyframes keycap {
-      0%, 14%, 100% { transform: none; }
-      5% { transform: translateY(2px); }
-    }
-
-    @keyframes answer {
-      0%, 22%, 100% { transform: none; }
-      6% { transform: scale(1.3, .7); }
-      14% { transform: scale(.9, 1.1); }
-    }
-
-    @keyframes burst {
-      0%, 4% { opacity: 0; transform: scale(.3); }
-      6% { opacity: 1; transform: scale(.4); }
-      40%, 100% { opacity: 0; transform: scale(1.4); }
-    }
-
-    @keyframes plus {
-      0%, 5% { opacity: 0; transform: translate(-50%, 0); }
-      10% { opacity: 1; }
-      45%, 100% { opacity: 0; transform: translate(-50%, -16px); }
-    }
-
-    @keyframes huh {
-      0%, 20%, 85%, 100% { opacity: 0; }
-      30%, 70% { opacity: .9; }
-    }
-
-    .d-flow svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .band {
-      fill: color-mix(in srgb, var(--acc) 24%, transparent);
-    }
-
-    .axis {
-      fill: none;
-      stroke: var(--ground);
-      stroke-width: 2;
-    }
-
-    .zone,
-    .axis-name {
-      fill: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .flow-word {
-      fill: var(--acc);
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .dot {
-      fill: var(--e);
-      animation: flow-dot 6s ease-in-out infinite;
-    }
-
-    @keyframes flow-dot {
-      0% { transform: none; opacity: 0; }
-      5% { opacity: 1; }
-      25% { transform: translate(65px, -21px); }
-      50% { transform: translate(130px, -33px); }
-      75% { transform: translate(195px, -61px); }
-      92% { transform: translate(229px, -66px); opacity: 1; }
-      100% { transform: translate(229px, -66px); opacity: 0; }
-    }
-
-    /* Stamps fill slowly at first and faster near the end */
-    .d-goal {
-      animation: stamp-fill 6s infinite;
-    }
-
-    .stamps {
-      position: absolute;
-      left: 50%;
-      top: 34px;
-      display: grid;
-      grid-template-columns: repeat(5, 22px);
-      gap: 8px;
-      padding: 10px;
-      border: 1px dashed var(--ground);
-      border-radius: 10px;
-      transform: translateX(-50%) scale(calc(1 + .06 * clamp(0, var(--lit) - 9, 1)));
-    }
-
-    .stamps span {
-      position: relative;
-      height: 22px;
-      border: 2px solid var(--ground);
-      border-radius: 50%;
-    }
-
-    .stamps span::after {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: 50%;
-      background: var(--p);
-      opacity: clamp(0, var(--lit) - var(--i) + 1, 1);
-    }
-
-    .tally {
-      display: grid;
-      justify-items: end;
-      counter-reset: stamps var(--lit);
-    }
-
-    .tally::before,
-    .tally::after {
-      grid-area: 1 / 1;
-    }
-
-    .tally::before {
-      content: counter(stamps) " / 10";
-      opacity: calc(1 - clamp(0, var(--lit) - 9, 1));
-    }
-
-    .tally::after {
-      content: "Full!";
-      color: oklch(var(--acc-l) var(--acc-c) 150);
-      opacity: clamp(0, var(--lit) - 9, 1);
-    }
-
-    @keyframes stamp-fill {
-      0%, 10% { --lit: 0; }
-      45% { --lit: 4; }
-      62% { --lit: 7; }
-      72%, 92% { --lit: 10; }
-      93%, 100% { --lit: 0; }
-    }
-
-    .calm .demo,
-    .calm .demo *,
-    .calm .flow *,
-    .calm .term span {
-      animation: none !important;
-    }
-
-    .calm .term span,
-    .calm .level span:first-child,
-    .calm .ask,
-    .calm .loaded,
-    .calm .ctx .net,
-    .calm .steps span:nth-child(3) {
-      opacity: 1;
-    }
-
-    .calm .d-pitch {
-      --lit: 6;
-    }
-
-    .calm .d-goal {
-      --lit: 10;
-    }
-
-    .calm .huh,
-    .calm .plus {
-      opacity: 1;
-    }
-
-    .calm .plus {
-      transform: translate(-50%, -8px);
-    }
-
-    .calm .burst {
-      opacity: .6;
-    }
-
-    .calm .dot {
-      transform: translate(130px, -33px);
-    }
-
-    .calm .stations span:nth-child(3) b {
-      border-color: var(--acc);
-      background: color-mix(in srgb, var(--acc) 18%, var(--surface));
-    }
-
-    .calm .token {
-      opacity: 1;
-      left: 50%;
-      border-radius: 3px;
-      background: var(--e);
-    }
-
-    .calm .pipe li {
-      color: var(--c);
-      opacity: 1;
-    }
-
-    .calm .cloud li:not(.hit) {
-      opacity: .3;
-    }
-
-    .calm .cloud .hit {
-      opacity: 1;
-      border-color: var(--acc);
-    }
-
-    .calm .tree .f2 {
-      background: color-mix(in srgb, var(--acc) 18%, transparent);
-    }
-
     /* ── PHONES ── */
     @media (max-width: 640px) {
-      .nav {
-        display: none;
-      }
-
       h1 {
         font-size: 2rem;
       }
@@ -3055,29 +1071,6 @@
         width: 100%;
       }
 
-      .topics,
-      .cap {
-        grid-template-columns: 1fr;
-      }
-
-      .cap .demo {
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .timings {
-        grid-template-columns: 1fr;
-        gap: 0;
-      }
-
-      .timings dd+dt {
-        margin-top: .5rem;
-      }
-
-      .term {
-        font-size: 12.5px;
-      }
-
       .lc-top {
         flex-direction: column;
         align-items: stretch;
@@ -3098,17 +1091,8 @@
       <path d="M8 1.5 14 4.5v7L8 14.5 2 11.5v-7zM2 4.5 8 7.5l6-3M8 7.5v7" fill="none" stroke="currentColor"
         stroke-width="1.2" stroke-linejoin="round" />
     </symbol>
-    <symbol id="i-tree" viewBox="0 0 16 16">
-      <path d="M2 3h7M3.5 3v9h2.5M3.5 7.5h2.5M7 7.5h7M7 12h7" fill="none" stroke="currentColor" stroke-width="1.4" />
-    </symbol>
     <symbol id="i-play" viewBox="0 0 16 16">
       <path d="M5 3v10l8-5z" fill="currentColor" />
-    </symbol>
-    <symbol id="i-pause" viewBox="0 0 16 16">
-      <path d="M4 3h3v10H4zM9 3h3v10H9z" fill="currentColor" />
-    </symbol>
-    <symbol id="i-step" viewBox="0 0 16 16">
-      <path d="M3 3v10l7-5zM11 3h2v10h-2z" fill="currentColor" />
     </symbol>
     <symbol id="i-pad" viewBox="0 0 16 16">
       <path
@@ -3118,28 +1102,8 @@
     <symbol id="i-folder" viewBox="0 0 16 16">
       <path d="M1.5 3h5l1.5 1.5h6.5V13h-13z" fill="currentColor" />
     </symbol>
-    <symbol id="i-list" viewBox="0 0 16 16">
-      <path d="M2 4h12M2 8h12M2 12h8" fill="none" stroke="currentColor" stroke-width="1.6" />
-    </symbol>
     <symbol id="i-chart" viewBox="0 0 16 16">
       <path d="M2 14V9h3v5zM6.5 14V5h3v9zM11 14V2h3v12z" fill="currentColor" />
-    </symbol>
-    <symbol id="i-info" viewBox="0 0 16 16">
-      <path d="M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM7.2 7v5h1.6V7zm0-3v1.6h1.6V4z" fill="currentColor"
-        fill-rule="evenodd" />
-    </symbol>
-    <symbol id="i-warn" viewBox="0 0 16 16">
-      <path d="M8 1.5 15 14H1zM7.2 6v4h1.6V6zm0 5v1.6h1.6V11z" fill="currentColor" fill-rule="evenodd" />
-    </symbol>
-    <symbol id="i-error" viewBox="0 0 16 16">
-      <path d="M8 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM5.5 4.4 4.4 5.5 6.9 8l-2.5 2.5 1.1 1.1L8 9.1l2.5 2.5 1.1-1.1L9.1 8l2.5-2.5-1.1-1.1L8 6.9z"
-        fill="currentColor" fill-rule="evenodd" />
-    </symbol>
-    <symbol id="i-script" viewBox="0 0 16 16">
-      <path d="M3.5 1.5h6l3 3v10h-9zM5.5 8h5M5.5 10.5h5" fill="none" stroke="currentColor" stroke-width="1.2" />
-    </symbol>
-    <symbol id="i-grid" viewBox="0 0 16 16">
-      <path d="M2 2h12v12H2zM2 6h12M2 10h12M6 2v12M10 2v12" fill="none" stroke="currentColor" stroke-width="1.2" />
     </symbol>
     <symbol id="i-down" viewBox="0 0 16 16">
       <path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.6"
@@ -3164,23 +1128,9 @@
       <path d="M8 3 1 6.5 8 10l7-3.5zM4 8v3.5c1 1 2.5 1.5 4 1.5s3-.5 4-1.5V8M14.5 6.5v4" fill="none"
         stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
     </symbol>
-    <symbol id="i-school" viewBox="0 0 16 16">
-      <path d="M2.5 14.5V5L8 2l5.5 3v9.5M1.5 14.5h13M6.5 14.5v-3.5h3v3.5M5 7.5h1M10 7.5h1" fill="none"
-        stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
-    </symbol>
     <symbol id="i-mail" viewBox="0 0 16 16">
       <path d="M1.5 3.5h13v9h-13zM1.5 4l6.5 5 6.5-5" fill="none" stroke="currentColor" stroke-width="1.3"
         stroke-linejoin="round" />
-    </symbol>
-    <symbol id="i-tag" viewBox="0 0 16 16">
-      <path d="M2 2.5h5.5L14 9l-5 5-6.5-6.5z" fill="none" stroke="currentColor" stroke-width="1.3"
-        stroke-linejoin="round" />
-      <circle cx="5.2" cy="5.7" r="1.1" fill="currentColor" />
-    </symbol>
-    <symbol id="i-pin" viewBox="0 0 16 16">
-      <path d="M8 14.5s-4.5-4.6-4.5-8a4.5 4.5 0 0 1 9 0c0 3.4-4.5 8-4.5 8z" fill="none" stroke="currentColor"
-        stroke-width="1.3" stroke-linejoin="round" />
-      <circle cx="8" cy="6.5" r="1.6" fill="currentColor" />
     </symbol>
     <symbol id="i-clock" viewBox="0 0 16 16">
       <circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.3" />
@@ -3200,39 +1150,14 @@
         d="M3 1.5h10A1.5 1.5 0 0 1 14.5 3v10a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5zM4 6.6V12h1.7V6.6zm.85-3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM7.2 6.6V12h1.7V9.2c0-.7.4-1.1 1-1.1s.9.4.9 1.1V12h1.7V8.9c0-1.6-.8-2.4-2-2.4-.8 0-1.3.4-1.6.9v-.8z"
         fill="currentColor" fill-rule="evenodd" />
     </symbol>
-    <symbol id="i-heart" viewBox="0 0 16 16">
-      <path d="M8 14S1.5 10 1.5 5.6A3.2 3.2 0 0 1 8 4a3.2 3.2 0 0 1 6.5 1.6C14.5 10 8 14 8 14z" fill="none"
-        stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
-    </symbol>
-    <symbol id="i-ball" viewBox="0 0 16 16">
-      <ellipse cx="8" cy="10" rx="5.5" ry="3.8" fill="none" stroke="currentColor" stroke-width="1.3" />
-      <path d="M2 15h12M8 1.5v2.5M5 2.5l.8 1.8M11 2.5l-.8 1.8" fill="none" stroke="currentColor" stroke-width="1.3"
-        stroke-linecap="round" />
-    </symbol>
-    <symbol id="i-palette" viewBox="0 0 16 16">
-      <path d="M8 1.5a6.5 6.5 0 0 0 0 13c1 0 1.5-.6 1.5-1.3 0-1-1-1.2-1-2.2 0-.8.6-1.3 1.5-1.3h1.8a2.7 2.7 0 0 0 2.7-2.7C14.5 4 11.6 1.5 8 1.5z"
-        fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
-      <circle cx="4.8" cy="7.5" r="1" fill="currentColor" />
-      <circle cx="6.8" cy="4.6" r="1" fill="currentColor" />
-      <circle cx="10.2" cy="4.8" r="1" fill="currentColor" />
-    </symbol>
     <symbol id="i-eye" viewBox="0 0 16 16">
       <path d="M1 8s2.5-4.5 7-4.5S15 8 15 8s-2.5 4.5-7 4.5S1 8 1 8z" fill="none" stroke="currentColor"
         stroke-width="1.3" stroke-linejoin="round" />
       <circle cx="8" cy="8" r="2" fill="currentColor" />
     </symbol>
-    <symbol id="i-note" viewBox="0 0 16 16">
-      <path d="M6 12.5V3l7.5-1.5V11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
-      <circle cx="4.2" cy="12.5" r="1.9" fill="currentColor" />
-      <circle cx="11.7" cy="11" r="1.9" fill="currentColor" />
-    </symbol>
-    <symbol id="i-flag" viewBox="0 0 16 16">
-      <path d="M3 15V1.5M3 2.5h9l-2 3 2 3H3" fill="none" stroke="currentColor" stroke-width="1.3"
-        stroke-linecap="round" stroke-linejoin="round" />
-    </symbol>
   </svg>
 
-  <a class="skip" href="#projects">Skip to content</a>
+  <a class="skip" href="#top">Skip to content</a>
 
   <header class="site-head">
     <div class="wrap">
@@ -3240,14 +1165,24 @@
           <use href="#i-cube" />
         </svg>Yunus Burkut</a>
       <nav class="nav" aria-label="Sections">
-        <a href="#projects">Projects</a>
-        <a href="#current">Current</a>
-        <a href="#leetcode-block" data-lc-nav hidden>LeetCode</a>
-        <a href="#feel">Game feel</a>
-        <a href="#claude">Claude Code</a>
-        <a href="#work">Work</a>
-        <a href="#skills">Skills</a>
-        <a href="#contact">Contact</a>
+        <a href="#leetcode-block" data-lc-nav hidden><svg class="i">
+            <use href="#i-chart" />
+          </svg>LeetCode</a>
+        <a href="#projects"><svg class="i">
+            <use href="#i-folder" />
+          </svg>Projects</a>
+        <a href="#work"><svg class="i">
+            <use href="#i-case" />
+          </svg>Work</a>
+        <a href="#skills"><svg class="i">
+            <use href="#i-wrench" />
+          </svg>Skills</a>
+        <a href="#current"><svg class="i">
+            <use href="#i-eye" />
+          </svg>Current</a>
+        <a href="#contact"><svg class="i">
+            <use href="#i-mail" />
+          </svg>Contact</a>
       </nav>
       <a class="button" href="YunusBurkutCV.pdf" download><svg class="i">
           <use href="#i-down" />
@@ -3269,20 +1204,31 @@
         </div>
         <p class="lead">I build gameplay, UI and tools in Unity and Unreal Engine.</p>
         <p class="about">
-          For nearly five years I've worked on a multiplayer action game for Steam and on two of Zynga's mobile card
-          games. I played American football for five years, and these days I coach my university's flag football
-          team.
+          Nearly five years on two multiplayer MOBAs in Unreal Engine and two of Zynga's mobile card games.
         </p>
+        <ul class="focus">
+          <li data-lc-nav hidden><svg class="i">
+              <use href="#i-chart" />
+            </svg><span><a href="#leetcode-block">Fundamentals</a>: LeetCode, algorithms, system design.</span>
+          </li>
+          <li><svg class="i">
+              <use href="#i-eye" />
+            </svg><span><a href="#current">Product</a>: I play what is working right now.</span></li>
+          <li><svg class="i">
+              <use href="#i-spark" />
+            </svg><span><a href="#skills">Development</a>: Blender, Figma, Linear.</span></li>
+        </ul>
+        <p class="about">Five years of American football, now coaching my university's flag football team.</p>
         <ul class="facts">
           <li><svg class="i">
               <use href="#i-clock" />
-            </svg>Making games since 2021</li>
+            </svg>Since 2021</li>
           <li><svg class="i">
               <use href="#i-case" />
             </svg>4 studios</li>
           <li><svg class="i">
               <use href="#i-cube" />
-            </svg>Unity · Unreal Engine 4 &amp; 5</li>
+            </svg>Unity · Unreal 4 &amp; 5</li>
           <li><svg class="i">
               <use href="#i-code" />
             </svg>C# · C++</li>
@@ -3305,117 +1251,6 @@
       </div>
     </section>
 
-    <!-- ── PROJECTS: Magic Sort always sits here, as the same card as the other projects ── -->
-    <section class="section" id="projects" style="--h: 160" aria-labelledby="projects-title">
-      <div class="wrap">
-        <h2 class="sec-title" id="projects-title"><span class="sec-i"><svg class="i">
-              <use href="#i-folder" />
-            </svg></span>Projects</h2>
-        <p class="sec-sub">Games and tools I built on my own.</p>
-
-        <div class="projects">
-          <article class="card project" id="games">
-            <div class="media">
-              <iframe src="https://itch.io/embed-upload/19962064?color=0a0a0d" title="Magic Sort, playable in the browser"
-                allow="autoplay; fullscreen" allowfullscreen></iframe>
-            </div>
-            <div class="body">
-              <h3>Magic Sort</h3>
-              <p class="mono">Water sort puzzle · Unity 6 · C# · DOTween</p>
-              <p>
-                A water sort puzzle I made on my own, where most of the work went into how each move feels: a tube
-                dips when you pick it, shakes on a wrong move and pours along an arc. Playable right here.
-              </p>
-              <p class="links">
-                <a class="ic" href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener"><svg
-                    class="i">
-                    <use href="#i-github" />
-                  </svg>Source code ↗</a>
-              </p>
-            </div>
-          </article>
-
-          <article class="card project" id="blokfit">
-            <div class="media">
-              <img src="images/blokfit.gif" alt="Blokfit gameplay" loading="lazy" decoding="async" />
-            </div>
-            <div class="body">
-              <h3>Blokfit</h3>
-              <p class="mono">Procedural puzzle · Unity 6 · C#</p>
-              <p>
-                Drag oddly shaped pieces onto a grid made of triangles. There are no hand-made levels: each one is
-                generated when you start it, by splitting the grid with a flood fill. Has undo, a level editor window
-                and unit tests.
-              </p>
-              <p class="links">
-                <a class="ic" href="https://github.com/yunusburkut/Procedural-Block-Fit" target="_blank"
-                  rel="noopener"><svg class="i">
-                    <use href="#i-github" />
-                  </svg>Source code ↗</a>
-              </p>
-            </div>
-          </article>
-
-          <article class="card project" id="pathfinding">
-            <div class="media">
-              <img src="images/pathfinding-astar.gif" alt="A* search running on a grid" loading="lazy"
-                decoding="async" />
-            </div>
-            <div class="body">
-              <h3>Pathfinding Visualizer</h3>
-              <p class="mono">BFS and A* · Unity 6 · C#</p>
-              <p>
-                Watch BFS and A* search a grid step by step. Click to place the start, the goal and walls, or
-                generate a random maze. The search code allocates no memory while it runs, so there are no garbage
-                collector spikes.
-              </p>
-              <p class="links">
-                <a class="ic" href="https://github.com/yunusburkut/Pathfinding" target="_blank" rel="noopener"><svg
-                    class="i">
-                    <use href="#i-github" />
-                  </svg>Source code ↗</a>
-              </p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── STAYING CURRENT: how I keep up on the product side and the development side ── -->
-    <section class="section" id="current" style="--h: 340" aria-labelledby="current-title">
-      <div class="wrap">
-        <h2 class="sec-title" id="current-title"><span class="sec-i"><svg class="i">
-              <use href="#i-eye" />
-            </svg></span>Staying current</h2>
-        <p class="sec-sub">
-          Games and the tools to make them change fast. I keep up on <strong>both sides</strong>: what players are
-          being offered, and how games are being built.
-        </p>
-
-        <div class="sides">
-          <article class="glow stay">
-            <span class="stay-tag">Product</span>
-            <h3><svg class="i">
-                <use href="#i-pad" />
-              </svg>I watch what is in soft launch</h3>
-            <p>I follow <a href="https://softlaunch.games/" target="_blank" rel="noopener">softlaunch.games</a> and new
-              releases to see <strong>which games are being tested right now</strong>, and what the market is about to
-              get.</p>
-          </article>
-
-          <article class="glow stay">
-            <span class="stay-tag">Development</span>
-            <h3><svg class="i">
-                <use href="#i-spark" />
-              </svg>I build with today's tools</h3>
-            <p>I work every day with <strong>Claude Code</strong> and the tools around it: <strong>Blender</strong>
-              for assets, <strong>Figma</strong> for UI, <strong>Linear</strong> for planning and
-              <strong>GitHub</strong> for code.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
     <!-- ── LEETCODE (filled from data/leetcode.json; stays hidden if it is missing) ──
          To turn the section on or off, set data-enabled to "true" or "false". -->
     <section class="section" id="leetcode-block" style="--h: 100" data-enabled="true" hidden
@@ -3425,23 +1260,6 @@
               <use href="#i-chart" />
             </svg></span>LeetCode</h2>
         <p class="sec-sub">Algorithm practice, updated every day.</p>
-        <div class="glow pledge">
-          <p class="pledge-big">Claude Code should make me <span class="up">10x better</span>, not <span
-              class="down">10x worse</span>.</p>
-          <p>I build with it every day, so I make a point of keeping my own fundamentals sharp. I don't want to lose
-            my grip on data structures and algorithms, so alongside it:</p>
-          <ul class="habits">
-            <li style="--k: 340"><svg class="i">
-                <use href="#i-code" />
-              </svg>I solve LeetCode problems</li>
-            <li style="--k: 100"><svg class="i">
-                <use href="#i-tree" />
-              </svg>I read on data structures and algorithms</li>
-            <li style="--k: 220"><svg class="i">
-                <use href="#i-grid" />
-              </svg>I read on system design</li>
-          </ul>
-        </div>
         <div class="lc-card">
           <div class="lc-top">
             <div class="lc-ring">
@@ -3505,635 +1323,86 @@
       </div>
     </section>
 
-    <!-- ── GAME FEEL: what I know about making a game feel good, and what I aim for in mine ── -->
-    <section class="section" id="feel" style="--h: 280" aria-labelledby="feel-title">
+    <!-- ── PROJECTS: Magic Sort always sits here, as the same card as the other projects ── -->
+    <section class="section" id="projects" style="--h: 160" aria-labelledby="projects-title">
       <div class="wrap">
-        <h2 class="sec-title" id="feel-title"><span class="sec-i"><svg class="i">
-              <use href="#i-heart" />
-            </svg></span>Game feel</h2>
-        <p class="sec-sub">
-          A good game answers <strong>instantly</strong>, shows <strong>clearly</strong> what just happened and stays
-          <strong>fun to repeat</strong>. These are the details I work on.
-        </p>
-        <div class="toggle-dock">
-          <button class="button motion-toggle" type="button" hidden><svg class="i">
-              <use href="#i-pause" />
-            </svg><span class="label"><span class="verb">Pause</span> <span class="what"><span class="full">animations</span><span class="short">anims</span></span></span></button>
-        </div>
+        <h2 class="sec-title" id="projects-title"><span class="sec-i"><svg class="i">
+              <use href="#i-folder" />
+            </svg></span>Projects</h2>
+        <p class="sec-sub">Games and tools I built on my own.</p>
 
-        <div class="topics">
-          <article class="card topic">
-            <div class="demo split d-delay" role="img"
-              aria-label="One key press makes two squares jump. The left one answers after 100 ms, the right one after 300 ms and feels late.">
-              <div><span class="demo-label">100 ms</span><span class="ground"></span><span class="actor"></span><span
-                  class="key">Space</span></div>
-              <div class="late"><span class="demo-label">300 ms · feels late</span><span class="ground"></span><span
-                  class="actor"></span><span class="key">Space</span></div>
+        <div class="projects">
+          <article class="card project" id="games">
+            <div class="media">
+              <iframe src="https://itch.io/embed-upload/19962064?color=0a0a0d" title="Magic Sort, playable in the browser"
+                allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
-            <h3><svg class="i">
-                <use href="#i-clock" />
-              </svg>Response and input delay</h3>
-            <ul>
-              <li>Show a response within <strong>100 ms</strong>, or it feels laggy.</li>
-              <li>Players need about <strong>240 ms</strong> to see, decide and act, so enemy warnings last longer.
-              </li>
-              <li><strong>Coyote time</strong> (0.10–0.15 s) and a <strong>jump buffer</strong> (0.08–0.20 s) forgive
-                a press that is a bit late or early.</li>
-            </ul>
-          </article>
-
-          <article class="card topic">
-            <div class="demo split d-squash" role="img"
-              aria-label="Two bouncing balls. The rigid one looks stiff. The other stretches as it falls and squashes when it lands, so it looks alive.">
-              <div><span class="demo-label">Rigid</span><span class="ground"></span><span class="ball"></span></div>
-              <div class="ss"><span class="demo-label">Squash and stretch</span><span class="ground"></span><span
-                  class="ball"></span></div>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-ball" />
-              </svg>Disney's animation principles</h3>
-            <ul>
-              <li><strong>Squash and stretch</strong> shows weight: stretch on the jump, squash on landing, same
-                volume.</li>
-              <li><strong>Anticipation</strong> for enemies, almost none for the player: a wind-up never delays the
-                action.</li>
-              <li><strong>Arcs, easing and follow-through</strong> make motion feel alive.</li>
-              <li><strong>Exaggerate</strong> only rare moves; routine ones stay short and light.</li>
-            </ul>
-          </article>
-
-          <article class="card topic">
-            <div class="demo d-hit" role="img"
-              aria-label="A square dashes into an enemy. Both freeze for 100 ms, the enemy flashes white, the screen shakes and the enemy is knocked back.">
-              <span class="demo-label">Hit stop 100 ms · flash 80 ms · shake 0.24 s</span>
-              <div class="world"><span class="ground"></span>
-                <div class="row"><span class="actor"></span><span class="foe"></span></div>
-              </div>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-list" />
-              </svg>Feedback timings</h3>
-            <dl class="timings">
-              <dt>Hit stop</dt>
-              <dd>50–100 ms (3–6 frames), never past ~8 frames on a player action</dd>
-              <dt>White flash</dt>
-              <dd>50–100 ms: shorter is invisible, longer smears</dd>
-              <dt>Screen shake</dt>
-              <dd>0.1–0.3 s, from a decaying "trauma" value, squared</dd>
-              <dt>UI tween</dt>
-              <dd>0.10–0.25 s, ease-out by default</dd>
-              <dt>Landing squash</dt>
-              <dd>80–150 ms, scaled by impact speed</dd>
-            </dl>
-          </article>
-
-          <article class="card topic">
-            <div class="demo split d-juice" role="img"
-              aria-label="The same pickup three ways. With no feedback it just vanishes. Balanced, it pops with a small ring. Overdone, it spins, flashes and shakes so much that the pickup itself is hidden.">
-              <div><span class="demo-label">None</span><span class="ground"></span><span class="gem"></span></div>
-              <div class="mid"><span class="demo-label">Balanced</span><span class="ground"></span><span
-                  class="ring"></span><span class="gem"></span></div>
-              <div class="max"><span class="demo-label">Too much</span>
-                <div class="world"><span class="ground"></span><span class="ring"></span><span
-                    class="ring r2"></span><span class="gem"></span></div><span class="flash"></span>
-              </div>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-spark" />
-              </svg>Juice, in balance</h3>
-            <ul>
-              <li>In a study of 3,018 players (Kao, 2020), <strong>no juice and too much juice both did worse</strong>
-                than a medium-high amount.</li>
-              <li><strong>One event, one peak:</strong> sound, particles, camera and UI hit together.</li>
-              <li><strong>Small for routine, big for rare,</strong> so rare moments stand out.</li>
-            </ul>
-          </article>
-
-          <article class="card topic">
-            <div class="demo d-color" role="img"
-              aria-label="Six hues in HSL and six in OKLCH. With the colour taken away, the HSL row turns into uneven greys while the OKLCH row stays one even grey.">
-              <span class="demo-label"><span class="c-on">Colour</span><span class="c-off">Lightness only</span></span>
-              <div class="swatches">
-                <span class="row-name">HSL</span><span style="background: hsl(0 75% 50%)"></span><span
-                  style="background: hsl(60 75% 50%)"></span><span style="background: hsl(120 75% 50%)"></span><span
-                  style="background: hsl(180 75% 50%)"></span><span style="background: hsl(240 75% 50%)"></span><span
-                  style="background: hsl(300 75% 50%)"></span>
-                <span class="row-name">OKLCH</span><span style="background: oklch(.7 .13 25)"></span><span
-                  style="background: oklch(.7 .13 85)"></span><span style="background: oklch(.7 .13 145)"></span><span
-                  style="background: oklch(.7 .13 205)"></span><span style="background: oklch(.7 .13 265)"></span><span
-                  style="background: oklch(.7 .13 325)"></span>
-              </div>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-palette" />
-              </svg>Colour and readability</h3>
-            <ul>
-              <li>Colour carries meaning: player, hazards and goals stand out by <strong>contrast and
-                  silhouette</strong>.</li>
-              <li>Palettes in <strong>OKLCH</strong>: same lightness, evenly spaced hues, so no colour shouts. This
-                site uses it.</li>
-              <li>An effect <strong>never covers</strong> what it announces.</li>
-            </ul>
-          </article>
-
-          <article class="card topic">
-            <div class="demo d-comfort" role="img"
-              aria-label="A screen shake slider moves from 100% to 50% to off, and the shaking scene calms down with it.">
-              <span class="demo-label">Screen shake: <span class="level"><span>100%</span><span>50%</span><span>Off</span></span></span>
-              <span class="slider"><span class="thumb"></span></span>
-              <div class="world"><span class="ground"></span><span class="actor"></span></div>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-eye" />
-              </svg>Comfort and accessibility</h3>
-            <ul>
-              <li>At most <strong>3 flashes a second</strong>, and no saturated red flashing.</li>
-              <li><strong>Sliders, not toggles,</strong> for screen shake and full-screen effects.</li>
-              <li>Input <strong>keeps working</strong> through any freeze, so no press is lost.</li>
-            </ul>
-          </article>
-        </div>
-
-        <h3 class="sub-title">Why it feels good</h3>
-        <div class="topics">
-          <article class="card topic">
-            <div class="demo d-pitch" role="img"
-              aria-label="Six hits in a row, each bar taller than the last, like a sound that plays one step higher on every hit. The combo counter climbs to six, then the chain resets.">
-              <span class="demo-label">Each hit, one step higher</span>
-              <div class="notes">
-                <span style="--i: 1"></span><span style="--i: 2"></span><span style="--i: 3"></span>
-                <span style="--i: 4"></span><span style="--i: 5"></span><span style="--i: 6"></span>
-              </div>
-              <span class="combo"></span>
-              <div class="ground"></div>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-note" />
-              </svg>Sounds that climb</h3>
-            <ul>
-              <li>A coin chain that goes <strong>one step higher per pickup</strong> is a progress bar you hear. The
-                brain predicts the next step and enjoys it landing: dopamine follows <strong>anticipation</strong>.
-              </li>
-              <li>The same sound on repeat fades from attention (<strong>habituation</strong>). A rising or slightly
-                random pitch keeps it fresh.</li>
-              <li><strong>A surprise lands harder</strong> than an expected reward, so a rare big hit beats a big hit
-                every time.</li>
-            </ul>
-          </article>
-
-          <article class="card topic">
-            <div class="demo d-agency split" role="img"
-              aria-label="The same key press twice. On the left nothing happens and a question mark appears. On the right the character squashes, a ring bursts and a plus one pops up.">
-              <span class="demo-label">Same press, two answers</span>
-              <div class="mute">
-                <span class="keycap">A</span>
-                <span class="actor"></span>
-                <span class="huh">?</span>
-                <span class="side">Silent</span>
-              </div>
-              <div>
-                <span class="keycap">A</span>
-                <span class="actor"></span>
-                <span class="burst"></span>
-                <span class="plus">+1</span>
-                <span class="side">Answered</span>
-              </div>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-pad" />
-              </svg>Every action answered</h3>
-            <ul>
-              <li>The <strong>"I did that"</strong> feeling (sense of agency) is strongest when the result is instant
-                and matches the action.</li>
-              <li>Players come back for <strong>competence</strong>, proof they are getting good (Ryan, Rigby and
-                Przybylski, 2006).</li>
-              <li>Silence reads as <strong>"did it work?"</strong>. Sound, image and vibration together read as
-                <strong>one solid event</strong>.</li>
-            </ul>
-          </article>
-
-          <article class="card topic">
-            <div class="demo d-flow" role="img"
-              aria-label="A chart of challenge against skill. A dot climbs along the flow channel between anxiety above and boredom below.">
-              <span class="demo-label">Staying in the channel</span>
-              <svg viewBox="0 0 320 136" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                <polygon class="band" points="40,100 40,116 70,116 300,44 300,30 268,30" />
-                <path class="axis" d="M40 30V116H300" />
-                <text class="zone" x="86" y="52">Anxiety</text>
-                <text class="zone" x="236" y="104">Boredom</text>
-                <text class="flow-word" x="168" y="74" transform="rotate(-17 168 74)">Flow</text>
-                <text class="axis-name" x="300" y="130" text-anchor="end">Skill →</text>
-                <text class="axis-name" x="34" y="116" transform="rotate(-90 34 116)">Challenge →</text>
-                <circle class="dot" cx="55" cy="105" r="6" />
-              </svg>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-chart" />
-              </svg>Flow</h3>
-            <ul>
-              <li><strong>Flow</strong> (Csikszentmihalyi) needs clear goals, <strong>instant feedback</strong> and a
-                challenge just above your skill.</li>
-              <li>Too easy turns into <strong>boredom</strong>, too hard into <strong>anxiety</strong>, so the
-                challenge grows with the player.</li>
-              <li>Feedback lets players <strong>correct in the moment</strong> and stay in the channel.</li>
-            </ul>
-          </article>
-
-          <article class="card topic">
-            <div class="demo d-goal" role="img"
-              aria-label="A card of ten stamps fills up, slowly at first and faster near the end, then shows Full.">
-              <span class="demo-label">Faster near the goal</span>
-              <div class="stamps">
-                <span style="--i: 1"></span><span style="--i: 2"></span><span style="--i: 3"></span>
-                <span style="--i: 4"></span><span style="--i: 5"></span><span style="--i: 6"></span>
-                <span style="--i: 7"></span><span style="--i: 8"></span><span style="--i: 9"></span>
-                <span style="--i: 10"></span>
-              </div>
-              <span class="tally"></span>
-            </div>
-            <h3><svg class="i">
-                <use href="#i-flag" />
-              </svg>The pull of the finish</h3>
-            <ul>
-              <li>People <strong>speed up near a goal</strong>: in a coffee card study, customers bought faster as a
-                free drink got close (Kivetz, Urminsky and Zheng, 2006).</li>
-              <li>So progress stays <strong>visible</strong>, and the last step gets the <strong>biggest
-                  moment</strong>.</li>
-              <li>A clear <strong>"done"</strong> signal closes the loop and feels like a reward.</li>
-            </ul>
-          </article>
-        </div>
-
-        <h3 class="sub-title" id="aims-title">What I aim for in my games</h3>
-        <ol class="aims">
-          <li><strong>Respond on the first frame.</strong> Squash sells the wind-up without delaying the move.</li>
-          <li><strong>Forgive the player.</strong> Generous timing windows, so mistakes feel like yours, not the
-            game's.</li>
-          <li><strong>Clarity before polish.</strong> Rule first, then a readable change, then feedback, decoration
-            last.</li>
-          <li><strong>Fun to repeat.</strong> Small feedback for what you do a hundred times, a big moment for what
-            you do once.</li>
-          <li><strong>Tune in data, not code.</strong> Timings live in one place, so I adjust the feel while playing.
-          </li>
-        </ol>
-
-        <p class="callout"><svg class="i">
-            <use href="#i-pad" />
-          </svg><span><strong>In Magic Sort:</strong> a tube dips when picked, shakes on a wrong move, pours along an
-            arc and bounces when full. Levels slide in tube by tube so you can read the board first, and all timings
-            live in <strong>one ScriptableObject</strong>.</span></p>
-      </div>
-    </section>
-
-    <!-- ── CLAUDE CODE: examples come from the setup of my current Unity game ── -->
-    <section class="section" id="claude" style="--h: 40" aria-labelledby="claude-title">
-      <div class="wrap">
-        <h2 class="sec-title" id="claude-title"><span class="sec-i"><svg class="i">
-              <use href="#i-spark" />
-            </svg></span>Building games with Claude Code</h2>
-        <p class="sec-sub">
-          I use Claude Code as a <strong>well-briefed teammate</strong>, set up like a project: its own agents,
-          skills, rules and safety hooks. The design, the shipped code and the <strong>final call stay with
-            me</strong>.
-        </p>
-        <button class="button motion-toggle" type="button" hidden><svg class="i">
-            <use href="#i-pause" />
-          </svg><span class="label"><span class="verb">Pause</span> <span class="what">animations</span></span></button>
-
-        <ul class="stats" aria-label="My Claude Code setup for my current Unity game">
-          <li><strong>9</strong> agents</li>
-          <li><strong>22</strong> skills</li>
-          <li><strong>2</strong> rules</li>
-          <li><strong>1</strong> safety hook</li>
-          <li><strong>3</strong> models, each where it fits</li>
-        </ul>
-
-
-        <div class="claude-demos">
-          <article class="card demo-card">
-            <svg class="flow" viewBox="0 0 340 200" role="img"
-              aria-label="I brief Claude, Claude sends the work to agents that run in parallel, their results come back, and I review them before anything goes in.">
-              <path class="links" d="M72 100H104M190 100 226 34M190 100H226M190 100 226 166" />
-              <g class="node me">
-                <rect x="8" y="82" width="64" height="36" rx="8" /><text x="40" y="105">Me</text>
-              </g>
-              <g class="node lead">
-                <rect x="104" y="82" width="86" height="36" rx="8" /><text x="147" y="105">Claude</text>
-              </g>
-              <g class="node agent">
-                <rect x="226" y="18" width="108" height="32" rx="8" /><text x="280" y="39">bug-hunter</text>
-              </g>
-              <g class="node agent">
-                <rect x="226" y="84" width="108" height="32" rx="8" /><text x="280" y="105">unity-reviewer</text>
-              </g>
-              <g class="node agent">
-                <rect x="226" y="150" width="108" height="32" rx="8" /><text x="280" y="171">design drafts</text>
-              </g>
-              <circle class="dot d0" r="4.5" />
-              <circle class="dot d1" r="4.5" />
-              <circle class="dot d2" r="4.5" />
-              <circle class="dot d3" r="4.5" />
-              <g class="done">
-                <circle cx="68" cy="82" r="9" />
-                <path d="M64 82l3 3 5-6" />
-              </g>
-            </svg>
-            <p class="demo-cap"><strong>Agents work in parallel, I decide.</strong> I write the brief, agents dig in
-              together, and nothing goes in until I review it and test it in Unity.</p>
-          </article>
-
-          <article class="card demo-card">
-            <div class="term" role="img"
-              aria-label="A Claude Code session. The game-feel skill turns 'make the jump feel better' into numbers. Then a hook blocks an edit to an open Unity scene, and I make the change in the editor.">
-              <span class="you">› make the jump feel better</span>
-              <span class="dim">● game-feel skill</span>
-              <span>  stretch  Y 1.2    90 ms</span>
-              <span>  squash   Y 0.8   120 ms</span>
-              <span>  coyote 0.12 s · buffer 0.15 s</span>
-              <span class="dim">● Edit Scenes/Level1.unity</span>
-              <span class="bad">✕ guard-unity-yaml: blocked</span>
-              <span class="dim">  The open editor would overwrite</span>
-              <span class="dim">  this scene. Change it in Unity.</span>
-              <span class="you">› ok, I'll set it in the editor</span>
-            </div>
-            <p class="demo-cap"><strong>Skills give numbers, hooks set limits.</strong> A skill turns a vague wish into
-              values, and a hook stops an edit that would break an open scene.</p>
-          </article>
-        </div>
-
-        <h3 class="sub-title">What I set up, and how it works</h3>
-
-        <div class="caps">
-          <article class="card cap">
-            <div class="demo d-pipe" role="img"
-              aria-label="One change from start to finish: linear-scout finds the issue, the plan is sharpened with me, Claude writes the change, two reviewers check it in parallel, the compile log is checked, and I test it in Play Mode.">
-              <span class="demo-label">One change, start to finish</span>
-              <ol class="pipe">
-                <li><span>linear-scout finds the issue</span></li>
-                <li class="mine"><span>Plan sharpened with me</span></li>
-                <li><span>Claude writes the change</span></li>
-                <li><span>Two reviewers, in parallel</span></li>
-                <li><span>Compile log is clean</span></li>
-                <li class="mine"><span>I test it in Play Mode</span></li>
-              </ol>
-            </div>
-            <div class="cap-body">
-              <h3><svg class="i">
-                  <use href="#i-tree" />
-                </svg>Orchestration, start to finish</h3>
-              <p>Every change starts with an agent finding its <strong>Linear issue</strong>, so nothing gets built
-                twice. The <code>grill-me</code> skill <strong>questions the plan</strong> with me first. Claude writes
-                the <strong>shortest diff</strong> in the right place, read-only reviewers check it <strong>in
-                  parallel</strong> and Claude reads the compile log. The last step is mine: I <strong>test it in Play
-                  Mode</strong>.</p>
-              <ul class="names">
-                <li>linear-scout</li>
-                <li>grill-me</li>
-                <li>lean-code</li>
-                <li>unity-reviewer</li>
-                <li>net-auditor</li>
-                <li>implementation-verification</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="card cap">
-            <div class="demo d-route" role="img"
-              aria-label="Tasks arrive one at a time and each goes to the agent built for it: mechanic ideas to idea-forge on Opus, a code review to unity-reviewer on Sonnet, an issue lookup to linear-scout on Haiku.">
-              <span class="demo-label">Each task goes to its agent</span>
-              <span class="agent-row r1" style="--row: 16%"><b>idea-forge</b><i>Opus</i></span>
-              <span class="agent-row r2" style="--row: 44%"><b>unity-reviewer</b><i>Sonnet</i></span>
-              <span class="agent-row r3" style="--row: 72%"><b>linear-scout</b><i>Haiku</i></span>
-              <span class="task t1" style="--row: 16%">New mechanic ideas</span>
-              <span class="task t2" style="--row: 44%">Review this change</span>
-              <span class="task t3" style="--row: 72%">Is there an issue?</span>
-            </div>
-            <div class="cap-body">
-              <h3><svg class="i">
-                  <use href="#i-case" />
-                </svg>Agents with one job each</h3>
-              <p>Nine subagents, each with <strong>one narrow job</strong> and its own context, so they never flood the
-                main session. All are <strong>read-only</strong>: they report, I decide. Each runs on the model it
-                needs: <strong>Opus</strong> for design, <strong>Sonnet</strong> for code audits,
-                <strong>Haiku</strong> for quick lookups.</p>
-              <ul class="names">
-                <li>bug-hunter</li>
-                <li>unity-reviewer</li>
-                <li>net-auditor</li>
-                <li>perf-auditor</li>
-                <li>design-critic</li>
-                <li>idea-forge</li>
-                <li>clarity-reviewer</li>
-                <li>launch-auditor</li>
-                <li>linear-scout</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="card cap">
-            <div class="demo d-skills" role="img"
-              aria-label="A request comes in: add a shake when the player lands. Of 22 skills, only game-feel and feel-authoring load; the rest stay as one-line descriptions.">
-              <span class="demo-label">22 skills, only 2 load</span>
-              <span class="ask">› add a shake when the player lands</span>
-              <ul class="cloud">
-                <li>unity-architecture</li>
-                <li class="hit">game-feel</li>
-                <li>unity-performance</li>
-                <li>level-beat-review</li>
-                <li class="hit">feel-authoring</li>
-                <li>unity-debugging</li>
-                <li>mechanic-forge</li>
-                <li>player-clarity</li>
-                <li>refactor-pass</li>
-                <li>art-pipeline</li>
-              </ul>
-              <span class="loaded">Loaded: game-feel · feel-authoring</span>
-            </div>
-            <div class="cap-body">
-              <h3><svg class="i">
-                  <use href="#i-cap" />
-                </svg>Skills that load only when needed</h3>
-              <p><strong>22 skills</strong> hold the know-how: game-feel numbers, Unity architecture, frame budgets,
-                debugging, level pacing, even a Steam launch audit. Only a one-line description sits in context
-                <strong>until a task needs it</strong>, then the full playbook loads. Four come from <strong>Unity's
-                  official plugin</strong>, the rest are made for this game.</p>
-              <ul class="names">
-                <li>game-feel</li>
-                <li>feel-authoring</li>
-                <li>unity-architecture</li>
-                <li>unity-performance</li>
-                <li>level-beat-review</li>
-                <li>mechanic-forge</li>
-                <li>+16 more</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="card cap">
-            <div class="demo d-rules" role="img"
-              aria-label="When Claude opens a file in the simulation code, only CLAUDE.md and the lean-code rule are in context. When it opens a networking file, the networking rule loads as well.">
-              <span class="demo-label">Context follows the folder</span>
-              <ul class="tree">
-                <li class="f1">Core/MovementSolver.cs</li>
-                <li class="f2">Game/Net/NetworkSession.cs</li>
-              </ul>
-              <div class="ctx">
-                <span class="ctx-label">In context</span>
-                <span>CLAUDE.md</span><span>lean-code.md</span><span class="net">networking.md</span>
-              </div>
-            </div>
-            <div class="cap-body">
-              <h3><svg class="i">
-                  <use href="#i-script" />
-                </svg>A short CLAUDE.md, rules by folder</h3>
-              <p>CLAUDE.md stays <strong>under 100 lines</strong>: a line stays only if Claude would make a mistake
-                without it. Detail lives elsewhere. The networking contract is a rule that <strong>loads only in
-                  networking code</strong>.</p>
-              <ul class="names">
-                <li>CLAUDE.md</li>
-                <li>rules/lean-code.md</li>
-                <li>rules/networking.md</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="card cap">
-            <div class="demo d-perms" role="img"
-              aria-label="Commands are sorted: git diff runs, a force push asks me first, reading generated Library files is blocked, and editing an open scene is blocked by the hook.">
-              <span class="demo-label">Every command has a lane</span>
-              <span class="cmd c1" style="--bx: 18%">git diff</span>
-              <span class="cmd c2" style="--bx: 50%">git push --force</span>
-              <span class="cmd c3" style="--bx: 80%">Read Library/**</span>
-              <span class="cmd c4" style="--bx: 80%">Edit Level1.unity</span>
-              <span class="bin b1">Runs</span><span class="bin b2">Asks me</span><span class="bin b3">Blocked</span>
-            </div>
-            <div class="cap-body">
-              <h3><svg class="i">
-                  <use href="#i-warn" />
-                </svg>Guardrails: permissions and a hook</h3>
-              <p>Everyday git commands <strong>just run</strong>. Anything that can destroy work, like a hard reset or
-                a force push, <strong>asks me first</strong>, and Unity's generated folders are <strong>off
-                  limits</strong>. A hook blocks hand-edits to scenes and prefabs while the editor is open, and to
-                generated animation files always.</p>
-              <ul class="names">
-                <li>allow</li>
-                <li>ask</li>
-                <li>deny</li>
-                <li>guard-unity-yaml</li>
-              </ul>
-            </div>
-          </article>
-        </div>
-
-        <h3 class="sub-title">Project order and asset production</h3>
-
-        <article class="card cap">
-          <div class="demo d-assets" role="img"
-            aria-label="An asset moves through the chain: a Linear issue, Claude edits the build script, headless Blender exports the model, Unity rebuilds the prefabs, and the commit lands on GitHub tagged with the issue.">
-            <span class="demo-label">From issue to asset</span>
-            <div class="stations">
-              <span><b><svg class="i">
-                    <use href="#i-list" />
-                  </svg></b>Linear</span>
-              <span><b><svg class="i">
-                    <use href="#i-script" />
-                  </svg></b>Script</span>
-              <span><b><svg class="i">
-                    <use href="#i-cube" />
-                  </svg></b>Blender</span>
-              <span><b><svg class="i">
-                    <use href="#i-grid" />
-                  </svg></b>Unity</span>
-              <span><b><svg class="i">
+            <div class="body">
+              <h3>Magic Sort</h3>
+              <p class="mono">Water sort puzzle · Unity 6 · C# · DOTween</p>
+              <p>
+                Most of the work went into how each move feels: a tube dips when picked, shakes on a wrong move and
+                pours along an arc. Playable right here.
+              </p>
+              <p class="links">
+                <a class="ic" href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener"><svg
+                    class="i">
                     <use href="#i-github" />
-                  </svg></b>GitHub</span>
+                  </svg>Source code ↗</a>
+              </p>
             </div>
-            <div class="track"><span class="token"></span></div>
-            <p class="steps">
-              <span>The issue says what to make</span>
-              <span>Claude edits the build script</span>
-              <span>Headless Blender exports the FBX</span>
-              <span>Unity rebuilds prefabs and clips</span>
-              <span>Commit tagged with the issue</span>
-            </p>
-          </div>
-          <div class="cap-body">
-            <h3><svg class="i">
-                <use href="#i-cube" />
-              </svg>Assets from scripts, not by hand</h3>
-            <p>The character, rig, animations, props and level kit are <strong>built by Python scripts</strong> in
-              headless Blender. Claude edits the script, Blender exports the FBX, and Unity <strong>rebuilds the
-                prefabs</strong>, materials and animator. A <strong>palette check</strong> fails the build if signal
-              colours clash, colour-blind vision included. Generated files are <strong>never edited by hand</strong>.
-            </p>
-            <ul class="names">
-              <li>build_character.py</li>
-              <li>build_levelkit.py</li>
-              <li>palette check</li>
-              <li>Blender MCP</li>
-            </ul>
-          </div>
-        </article>
+          </article>
 
-        <div class="tool-grid">
-          <article class="card tool">
-            <h3><svg class="i">
-                <use href="#i-cube" />
-              </svg>Blender</h3>
-            <p><strong>Python build scripts</strong> make the character, rig, clips, props and level kit. Claude runs
-              them headless, and through the <strong>Blender MCP</strong> server it can inspect a scene before
-              changing it.</p>
+          <article class="card project" id="blokfit">
+            <div class="media">
+              <img src="images/blokfit.gif" alt="Blokfit gameplay" loading="lazy" decoding="async" />
+            </div>
+            <div class="body">
+              <h3>Blokfit</h3>
+              <p class="mono">Procedural puzzle · Unity 6 · C#</p>
+              <p>
+                Drag odd-shaped pieces onto a triangle grid. Every level is generated on start by splitting the grid
+                with a flood fill. Has undo, a level editor and unit tests.
+              </p>
+              <p class="links">
+                <a class="ic" href="https://github.com/yunusburkut/Procedural-Block-Fit" target="_blank"
+                  rel="noopener"><svg class="i">
+                    <use href="#i-github" />
+                  </svg>Source code ↗</a>
+              </p>
+            </div>
           </article>
-          <article class="card tool">
-            <h3><svg class="i">
-                <use href="#i-palette" />
-              </svg>Figma</h3>
-            <p>UI is <strong>designed in Figma first</strong>. Claude builds it from those designs in Unity's uGUI,
-              with a <strong>skill for Canvas</strong> and layout work.</p>
-          </article>
-          <article class="card tool">
-            <h3><svg class="i">
-                <use href="#i-list" />
-              </svg>Linear</h3>
-            <p><strong>Every change has an issue.</strong> Before work starts, a small Haiku agent finds it, or the
-              collector it belongs under. <strong>Decisions live in issues</strong>, so the reasons stay findable.</p>
-          </article>
-          <article class="card tool">
-            <h3><svg class="i">
-                <use href="#i-github" />
-              </svg>GitHub</h3>
-            <p>Every commit <strong>starts with its issue key</strong>, so history and issues line up. Destructive git
-              commands <strong>ask me first</strong>. This site ships from GitHub too, and a workflow
-              <strong>refreshes the LeetCode stats</strong> daily.</p>
+
+          <article class="card project" id="pathfinding">
+            <div class="media">
+              <img src="images/pathfinding-astar.gif" alt="A* search running on a grid" loading="lazy"
+                decoding="async" />
+            </div>
+            <div class="body">
+              <h3>Pathfinding Visualizer</h3>
+              <p class="mono">BFS and A* · Unity 6 · C#</p>
+              <p>
+                Watch BFS and A* search a grid step by step. Place the start, goal and walls, or generate a maze. The
+                search allocates no memory, so there are no garbage collector spikes.
+              </p>
+              <p class="links">
+                <a class="ic" href="https://github.com/yunusburkut/Pathfinding" target="_blank" rel="noopener"><svg
+                    class="i">
+                    <use href="#i-github" />
+                  </svg>Source code ↗</a>
+              </p>
+            </div>
           </article>
         </div>
-
-        <div class="card tools">
-          <h3><svg class="i">
-              <use href="#i-wrench" />
-            </svg>Also connected</h3>
-          <ul class="tags">
-            <li>C# language server</li>
-            <li>context7 docs</li>
-            <li>Unity CLI</li>
-          </ul>
-        </div>
-
-        <p class="callout"><svg class="i">
-            <use href="#i-pad" />
-          </svg><span><strong>In control:</strong> Claude speeds up the work, but I decide what gets built, review
-            every change and test it in the engine. This site was made the same way: agents drafted <strong>six
-              layouts in parallel</strong>, and I picked and refined one.</span></p>
       </div>
     </section>
 
     <!-- ── WORK ── -->
-    <section class="section" id="work" style="--h: 220" aria-labelledby="work-title">
+    <section class="section" id="work" style="--h: 280" aria-labelledby="work-title">
       <div class="wrap">
         <h2 class="sec-title" id="work-title"><span class="sec-i"><svg class="i">
               <use href="#i-case" />
             </svg></span>Work</h2>
-        <p class="sec-sub">Newest first.</p>
 
         <div class="jobs">
           <article class="card job" id="zynga">
@@ -4173,7 +1442,7 @@
             <p>Heroes of the Dark Ages, a multiplayer third-person MOBA.</p>
             <ul>
               <li>Optimized how character abilities run on the Gameplay Ability System.</li>
-              <li>Built tools and base classes for the team. The same tasks took about 20% less time afterwards.</li>
+              <li>Built tools and base classes that cut the team's task time by about 20%.</li>
               <li>Worked with the CI/CD pipeline.</li>
             </ul>
           </article>
@@ -4190,7 +1459,6 @@
                 checks.</li>
               <li>Kept gameplay in sync between server and clients with RPCs and replication.</li>
               <li>Worked on zone logic, the game loop, UI and animation, and kept tuning how combat feels.</li>
-              <li>Led gameplay development on the project.</li>
             </ul>
             <div class="shots single">
               <video class="autoplay" muted loop playsinline preload="none" poster="images/hit-and-boom.jpg"
@@ -4262,7 +1530,9 @@
                 <use href="#i-wrench" />
               </svg>Tools</h3>
             <ul class="tags">
-              <li>Claude Code</li>
+              <li>Blender</li>
+              <li>Figma</li>
+              <li>Linear</li>
               <li>Editor tools</li>
               <li>CI/CD</li>
               <li>Git</li>
@@ -4281,15 +1551,52 @@
       </div>
     </section>
 
+    <!-- ── STAYING CURRENT: how I keep up, in three steps ── -->
+    <section class="section" id="current" style="--h: 340" aria-labelledby="current-title">
+      <div class="wrap">
+        <h2 class="sec-title" id="current-title"><span class="sec-i"><svg class="i">
+              <use href="#i-eye" />
+            </svg></span>Staying current</h2>
+        <p class="sec-sub">I play what is working <strong>right now</strong>.</p>
+
+        <ol class="loop">
+          <li class="glow stay">
+            <span class="stay-tag">Spot</span>
+            <h3><svg class="i">
+                <use href="#i-pad" />
+              </svg>Find new games</h3>
+            <p>I browse <a href="https://softlaunch.games/" target="_blank" rel="noopener">softlaunch.games</a> for
+              games in soft launch and new releases.</p>
+          </li>
+
+          <li class="glow stay">
+            <span class="stay-tag">Play</span>
+            <h3><svg class="i">
+                <use href="#i-play" />
+              </svg>Play the hits</h3>
+            <p>I play the ones that are <strong>catching on</strong>.</p>
+          </li>
+
+          <li class="glow stay">
+            <span class="stay-tag">Learn</span>
+            <h3><svg class="i">
+                <use href="#i-spark" />
+              </svg>See what works</h3>
+            <p>I work out <strong>what they got right</strong> and bring it into my own games.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
     <!-- ── CONTACT ── -->
-    <section class="section" id="contact" style="--h: 280" aria-labelledby="contact-title">
+    <section class="section" id="contact" style="--h: 220" aria-labelledby="contact-title">
       <div class="wrap">
         <h2 class="sec-title" id="contact-title"><span class="sec-i"><svg class="i">
               <use href="#i-mail" />
             </svg></span>Contact</h2>
 
         <div class="card contact">
-          <p class="muted">Want to talk about a role or a project? Email is the fastest way to reach me.</p>
+          <p class="muted">Email is the fastest way to reach me.</p>
           <p class="big"><a href="mailto:yunus.burkut@outlook.com">yunus.burkut@outlook.com</a></p>
           <div class="actions">
             <a class="button" href="https://github.com/yunusburkut" target="_blank" rel="noopener"><svg class="i">
@@ -4316,146 +1623,6 @@
   </footer>
 
   <script>
-    // The Game feel and Claude Code demos loop on their own. Visitors who prefer reduced motion start with still
-    // frames, and the buttons let anyone pause or play them.
-    const motionToggles = document.querySelectorAll('.motion-toggle');
-    const setCalm = (calm) => {
-      document.documentElement.classList.toggle('calm', calm);
-      motionToggles.forEach((button) => {
-        button.querySelector('use').setAttribute('href', calm ? '#i-play' : '#i-pause');
-        button.querySelector('.verb').textContent = calm ? 'Play' : 'Pause';
-      });
-    };
-    setCalm(matchMedia('(prefers-reduced-motion: reduce)').matches);
-    motionToggles.forEach((button) => {
-      button.hidden = false;
-      button.addEventListener('click', () => setCalm(!document.documentElement.classList.contains('calm')));
-    });
-
-    // Game feel: once its dock scrolls under the header, the button jumps out beside the demos with a squash and
-    // stretch. At "What I aim for" it swells and shrinks away, and it jumps back into the dock when you scroll up.
-    const dock = document.querySelector('.toggle-dock');
-    const aimsTitle = document.querySelector('#aims-title');
-    if (dock && aimsTitle) {
-      const dockButton = dock.querySelector('.motion-toggle');
-      let place = 'home';
-      // Left of the demo column when there is room, otherwise at the bottom, lined up with the cards' left edge
-      const setFloatSpot = () => {
-        const column = dock.parentElement;
-        const columnLeft = column.getBoundingClientRect().left + parseFloat(getComputedStyle(column).paddingLeft);
-        const outside = columnLeft - dockButton.offsetWidth - 16;
-        Object.assign(dockButton.style, outside >= 12
-          ? { left: `${outside}px`, top: `${(innerHeight - dockButton.offsetHeight) / 2}px`, bottom: '' }
-          : { left: `${columnLeft}px`, top: '', bottom: '16px' });
-      };
-      const clearFloatSpot = () => Object.assign(dockButton.style, { left: '', top: '', bottom: '' });
-      const at = (x, y) => `translate(${x}px, ${y}px)`;
-      const moveTo = (next) => {
-        if (next === place) return;
-        // Measure where it is right now, mid-flight included, then start the next move from there
-        const first = dockButton.getBoundingClientRect();
-        dockButton.getAnimations({ subtree: true }).forEach((move) => move.cancel());
-        dockButton.classList.toggle('floating', next !== 'home');
-        dockButton.classList.toggle('away', next === 'away');
-        dockButton.inert = next === 'away';
-        if (next === 'home') clearFloatSpot();
-        else setFloatSpot();
-        const last = dockButton.getBoundingClientRect();
-        const x = first.left + first.width / 2 - (last.left + last.width / 2);
-        const y = first.top + first.height / 2 - (last.top + last.height / 2);
-        // The floating shape is a different size, so the box starts at the old size and morphs into the new one
-        const sx = first.width ? first.width / last.width : 1;
-        const sy = first.height ? first.height / last.height : 1;
-        // Soft in, soft out on the way; the wobble after landing settles in smaller and smaller swings
-        const easeIn = 'cubic-bezier(.5, 0, .75, .4)';
-        const easeOut = 'cubic-bezier(.25, .6, .5, 1)';
-        const sway = 'ease-in-out';
-        // Each frame: m is how much of the way back to the old spot it still is, w and h the box's scale
-        let frames, duration;
-        if (next === 'away') {
-          // Swell, wobble, then squeeze down to nothing
-          duration = 650;
-          frames = [
-            { w: 1, h: 1, opacity: 1, easing: sway },
-            { w: 1.18, h: .86, offset: .3, easing: sway },
-            { w: .92, h: 1.1, offset: .5, easing: easeIn },
-            { w: .5, h: 1.2, opacity: .8, offset: .75, easing: easeIn },
-            { w: 0, h: 0, opacity: 0 },
-          ];
-        } else if (place === 'away') {
-          // Pop back out of nothing, then wobble until it settles
-          duration = 800;
-          frames = [
-            { m: 1, w: 0, h: 0, opacity: 0, easing: easeOut },
-            { w: 1.2, h: .85, opacity: 1, offset: .35, easing: sway },
-            { w: .9, h: 1.1, offset: .52, easing: sway },
-            { w: 1.07, h: .95, offset: .68, easing: sway },
-            { w: .97, h: 1.03, offset: .84, easing: sway },
-            { w: 1, h: 1, opacity: 1 },
-          ];
-        } else {
-          // Squash to its new size while winding up, so the new text never sticks out of the box, stretch through
-          // the flight, then wobble on landing until it settles
-          duration = 1000;
-          frames = [
-            { m: 1, w: sx, h: sy, easing: sway },
-            { m: 1, w: 1.18, h: .84, offset: .14, easing: easeIn },
-            { m: .45, w: .88, h: 1.12, offset: .34, easing: easeOut },
-            { w: 1.16, h: .86, offset: .54, easing: sway },
-            { w: .92, h: 1.08, offset: .66, easing: sway },
-            { w: 1.05, h: .96, offset: .78, easing: sway },
-            { w: .98, h: 1.02, offset: .9, easing: sway },
-            { w: 1, h: 1 },
-          ];
-        }
-        // Only the box squashes and stretches: the icon and the text get the opposite scale, so they keep their
-        // size the whole way. An opposite scale drifts between two frames, so each stretch is cut into small steps
-        // that follow its curve. A box shrunk to nothing takes the text along.
-        const curves = { [easeIn]: (p) => p * p, [easeOut]: (p) => 1 - (1 - p) ** 2, [sway]: (p) => p * p * (3 - 2 * p) };
-        const lerp = (a, b, p) => a + (b - a) * p;
-        const steps = frames.flatMap((a, i) => {
-          const b = frames[i + 1];
-          const start = { ...a, offset: a.offset ?? (i ? 1 : 0) };
-          if (!b || !a.w || !b.w) return [start];
-          const curve = curves[a.easing] ?? ((p) => p);
-          const cuts = Array.from({ length: 5 }, (_, k) => {
-            const p = (k + 1) / 6, e = curve(p);
-            return { m: lerp(a.m ?? 0, b.m ?? 0, e), w: lerp(a.w, b.w, e), h: lerp(a.h, b.h, e), offset: lerp(start.offset, b.offset ?? 1, p) };
-          });
-          return [{ ...start, easing: 'linear' }, ...cuts.map((cut) => ({ ...cut, easing: 'linear' }))];
-        });
-        dockButton.animate(steps.map(({ m = 0, w, h, opacity, offset, easing }) =>
-          ({ transform: `${at(x * m, y * m)} scale(${w}, ${h})`, ...(opacity === undefined ? {} : { opacity }), offset, easing })), { duration });
-        // Where the box is nothing, the text keeps the size of the frame beside it and fades instead
-        const parts = dockButton.querySelectorAll(':scope > .i, :scope > .label');
-        parts.forEach((part) => part.animate(steps.map(({ offset, easing }, i) => {
-          const { w, h } = steps[i].w ? steps[i] : steps[i ? i - 1 : 1];
-          return { transform: `scale(${1 / w}, ${1 / h})`, offset, easing };
-        }), { duration }));
-        if (next === 'away') {
-          parts.forEach((part) => part.animate([{ opacity: 1 }, { opacity: 1, offset: .5 }, { opacity: 0, offset: .72 }, { opacity: 0 }], { duration }));
-        } else if (place === 'away') {
-          parts.forEach((part) => part.animate([{ opacity: 0 }, { opacity: 0, offset: .18 }, { opacity: 1, offset: .35 }, { opacity: 1 }], { duration }));
-        } else {
-          // The text changes when the shape does, so it fades in once the box has wound up around it
-          dockButton.querySelector('.label').animate([{ opacity: 0 }, { opacity: 0, offset: .4 }, { opacity: 1 }], { duration: 200 });
-        }
-        place = next;
-      };
-      const headHeight = () => document.querySelector('.site-head')?.offsetHeight ?? 60;
-      const placeButton = () => {
-        if (dock.getBoundingClientRect().top > headHeight()) moveTo('home');
-        else if (aimsTitle.getBoundingClientRect().top < innerHeight * .6) moveTo('away');
-        else moveTo('floating');
-      };
-      addEventListener('scroll', placeButton, { passive: true });
-      addEventListener('resize', () => {
-        placeButton();
-        if (place !== 'home') setFloatSpot();
-      });
-      placeButton();
-    }
-
     // Gameplay clips play only while on screen. Visitors who prefer reduced motion get controls instead.
     const videos = document.querySelectorAll('video.autoplay');
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
@@ -4492,6 +1659,57 @@
       undoJump();
       requestAnimationFrame(undoJump);
     });
+
+    // The header marks the section you are reading and fills a bar as you go down the page. After a click the
+    // clicked link stays marked through the scroll, so the marker does not flick across every section on the way.
+    const nav = document.querySelector('.nav');
+    const head = document.querySelector('.site-head');
+    const links = [...nav.querySelectorAll('a')];
+    const sectionOf = (link) => document.querySelector(link.hash);
+    const paint = () => links.forEach((link) => {
+      link.style.setProperty('--acc', getComputedStyle(sectionOf(link)).getPropertyValue('--acc'));
+    });
+    let current = null;
+    let clicked = null;
+    const mark = (link) => {
+      if (link === current) return;
+      current?.removeAttribute('aria-current');
+      link?.setAttribute('aria-current', 'location');
+      head.style.setProperty('--acc', link ? link.style.getPropertyValue('--acc') : '');
+      current = link;
+      // Keep the marked link in view when the row scrolls sideways
+      if (link && nav.scrollWidth > nav.clientWidth) {
+        nav.scrollTo({ left: link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2, behavior: 'smooth' });
+      }
+    };
+    const track = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      head.style.setProperty('--read', max > 0 ? Math.min(scrollY / max, 1) : 0);
+      if (clicked) return mark(clicked);
+      const line = head.offsetHeight + innerHeight * .3;
+      const shown = links.filter((link) => !link.hidden);
+      const atEnd = scrollY >= max - 2;
+      mark(atEnd ? shown.at(-1) : shown.findLast((link) => sectionOf(link).getBoundingClientRect().top <= line) ?? null);
+    };
+    let queued = false;
+    addEventListener('scroll', () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; track(); });
+    }, { passive: true });
+    addEventListener('resize', track);
+    let release;
+    const letGo = () => { clicked = null; clearTimeout(release); track(); };
+    addEventListener('scrollend', letGo);
+    links.forEach((link) => link.addEventListener('click', () => {
+      clicked = link;
+      clearTimeout(release);
+      release = setTimeout(letGo, 1500);
+      track();
+    }));
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { paint(); current = null; track(); });
+    paint();
+    track();
   </script>
 
   <script>
@@ -4551,7 +1769,7 @@
         buildHeatmap(parseCalendar(calendar.submissionCalendar));
 
         block.hidden = false;
-        document.querySelector('[data-lc-nav]').hidden = false;
+        document.querySelectorAll('[data-lc-nav]').forEach((link) => { link.hidden = false; });
 
         const start = () => animate(counters, totals, solved);
         if (reduceMotion || !('IntersectionObserver' in window)) return start();
