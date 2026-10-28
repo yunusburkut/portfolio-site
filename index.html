@@ -2231,8 +2231,12 @@
       if (!touched && document.activeElement !== game) settledY = scrollY;
       else undoJump();
     }, { passive: true });
-    // The page loses focus to the iframe a moment before the browser scrolls to it
+    // The page loses focus to the iframe a moment before the browser scrolls to it. A click inside the iframe never
+    // reaches this page, so focus moving to a game already on screen is the visitor playing: leave it there, or the
+    // game pauses on every click.
     addEventListener('blur', () => {
+      const { top, bottom } = game.getBoundingClientRect();
+      if (top < innerHeight && bottom > 0) touched = true;
       undoJump();
       requestAnimationFrame(undoJump);
     });
