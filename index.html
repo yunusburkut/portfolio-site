@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yunus Burkut · Game Developer</title>
   <meta name="description"
-    content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Magic Sort in the browser." />
+    content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Trash Flow and Magic Sort in the browser." />
   <!-- Inter stands in for Helvetica where it is not installed (Windows, Android); Macs keep Helvetica Neue -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -962,6 +962,30 @@
       border: 0;
     }
 
+    /* the game downloads only when the visitor asks for it */
+    .game-poster {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      background: #1d2035;
+      cursor: pointer;
+    }
+
+    .game-poster .button {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 6px 24px rgb(0 0 0 / .4);
+    }
+
+    .game-poster:hover .button,
+    .game-poster:focus-visible .button {
+      filter: brightness(1.12);
+    }
+
     .project .body {
       padding: 1.25rem 1.5rem 1.5rem;
     }
@@ -1649,6 +1673,9 @@
                   <use href="#i-folder" />
                 </svg>Projects</a>
               <ul>
+                <li><a href="#trash-flow"><svg class="i">
+                      <use href="#i-pad" />
+                    </svg>Trash Flow</a></li>
                 <li><a href="#games"><svg class="i">
                       <use href="#i-pad" />
                     </svg>Magic Sort</a></li>
@@ -1885,7 +1912,7 @@
     </section>
     </div>
 
-    <!-- ── PROJECTS: Magic Sort always sits here, as the same card as the other projects ── -->
+    <!-- ── PROJECTS: Trash Flow leads, then Magic Sort; every project is the same card ── -->
     <section class="section" id="projects" style="--h: 160" aria-labelledby="projects-title">
       <div class="wrap">
         <h2 class="sec-title" id="projects-title"><span class="sec-i"><svg class="i">
@@ -1894,10 +1921,33 @@
         <p class="sec-sub">Games and tools I built on my own.</p>
 
         <div class="projects">
+          <article class="card project" id="trash-flow">
+            <div class="media">
+              <button class="game-poster" type="button" data-src="games/trash-flow/index.html" data-title="Trash Flow">
+                <span class="button primary"><svg class="i">
+                    <use href="#i-play" />
+                  </svg>Play in the browser</span>
+              </button>
+            </div>
+            <div class="body">
+              <h3>Trash Flow</h3>
+              <p class="mono">Color shooter puzzle · Unity 6 · C# · URP</p>
+              <p>
+                Tap garbage trucks out of a parking jam onto the street round the block, and they pick a pixel art
+                picture of garbage bags apart, one color at a time. The first ten levels, playable right here.
+              </p>
+            </div>
+          </article>
+
           <article class="card project" id="games">
             <div class="media">
-              <iframe src="https://itch.io/embed-upload/20088623?color=0a0a0d" title="Magic Sort, playable in the browser"
-                allow="autoplay; fullscreen" allowfullscreen></iframe>
+              <button class="game-poster" type="button" data-src="games/magic-sort/index.html" data-title="Magic Sort">
+                <img src="images/magic-sort.jpg" alt="Magic Sort: a level of mixed water bottles, ready to play"
+                  loading="lazy" decoding="async" />
+                <span class="button primary"><svg class="i">
+                    <use href="#i-play" />
+                  </svg>Press to play</span>
+              </button>
             </div>
             <div class="body">
               <h3>Magic Sort</h3>
@@ -2214,32 +2264,16 @@
       videos.forEach((video) => clips.observe(video));
     }
 
-    // The itch.io build focuses itself once it loads, which makes the browser jump down to it.
-    // Until the visitor scrolls, taps or types, that jump is undone and focus goes back to the page.
-    const game = document.querySelector('#games iframe');
-    let settledY = scrollY;
-    let touched = false;
-    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
-      addEventListener(type, () => { touched = true; }, { passive: true, once: true });
-    });
-    const undoJump = () => {
-      if (touched || document.activeElement !== game) return;
-      scrollTo(0, settledY);
-      window.focus();
-    };
-    addEventListener('scroll', () => {
-      if (!touched && document.activeElement !== game) settledY = scrollY;
-      else undoJump();
-    }, { passive: true });
-    // The page loses focus to the iframe a moment before the browser scrolls to it. A click inside the iframe never
-    // reaches this page, so focus moving to a game already on screen is the visitor playing: leave it there, or the
-    // game pauses on every click.
-    addEventListener('blur', () => {
-      const { top, bottom } = game.getBoundingClientRect();
-      if (top < innerHeight && bottom > 0) touched = true;
-      undoJump();
-      requestAnimationFrame(undoJump);
-    });
+    // Each game (about 15 MB) downloads only on Play, so the page stays light and the game never takes focus or
+    // scrolls the page on its own. Unity pauses whenever its frame loses focus, so the frame gets it straight away.
+    document.querySelectorAll('.game-poster').forEach((poster) => poster.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = poster.dataset.src;
+      frame.title = `${poster.dataset.title}, playable in the browser`;
+      frame.allow = 'fullscreen';
+      poster.replaceWith(frame);
+      frame.focus();
+    }));
 
     // The header links (narrow screens) and the Hierarchy (wide screens) mark what you are reading, the toolbar
     // shows where that is, and a bar under the header fills as you go down the page. After a click the clicked
