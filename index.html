@@ -1056,16 +1056,22 @@
       transition: grid-template-rows .35s ease, opacity .3s ease, transform .35s ease;
     }
 
+    /* the gap above the row opens with it, so the folded row leaves the scroll row centered in the card */
     .zoom-hint-drag > * {
       min-height: 0;
       overflow: hidden;
-      padding-top: .75rem;
+      padding-top: 0;
+      transition: padding-top .35s ease;
     }
 
     .zoom-hint.can-drag .zoom-hint-drag {
       grid-template-rows: 1fr;
       opacity: 1;
       transform: none;
+    }
+
+    .zoom-hint.can-drag .zoom-hint-drag > * {
+      padding-top: .75rem;
     }
 
     .zoom-hint.can-drag .zoom-hint-drag svg {
