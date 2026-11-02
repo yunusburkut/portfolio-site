@@ -970,11 +970,59 @@
       justify-content: center;
     }
 
-    /* the shape of an iPhone 15/16 screen (393 x 852 points), so the game's bottom bar sits where it does on a phone */
-    .project .media.portrait > * {
-      width: min(100%, calc((100svh - var(--head-h) - 16px) * 393 / 852));
+    /* wider than a phone, so the game reaches nearer the card's edges and draws bigger; the rest of the lot is a drag
+       away, which the hint beside the frame points out */
+    .project .media.portrait {
+      position: relative;
+    }
+
+    .project .media.portrait > :not(.scroll-hint) {
+      /* the frame fits under the header and the pinned section title (about 64px) */
+      width: min(100%, calc((100svh - var(--head-h) - 96px) * 2 / 3));
       height: auto;
-      aspect-ratio: 393 / 852;
+      aspect-ratio: 2 / 3;
+    }
+
+    /* on a phone the card's width already sets the game's size, so the frame takes the room below for more of the lot */
+    @media (max-width: 720px) {
+      .project .media.portrait > :not(.scroll-hint) {
+        aspect-ratio: 9 / 16;
+        max-height: calc(100svh - var(--head-h) - 96px);
+      }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      top: 50%;
+      right: 6px;
+      transform: translateY(-50%);
+      display: grid;
+      justify-items: center;
+      gap: .15rem;
+      padding: .5rem .3rem;
+      border-radius: 999px;
+      background: rgb(10 10 13 / .6);
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 700;
+      line-height: 1;
+      pointer-events: none;
+      animation: hint-pulse 1.6s ease-in-out infinite;
+    }
+
+    .scroll-hint[hidden] {
+      display: none;
+    }
+
+    .scroll-hint svg {
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+
+    @keyframes hint-pulse {
+      50% {
+        opacity: .35;
+      }
     }
 
     /* the game downloads only when the visitor asks for it */
@@ -1490,6 +1538,10 @@
         scroll-behavior: auto;
       }
 
+      .scroll-hint {
+        animation: none;
+      }
+
       .lc-arc,
       .lc-bar-fill {
         transition: none;
@@ -1946,6 +1998,14 @@
                     <use href="#i-play" />
                   </svg>Press to play</span>
               </button>
+              <!-- shown once the game runs: the lot runs on below the frame, and nothing in the game says it scrolls -->
+              <div class="scroll-hint" hidden aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                  stroke-linejoin="round"><path d="M3 10l5-5 5 5" /></svg>
+                <span class="scroll-hint-verb">Drag</span>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                  stroke-linejoin="round"><path d="M3 6l5 5 5-5" /></svg>
+              </div>
             </div>
             <div class="body">
               <h3>Trash Flow</h3>
@@ -2295,6 +2355,11 @@
       frame.src = poster.dataset.src;
       frame.title = `${poster.dataset.title}, playable in the browser`;
       frame.allow = 'fullscreen';
+      const hint = poster.parentElement.querySelector('.scroll-hint');
+      if (hint) {
+        hint.querySelector('.scroll-hint-verb').textContent = matchMedia('(pointer: coarse)').matches ? 'Swipe' : 'Drag';
+        hint.hidden = false;
+      }
       poster.replaceWith(frame);
       frame.focus();
     }));
