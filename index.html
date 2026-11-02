@@ -998,7 +998,7 @@
       transform: translateY(-50%);
       display: grid;
       justify-items: center;
-      gap: .15rem;
+      gap: .9rem;
       padding: .5rem .3rem;
       border-radius: 999px;
       background: rgb(10 10 13 / .6);
@@ -1007,6 +1007,10 @@
       font-weight: 700;
       line-height: 1;
       pointer-events: none;
+    }
+
+    /* only the word blinks; the arrows hold still above and below it */
+    .scroll-hint-verb {
       animation: hint-pulse 1.6s ease-in-out infinite;
     }
 
@@ -1538,7 +1542,7 @@
         scroll-behavior: auto;
       }
 
-      .scroll-hint {
+      .scroll-hint-verb {
         animation: none;
       }
 
