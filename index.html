@@ -1004,7 +1004,6 @@
         top: 50%;
         transform: translateY(-50%);
         display: grid;
-        gap: .75rem;
         padding: .8rem .85rem;
         border: 1px solid rgb(255 255 255 / .18);
         border-radius: 14px;
@@ -1045,6 +1044,42 @@
       width: 1.7rem;
       height: 1.7rem;
       flex: none;
+    }
+
+    /* The drag row opens only while the game is zoomed in (it says so through a message), sliding down out of the
+       scroll row, and its arrows nudge once to show the move; zoomed all the way out it folds back up. */
+    .zoom-hint-drag {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: grid-template-rows .35s ease, opacity .3s ease, transform .35s ease;
+    }
+
+    .zoom-hint-drag > * {
+      min-height: 0;
+      overflow: hidden;
+      padding-top: .75rem;
+    }
+
+    .zoom-hint.can-drag .zoom-hint-drag {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transform: none;
+    }
+
+    .zoom-hint.can-drag .zoom-hint-drag svg {
+      animation: drag-nudge .9s ease-in-out .3s 2;
+    }
+
+    @keyframes drag-nudge {
+      25% {
+        transform: translate(-3px, -2px);
+      }
+
+      75% {
+        transform: translate(3px, 2px);
+      }
     }
 
     /* the wheel's stroke blinks; the rest holds still */
@@ -1572,8 +1607,13 @@
         scroll-behavior: auto;
       }
 
-      .zoom-hint .wheel {
+      .zoom-hint .wheel,
+      .zoom-hint.can-drag .zoom-hint-drag svg {
         animation: none;
+      }
+
+      .zoom-hint-drag {
+        transition: none;
       }
 
       .lc-arc,
@@ -2041,11 +2081,13 @@
                   <span>Scroll<small>zoom in / out</small></span>
                 </div>
                 <!-- a drag moves the lot once the wheel has closed in -->
-                <div class="zoom-hint-row">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
-                    stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5v13M1.5 8h13" />
-                    <path d="M6 3.5l2-2 2 2M6 12.5l2 2 2-2M3.5 6l-2 2 2 2M12.5 6l2 2-2 2" /></svg>
-                  <span>Drag<small>move around</small></span>
+                <div class="zoom-hint-drag">
+                  <div class="zoom-hint-row">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
+                      stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5v13M1.5 8h13" />
+                      <path d="M6 3.5l2-2 2 2M6 12.5l2 2 2-2M3.5 6l-2 2 2 2M12.5 6l2 2-2 2" /></svg>
+                    <span>Drag<small>move around</small></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2399,7 +2441,15 @@
       frame.src = `${poster.dataset.src}?t=${Date.now()}`;
       frame.title = `${poster.dataset.title}, playable in the browser`;
       frame.allow = 'fullscreen';
-      poster.parentElement.querySelector('.zoom-hint')?.classList.add('on');
+      const hint = poster.parentElement.querySelector('.zoom-hint');
+      if (hint) {
+        hint.classList.add('on');
+        // the game says whether it is zoomed in far enough to drag (Plugins/WebGL/TrashFlowPage.jslib in its repo)
+        addEventListener('message', (e) => {
+          if (e.source === frame.contentWindow && typeof e.data?.trashFlowCanDrag === 'boolean')
+            hint.classList.toggle('can-drag', e.data.trashFlowCanDrag);
+        });
+      }
       poster.replaceWith(frame);
       frame.focus();
     }));
