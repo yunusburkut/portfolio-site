@@ -2329,7 +2329,9 @@
     // scrolls the page on its own. Unity pauses whenever its frame loses focus, so the frame gets it straight away.
     document.querySelectorAll('.game-poster').forEach((poster) => poster.addEventListener('click', () => {
       const frame = document.createElement('iframe');
-      frame.src = poster.dataset.src;
+      // The page is asked for fresh each time: a copy cached from before a rebuild names build files the rebuild
+      // deleted, and the game would hang loading them. The build files keep their cache, named after their contents.
+      frame.src = `${poster.dataset.src}?t=${Date.now()}`;
       frame.title = `${poster.dataset.title}, playable in the browser`;
       frame.allow = 'fullscreen';
       poster.replaceWith(frame);
