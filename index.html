@@ -962,6 +962,21 @@
       border: 0;
     }
 
+    /* Trash Flow is a portrait game: a wide frame crops its parking lot, so it plays in a phone-shaped frame as tall
+       as the screen allows */
+    .project .media.portrait {
+      aspect-ratio: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .project .media.portrait > * {
+      width: auto;
+      max-width: 100%;
+      height: min(calc(100svh - var(--head-h) - 48px), 960px);
+      aspect-ratio: 9 / 16;
+    }
+
     /* the game downloads only when the visitor asks for it */
     .game-poster {
       position: relative;
@@ -1923,11 +1938,13 @@
 
         <div class="projects">
           <article class="card project" id="trash-flow">
-            <div class="media">
+            <div class="media portrait">
               <button class="game-poster" type="button" data-src="games/trash-flow/index.html" data-title="Trash Flow">
+                <img src="images/trash-flow.jpg" alt="Trash Flow: a pixel invader of garbage bags over a parking jam of trucks, ready to play"
+                  loading="lazy" decoding="async" />
                 <span class="button primary"><svg class="i">
                     <use href="#i-play" />
-                  </svg>Play in the browser</span>
+                  </svg>Press to play</span>
               </button>
             </div>
             <div class="body">
