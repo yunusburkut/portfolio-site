@@ -992,31 +992,31 @@
       position: relative;
     }
 
-    /* upright, to fit the narrow strip beside the frame */
+    /* upright, to fit the narrow strip beside the frame: zoom in above the wheel, zoom out below it */
     .zoom-hint {
       position: absolute;
-      right: 6px;
+      right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      width: 3.6rem;
       display: grid;
       justify-items: center;
-      gap: .4rem;
-      padding: .6rem .3rem;
+      gap: .55rem;
+      padding: .7rem .55rem;
       border-radius: 999px;
-      text-align: center;
       background: rgb(10 10 13 / .6);
       color: #fff;
-      font-size: .7rem;
-      font-weight: 700;
-      line-height: 1.25;
       pointer-events: none;
     }
 
     .zoom-hint svg {
-      width: 1.5rem;
-      height: 1.5rem;
-      flex: none;
+      width: 1.6rem;
+      height: 1.6rem;
+    }
+
+    .zoom-hint .lens {
+      width: 1.25rem;
+      height: 1.25rem;
+      opacity: .75;
     }
 
     /* the wheel's stroke blinks; the rest holds still */
@@ -2368,9 +2368,15 @@
         const hint = document.createElement('div');
         hint.className = 'zoom-hint';
         hint.setAttribute('aria-hidden', 'true');
-        hint.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" '
-          + 'stroke-linecap="round"><rect x="4" y="1.5" width="8" height="13" rx="4" />'
-          + '<path class="wheel" d="M8 4v2.5" stroke-width="1.8" /></svg><span>Scroll to zoom in / out</span>';
+        // a magnifier to zoom in over the mouse's wheel, one to zoom out under it
+        const lens = (sign) => '<svg class="lens" viewBox="0 0 16 16" fill="none" stroke="currentColor" '
+          + `stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5" /><path d="M10.4 10.4L14 14" />`
+          + `<path d="M5 7h4${sign === '+' ? 'M7 5v4' : ''}" /></svg>`;
+        hint.innerHTML = lens('+')
+          + '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">'
+          + '<rect x="4" y="1.5" width="8" height="13" rx="4" /><path class="wheel" d="M8 4v2.5" stroke-width="1.8" />'
+          + '</svg>' + lens('-');
+        hint.title = 'Scroll to zoom in and out';
         frame.after(hint);
       }
       frame.focus();
