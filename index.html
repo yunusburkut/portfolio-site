@@ -986,33 +986,34 @@
       }
     }
 
-    /* The wheel zooms the game, which nothing in it says, so a mouse gets a card beside the frame that says so. It
-       sits in the layout from the start, hidden until Play, so the frame does not jump over when it shows, and the
-       frame gives up the room for it. */
+    /* The wheel zooms the game, which nothing in it says, so a mouse gets a card that says so. It floats over the
+       right edge, see-through and deaf to the pointer, so the game keeps its size in the middle and stays playable
+       under it. */
     .zoom-hint {
       display: none;
     }
 
     @media (hover: hover) and (pointer: fine) and (min-width: 721px) {
       .project .media.portrait {
-        align-items: center;
-        gap: 1.25rem;
-      }
-
-      .project .media.portrait > :not(.zoom-hint) {
-        width: min(100% - 12.5rem, calc((100svh - var(--head-h) - 96px) * 2 / 3));
+        position: relative;
       }
 
       .project .media.portrait .zoom-hint {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
         display: grid;
-        flex: none;
-        width: 11.25rem;
-        gap: .9rem;
-        padding: 1.1rem 1rem;
-        border: 1px solid rgb(255 255 255 / .12);
+        width: 11.5rem;
+        gap: .8rem;
+        padding: 1rem .9rem;
+        border: 1px solid rgb(255 255 255 / .18);
         border-radius: 14px;
-        background: rgb(255 255 255 / .05);
+        background: rgb(10 10 13 / .45);
+        backdrop-filter: blur(3px);
         color: #fff;
+        text-shadow: 0 1px 2px rgb(0 0 0 / .6);
+        pointer-events: none;
         visibility: hidden;
         opacity: 0;
         transition: opacity .4s ease;
