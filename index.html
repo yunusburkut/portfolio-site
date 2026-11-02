@@ -971,7 +971,7 @@
     }
 
     /* wider than a phone, so the game reaches nearer the card's edges and draws bigger, the whole lot in view */
-    .project .media.portrait > * {
+    .project .media.portrait > :not(.game-fullscreen) {
       /* the frame fits under the header and the pinned section title (about 64px) */
       width: min(100%, calc((100svh - var(--head-h) - 96px) * 2 / 3));
       height: auto;
@@ -980,9 +980,32 @@
 
     /* on a phone the card's width already sets the game's size, so the frame takes the room below for more of the lot */
     @media (max-width: 720px) {
-      .project .media.portrait > * {
+      .project .media.portrait {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .project .media.portrait > :not(.game-fullscreen) {
         aspect-ratio: 9 / 16;
         max-height: calc(100svh - var(--head-h) - 96px);
+      }
+    }
+
+    /* in the corner the portrait frame leaves free on a wide screen; under the frame on a phone, which it fills */
+    .project .media.portrait {
+      position: relative;
+    }
+
+    .game-fullscreen {
+      position: absolute;
+      right: .75rem;
+      bottom: .75rem;
+    }
+
+    @media (max-width: 720px) {
+      .game-fullscreen {
+        position: static;
+        margin: .6rem 0;
       }
     }
 
@@ -1573,6 +1596,10 @@
     </symbol>
     <symbol id="i-play" viewBox="0 0 16 16">
       <path d="M5 3v10l8-5z" fill="currentColor" />
+    </symbol>
+    <symbol id="i-expand" viewBox="0 0 16 16">
+      <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6"
+        stroke-linecap="round" stroke-linejoin="round" />
     </symbol>
     <symbol id="i-pad" viewBox="0 0 16 16">
       <path
@@ -2306,6 +2333,15 @@
       frame.title = `${poster.dataset.title}, playable in the browser`;
       frame.allow = 'fullscreen';
       poster.replaceWith(frame);
+      // a portrait game draws small in its frame, so it offers the whole screen (iPhones cannot put a frame there)
+      if (document.fullscreenEnabled && frame.closest('.media.portrait')) {
+        const full = document.createElement('button');
+        full.type = 'button';
+        full.className = 'button game-fullscreen';
+        full.innerHTML = '<svg class="i"><use href="#i-expand" /></svg>Fullscreen';
+        full.addEventListener('click', () => frame.requestFullscreen().then(() => frame.focus()));
+        frame.after(full);
+      }
       frame.focus();
     }));
 
