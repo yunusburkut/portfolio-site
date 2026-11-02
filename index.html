@@ -970,11 +970,11 @@
       justify-content: center;
     }
 
+    /* the shape of an iPhone 15/16 screen (393 x 852 points), so the game's bottom bar sits where it does on a phone */
     .project .media.portrait > * {
-      width: auto;
-      max-width: 100%;
-      height: min(calc(100svh - var(--head-h) - 48px), 960px);
-      aspect-ratio: 9 / 16;
+      width: min(100%, calc((100svh - var(--head-h) - 16px) * 393 / 852));
+      height: auto;
+      aspect-ratio: 393 / 852;
     }
 
     /* the game downloads only when the visitor asks for it */
