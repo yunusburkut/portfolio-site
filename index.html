@@ -986,37 +986,76 @@
       }
     }
 
-    /* in the corner the portrait frame leaves free on a wide screen; the wheel zooms the game, which nothing in it
-       says */
-    .project .media.portrait {
-      position: relative;
-    }
-
-    /* upright, to fit the narrow strip beside the frame: zoom in above the wheel, zoom out below it */
+    /* The wheel zooms the game, which nothing in it says, so a mouse gets a card beside the frame that says so. It
+       sits in the layout from the start, hidden until Play, so the frame does not jump over when it shows, and the
+       frame gives up the room for it. */
     .zoom-hint {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
+      display: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) and (min-width: 721px) {
+      .project .media.portrait {
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .project .media.portrait > :not(.zoom-hint) {
+        width: min(100% - 12.5rem, calc((100svh - var(--head-h) - 96px) * 2 / 3));
+      }
+
+      .project .media.portrait .zoom-hint {
+        display: grid;
+        flex: none;
+        width: 11.25rem;
+        gap: .9rem;
+        padding: 1.1rem 1rem;
+        border: 1px solid rgb(255 255 255 / .12);
+        border-radius: 14px;
+        background: rgb(255 255 255 / .05);
+        color: #fff;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity .4s ease;
+      }
+
+      .project .media.portrait .zoom-hint.on {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+
+    .zoom-hint-head {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .zoom-hint-head svg {
+      width: 2.2rem;
+      height: 2.2rem;
+      flex: none;
+    }
+
+    .zoom-hint-rows {
       display: grid;
-      justify-items: center;
+      gap: .45rem;
+      font-size: .9rem;
+      font-weight: 600;
+      color: rgb(255 255 255 / .85);
+    }
+
+    .zoom-hint-rows span {
+      display: flex;
+      align-items: center;
       gap: .55rem;
-      padding: .7rem .55rem;
-      border-radius: 999px;
-      background: rgb(10 10 13 / .6);
-      color: #fff;
-      pointer-events: none;
     }
 
-    .zoom-hint svg {
-      width: 1.6rem;
-      height: 1.6rem;
-    }
-
-    .zoom-hint .lens {
-      width: 1.25rem;
-      height: 1.25rem;
-      opacity: .75;
+    .zoom-hint-rows svg {
+      width: 1.1rem;
+      height: 1.1rem;
+      flex: none;
     }
 
     /* the wheel's stroke blinks; the rest holds still */
@@ -1027,13 +1066,6 @@
     @keyframes hint-pulse {
       50% {
         opacity: .2;
-      }
-    }
-
-    /* only a mouse has a wheel */
-    @media not ((hover: hover) and (pointer: fine)) {
-      .zoom-hint {
-        display: none;
       }
     }
 
@@ -2011,6 +2043,21 @@
                     <use href="#i-play" />
                   </svg>Press to play</span>
               </button>
+              <!-- the game opens with its whole lot in view, and the wheel closes in on it -->
+              <div class="zoom-hint" aria-hidden="true">
+                <div class="zoom-hint-head">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"
+                    stroke-linecap="round"><rect x="4" y="1.5" width="8" height="13" rx="4" />
+                    <path class="wheel" d="M8 4v2.5" stroke-width="1.6" /></svg>
+                  Scroll to zoom
+                </div>
+                <div class="zoom-hint-rows">
+                  <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l5-5 5 5" /></svg>Up: zoom in</span>
+                  <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l5 5 5-5" /></svg>Down: zoom out</span>
+                </div>
+              </div>
             </div>
             <div class="body">
               <h3>Trash Flow</h3>
@@ -2362,23 +2409,8 @@
       frame.src = `${poster.dataset.src}?t=${Date.now()}`;
       frame.title = `${poster.dataset.title}, playable in the browser`;
       frame.allow = 'fullscreen';
+      poster.parentElement.querySelector('.zoom-hint')?.classList.add('on');
       poster.replaceWith(frame);
-      // a portrait game opens with its whole lot in view and the wheel closes in on it
-      if (frame.closest('.media.portrait')) {
-        const hint = document.createElement('div');
-        hint.className = 'zoom-hint';
-        hint.setAttribute('aria-hidden', 'true');
-        // a magnifier to zoom in over the mouse's wheel, one to zoom out under it
-        const lens = (sign) => '<svg class="lens" viewBox="0 0 16 16" fill="none" stroke="currentColor" '
-          + `stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5" /><path d="M10.4 10.4L14 14" />`
-          + `<path d="M5 7h4${sign === '+' ? 'M7 5v4' : ''}" /></svg>`;
-        hint.innerHTML = lens('+')
-          + '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">'
-          + '<rect x="4" y="1.5" width="8" height="13" rx="4" /><path class="wheel" d="M8 4v2.5" stroke-width="1.8" />'
-          + '</svg>' + lens('-');
-        hint.title = 'Scroll to zoom in and out';
-        frame.after(hint);
-      }
       frame.focus();
     }));
 
