@@ -42,12 +42,12 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/3f5b4c9732264c6d73720a6043f9e280.loader.js";
+      var loaderUrl = buildUrl + "/8b8e5ad008b6385ec9fbd7d2045e9313.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/bac1c4cce40d19c654db03bcba8e6a4c.data",
-        frameworkUrl: buildUrl + "/1fcd35a1d7cb8a657b15454be556f5d3.framework.js",
-        codeUrl: buildUrl + "/f5a9ed31be5188f6ae406f56a6f7eab9.wasm",
+        dataUrl: buildUrl + "/e4f9cb2eaa4932728569797a903383cf.data",
+        frameworkUrl: buildUrl + "/deaf3c48510c3388d287d3648de94560.framework.js",
+        codeUrl: buildUrl + "/293db11b4a34b03fef852fad94f6fdcf.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "HeronCase",
@@ -62,10 +62,14 @@
       script.onload = () => {
         var loading = document.querySelector("#unity-loading");
         var progress = document.querySelector("#unity-progress");
+        // the bar stays until the game has linked its shaders and drawn the first level (Page.jslib), so the canvas
+        // shows nothing that would hitch
+        window.addEventListener("unity-ready", () => { loading.style.display = "none"; });
         createUnityInstance(canvas, config, (p) => {
           progress.style.width = 100 * p + "%";
         }).then((unityInstance) => {
-          loading.style.display = "none";
+          // should the game never say so (an error on start), the bar still goes
+          setTimeout(() => { loading.style.display = "none"; }, 15000);
           canvas.focus();
         }).catch((message) => {
           alert(message);
