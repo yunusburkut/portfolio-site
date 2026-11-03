@@ -42,12 +42,12 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/5bd21c70f574cd31a5e146536fea8ba3.loader.js";
+      var loaderUrl = buildUrl + "/42b3d2ae5a9261c24ff5f5c3c9292c85.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/6c1c459809761eb08401523bc23e7d6a.data.unityweb",
-        frameworkUrl: buildUrl + "/9fc952f556d7f8e577024fc38df6ba47.framework.js.unityweb",
-        codeUrl: buildUrl + "/1a3685616f2095f943b198a238e478c8.wasm.unityweb",
+        dataUrl: buildUrl + "/eba8061a6370fad5b964a7db50d0a286.data.unityweb",
+        frameworkUrl: buildUrl + "/4effeb7178ed690ca350eddc443fd1e6.framework.js.unityweb",
+        codeUrl: buildUrl + "/beb834903ed9780e1f0840c02dd9b171.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Yunus Burkut",
         productName: "Trash Flow",
@@ -62,10 +62,14 @@
       script.onload = () => {
         var loading = document.querySelector("#unity-loading");
         var progress = document.querySelector("#unity-progress");
+        // the bar stays until the game has compiled its shaders and drawn the first level (Page.jslib), so the canvas
+        // shows nothing that would hitch
+        window.addEventListener("unity-ready", () => { loading.style.display = "none"; });
         createUnityInstance(canvas, config, (p) => {
           progress.style.width = 100 * p + "%";
         }).then((unityInstance) => {
-          loading.style.display = "none";
+          // should the game never say so (an error on start), the bar still goes
+          setTimeout(() => { loading.style.display = "none"; }, 15000);
           canvas.focus();
         }).catch((message) => {
           alert(message);
