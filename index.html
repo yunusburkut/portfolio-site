@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yunus Burkut · Game Developer</title>
   <meta name="description"
-    content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Trash Flow and Magic Sort in the browser." />
+    content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Magic Sort in the browser." />
   <!-- Inter stands in for Helvetica where it is not installed (Windows, Android); Macs keep Helvetica Neue -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1821,9 +1821,6 @@
                   <use href="#i-folder" />
                 </svg>Projects</a>
               <ul>
-                <li><a href="#trash-flow"><svg class="i">
-                      <use href="#i-pad" />
-                    </svg>Trash Flow</a></li>
                 <li><a href="#games"><svg class="i">
                       <use href="#i-pad" />
                     </svg>Magic Sort</a></li>
@@ -2060,7 +2057,7 @@
     </section>
     </div>
 
-    <!-- ── PROJECTS: Trash Flow leads, then Magic Sort; every project is the same card ── -->
+    <!-- ── PROJECTS: every project is the same card ── -->
     <section class="section" id="projects" style="--h: 160" aria-labelledby="projects-title">
       <div class="wrap">
         <h2 class="sec-title" id="projects-title"><span class="sec-i"><svg class="i">
@@ -2069,50 +2066,6 @@
         <p class="sec-sub">Games and tools I built on my own.</p>
 
         <div class="projects">
-          <article class="card project" id="trash-flow">
-            <div class="media portrait">
-              <button class="game-poster" type="button" data-src="games/trash-flow/index.html" data-title="Trash Flow">
-                <img src="images/trash-flow.jpg" alt="Trash Flow: a pixel invader of garbage bags over a parking jam of trucks, ready to play"
-                  loading="lazy" decoding="async" />
-                <span class="button primary"><svg class="i">
-                    <use href="#i-play" />
-                  </svg>Press to play</span>
-              </button>
-              <!-- the game opens with its whole lot in view, and the wheel closes in on it -->
-              <div class="zoom-hint" aria-hidden="true">
-                <div class="zoom-hint-row">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"
-                    stroke-linecap="round"><rect x="4" y="1.5" width="8" height="13" rx="4" />
-                    <path class="wheel" d="M8 4v2.5" stroke-width="1.6" /></svg>
-                  <span>Scroll<small>zoom in / out</small></span>
-                </div>
-                <!-- a drag moves the lot once the wheel has closed in -->
-                <div class="zoom-hint-drag">
-                  <div class="zoom-hint-row">
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
-                      stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5v13M1.5 8h13" />
-                      <path d="M6 3.5l2-2 2 2M6 12.5l2 2 2-2M3.5 6l-2 2 2 2M12.5 6l2 2-2 2" /></svg>
-                    <span>Drag<small>move around</small></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="body">
-              <h3>Trash Flow</h3>
-              <p class="mono">Color shooter puzzle · Unity 6 · C# · URP</p>
-              <p>
-                Tap garbage trucks out of a parking jam onto the street round the block, and they pick a pixel art
-                picture of garbage bags apart, one color at a time. The first ten levels, playable right here.
-              </p>
-              <p class="links">
-                <a class="ic" href="https://github.com/yunusburkut/PixelVolley" target="_blank" rel="noopener"><svg
-                    class="i">
-                    <use href="#i-github" />
-                  </svg>Source code ↗</a>
-              </p>
-            </div>
-          </article>
-
           <article class="card project" id="games">
             <div class="media">
               <button class="game-poster" type="button" data-src="games/magic-sort/index.html" data-title="Magic Sort">
