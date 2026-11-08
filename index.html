@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yunus Burkut · Game Developer</title>
   <meta name="description"
-    content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Magic Sort in the browser." />
+    content="Yunus Burkut, game developer in Istanbul. Unity and Unreal Engine. Play Trash Flow and Magic Sort in the browser." />
   <!-- Inter stands in for Helvetica where it is not installed (Windows, Android); Macs keep Helvetica Neue -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -882,7 +882,7 @@
 
     /* ── SECTIONS ──
        Each section gets one hue for its title icon and accents: six hues 60° apart in OKLCH at one lightness and
-       chroma. Down the page (Projects 160, Work 280, Skills 100, Staying current 340, Contact 220)
+       chroma. Down the page (Claude Code 40, Projects 160, Work 280, Skills 100, Staying current 340, Contact 220)
        every step is 120° or 180°, so neighbouring sections never look alike. LeetCode, on top, keeps
        LeetCode's own colours instead. */
     .section {
@@ -1220,6 +1220,134 @@
         width: 1.5rem;
         height: 2px;
       }
+    }
+
+    /* Claude Code agent graph: boxes top to bottom joined by a line, the test and review agents side by side */
+    .flow-cap {
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .flow>*+* {
+      position: relative;
+      margin-top: 1.5rem;
+    }
+
+    .flow>*+*::before {
+      content: '';
+      position: absolute;
+      top: -1.5rem;
+      left: calc(50% - 1px);
+      width: 2px;
+      height: 1.5rem;
+      background: var(--acc);
+    }
+
+    /* The caption sits close to its graph; the wrap's 1.5rem sibling gap would otherwise win */
+    .flow-cap+.flow {
+      margin-top: .6rem;
+    }
+
+    .fork {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+    }
+
+    /* The fork splits the line into a rounded bracket that curves down into each box, and the same bracket mirrored
+       below them curves back into the gate. The link line covers the outer half of the gap, the bracket the inner
+       half. 25% - gap/4 is each box's centre. */
+    .fork::before {
+      height: .75rem;
+    }
+
+    .fork+*::before {
+      top: -.75rem;
+      height: .75rem;
+    }
+
+    .fork::after,
+    .fork+*::after {
+      content: '';
+      position: absolute;
+      left: calc(25% - .1875rem - 1px);
+      right: calc(25% - .1875rem - 1px);
+      height: .75rem;
+      border: 2px solid var(--acc);
+    }
+
+    .fork::after {
+      top: -.75rem;
+      border-bottom: 0;
+      border-radius: .75rem .75rem 0 0;
+    }
+
+    .fork+*::after {
+      top: -1.5rem;
+      border-top: 0;
+      border-radius: 0 0 .75rem .75rem;
+    }
+
+    .node {
+      padding: .7rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .node b {
+      display: block;
+    }
+
+    .node>span {
+      display: block;
+      line-height: 1.4;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .node.gate {
+      border: 2px solid var(--acc);
+    }
+
+    .gate p {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: .4rem 1rem;
+      margin-top: .5rem;
+      font-weight: 700;
+    }
+
+    .pill {
+      padding: .1rem .55rem;
+      background: color-mix(in srgb, var(--p) 20%, transparent);
+      border-radius: 999px;
+      color: var(--p);
+      font-size: 12.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .pill.pass {
+      --p: oklch(var(--acc-l) var(--acc-c) 150);
+    }
+
+    .pill.fail {
+      --p: oklch(var(--acc-l) var(--acc-c) 25);
+    }
+
+    .flow+.card {
+      margin-top: 1.5rem;
+    }
+
+    /* Task-to-method rows: the task on the left, the way I run it on the right */
+    .summary.picks>div {
+      grid-template-columns: 1fr 1fr;
     }
 
     .stay-tag {
@@ -1783,6 +1911,9 @@
         <a href="#leetcode-block" data-lc-nav hidden><svg class="i">
             <use href="#i-chart" />
           </svg>LeetCode</a>
+        <a href="#claude"><svg class="i">
+            <use href="#i-spark" />
+          </svg>Claude Code</a>
         <a href="#projects"><svg class="i">
             <use href="#i-folder" />
           </svg>Projects</a>
@@ -1817,10 +1948,16 @@
             <li><a href="#leetcode-block" data-lc-nav hidden><svg class="i">
                   <use href="#i-chart" />
                 </svg>LeetCode</a></li>
+            <li><a href="#claude"><svg class="i">
+                  <use href="#i-spark" />
+                </svg>Claude Code</a></li>
             <li><a href="#projects"><svg class="i">
                   <use href="#i-folder" />
                 </svg>Projects</a>
               <ul>
+                <li><a href="#trash-flow"><svg class="i">
+                      <use href="#i-pad" />
+                    </svg>Trash Flow</a></li>
                 <li><a href="#games"><svg class="i">
                       <use href="#i-pad" />
                     </svg>Magic Sort</a></li>
@@ -1836,6 +1973,9 @@
                   <use href="#i-case" />
                 </svg>Work</a>
               <ul>
+                <li><a href="#indie"><svg class="i">
+                      <use href="#i-case" />
+                    </svg>Independent</a></li>
                 <li><a href="#zynga"><svg class="i">
                       <use href="#i-case" />
                     </svg>Zynga Turkey</a></li>
@@ -2057,7 +2197,159 @@
     </section>
     </div>
 
-    <!-- ── PROJECTS: every project is the same card ── -->
+    <!-- ── CLAUDE CODE: what it changed and how my taste stays in charge ── -->
+    <section class="section" id="claude" style="--h: 40" aria-labelledby="claude-title">
+      <div class="wrap">
+        <h2 class="sec-title" id="claude-title"><span class="sec-i"><svg class="i">
+              <use href="#i-spark" />
+            </svg></span>Claude Code</h2>
+        <p class="sec-sub">I use Claude Code with Unity for <strong>fast output and quick prototypes</strong>, and I
+          stick to its best practices. I make the calls and play every change before it goes in.</p>
+
+        <p class="flow-cap">Agent graph · a complex gameplay system</p>
+        <div class="flow">
+          <div class="node"><b>Spec</b><span>Acceptance criteria and limits</span></div>
+          <div class="node"><b>Plan</b><span>Core or Game, who owns the state, what depends on what</span></div>
+          <div class="node"><b>Implement</b><span>C# and the live Editor through the Unity CLI</span></div>
+          <div class="fork">
+            <div class="node"><b>Review agent</b><span>Lifecycle, GC and coupling</span></div>
+            <div class="node"><b>Perf agent</b><span>Frame time on low-end phones</span></div>
+          </div>
+          <div class="node gate"><b>Verification gate</b><span>Compile check, Unity tests and my Play Mode check</span>
+            <p><span><span class="pill pass">Pass</span> Complete</span><span><span class="pill fail">Fail</span> ↻ Fix and
+                check again</span></p>
+          </div>
+        </div>
+
+        <div class="card skills">
+          <div class="skill-row" style="--h: 40">
+            <div>
+              <h3><svg class="i">
+                  <use href="#i-play" />
+                </svg>Fast output</h3>
+              <p class="skill-why">From idea to playable, fast</p>
+            </div>
+            <ul class="tags">
+              <li>Rapid prototyping</li>
+              <li>Quick iteration on feel</li>
+              <li>Playable builds early</li>
+            </ul>
+          </div>
+          <div class="skill-row" style="--h: 280">
+            <div>
+              <h3><svg class="i">
+                  <use href="#i-list" />
+                </svg>Right tool</h3>
+              <p class="skill-why">How much agent each task gets</p>
+            </div>
+            <dl class="summary picks">
+              <div>
+                <dt>One C# class</dt>
+                <dd>Plain Claude Code</dd>
+              </div>
+              <div>
+                <dt>Bug with an unclear cause</dt>
+                <dd>Bug-hunter agent, then the fix</dd>
+              </div>
+              <div>
+                <dt>New Unity mechanic</dt>
+                <dd>Plan → Implement → Verify</dd>
+              </div>
+              <div>
+                <dt>Complex gameplay system</dt>
+                <dd>Graph + independent code review</dd>
+              </div>
+              <div>
+                <dt>Code that has grown</dt>
+                <dd>Refactor pass + review agent</dd>
+              </div>
+              <div>
+                <dt>Stutter or GC spikes</dt>
+                <dd>Perf agent sweep</dd>
+              </div>
+              <div>
+                <dt>Wide review or audit</dt>
+                <dd>Multi-agent workflow</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="skill-row" style="--h: 220">
+            <div>
+              <h3><svg class="i">
+                  <use href="#i-wrench" />
+                </svg>Harness</h3>
+              <p class="skill-why">Context, checks and code-enforced rules</p>
+            </div>
+            <dl class="summary">
+              <div>
+                <dt>CLAUDE.md</dt>
+                <dd>Project rules, architecture limits, the Unity version</dd>
+              </div>
+              <div>
+                <dt>Skills</dt>
+                <dd>Reusable procedures: architecture, game feel, debugging, profiling, tests</dd>
+              </div>
+              <div>
+                <dt>Subagents</dt>
+                <dd>Read-only reviewers for code, performance, bugs and player-facing text</dd>
+              </div>
+              <div>
+                <dt>Hooks</dt>
+                <dd>Guardrails that always run: no hand-edited scenes, no handover with compile errors</dd>
+              </div>
+              <div>
+                <dt>Memory</dt>
+                <dd>Lessons and preferences that carry over from one session to the next</dd>
+              </div>
+              <div>
+                <dt>Loops</dt>
+                <dd>Fix, check, repeat until the acceptance criteria hold</dd>
+              </div>
+              <div>
+                <dt>Workflows</dt>
+                <dd>Many agents at once, only when a task is complex enough</dd>
+              </div>
+              <div>
+                <dt>Unity CLI</dt>
+                <dd>Drives the live Editor instead of hand-edited scenes</dd>
+              </div>
+              <div>
+                <dt>Blender MCP</dt>
+                <dd>Game models built in Blender by script, all on one palette texture and one material</dd>
+              </div>
+              <div>
+                <dt>Context</dt>
+                <dd>Kept lean, so fewer tokens</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="skill-row" style="--h: 160">
+            <div>
+              <h3><svg class="i">
+                  <use href="#i-chart" />
+                </svg>Always tuning</h3>
+              <p class="skill-why">Day by day</p>
+            </div>
+            <p>I follow what is new in AI tooling and test how different LLMs can make my pipeline faster and its
+              output better.</p>
+          </div>
+          <div class="skill-row" style="--h: 340">
+            <div>
+              <h3><svg class="i">
+                  <use href="#i-eye" />
+                </svg>Feel stays mine</h3>
+              <p class="skill-why">My taste, written down</p>
+            </div>
+            <ul class="tags">
+              <li>Feel values I pick, not defaults</li>
+              <li>No template-looking UI</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROJECTS: Trash Flow leads, then Magic Sort; every project is the same card ── -->
     <section class="section" id="projects" style="--h: 160" aria-labelledby="projects-title">
       <div class="wrap">
         <h2 class="sec-title" id="projects-title"><span class="sec-i"><svg class="i">
@@ -2066,6 +2358,50 @@
         <p class="sec-sub">Games and tools I built on my own.</p>
 
         <div class="projects">
+          <article class="card project" id="trash-flow">
+            <div class="media portrait">
+              <button class="game-poster" type="button" data-src="games/trash-flow/index.html" data-title="Trash Flow">
+                <img src="images/trash-flow.jpg" alt="Trash Flow: a pixel invader of garbage bags over a parking jam of trucks, ready to play"
+                  loading="lazy" decoding="async" />
+                <span class="button primary"><svg class="i">
+                    <use href="#i-play" />
+                  </svg>Press to play</span>
+              </button>
+              <!-- the game opens with its whole lot in view, and the wheel closes in on it -->
+              <div class="zoom-hint" aria-hidden="true">
+                <div class="zoom-hint-row">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"
+                    stroke-linecap="round"><rect x="4" y="1.5" width="8" height="13" rx="4" />
+                    <path class="wheel" d="M8 4v2.5" stroke-width="1.6" /></svg>
+                  <span>Scroll<small>zoom in / out</small></span>
+                </div>
+                <!-- a drag moves the lot once the wheel has closed in -->
+                <div class="zoom-hint-drag">
+                  <div class="zoom-hint-row">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
+                      stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5v13M1.5 8h13" />
+                      <path d="M6 3.5l2-2 2 2M6 12.5l2 2 2-2M3.5 6l-2 2 2 2M12.5 6l2 2-2 2" /></svg>
+                    <span>Drag<small>move around</small></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="body">
+              <h3>Trash Flow</h3>
+              <p class="mono">Color shooter puzzle · Unity 6 · C# · URP · Blender</p>
+              <p>
+                Tap garbage trucks out of a parking jam onto the street round the block, and they pick a pixel art
+                picture of garbage bags apart, one color at a time. The first 100 levels, playable right here.
+              </p>
+              <p class="links">
+                <a class="ic" href="https://github.com/yunusburkut/PixelVolley" target="_blank" rel="noopener"><svg
+                    class="i">
+                    <use href="#i-github" />
+                  </svg>Source code ↗</a>
+              </p>
+            </div>
+          </article>
+
           <article class="card project" id="games">
             <div class="media">
               <button class="game-poster" type="button" data-src="games/magic-sort/index.html" data-title="Magic Sort">
@@ -2081,7 +2417,7 @@
               <p class="mono">Water sort puzzle · Unity 6 · C# · DOTween</p>
               <p>
                 Most of the work went into how each move feels: a tube dips when picked, shakes on a wrong move and
-                pours along an arc. Playable right here.
+                pours along an arc. I built that feel by hand first, then reworked it with Claude Code, judging every move in Play Mode myself. Playable right here.
               </p>
               <p class="links">
                 <a class="ic" href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener"><svg
@@ -2144,6 +2480,21 @@
             </svg></span>Work</h2>
 
         <div class="jobs">
+          <article class="card job" id="indie">
+            <div class="job-head">
+              <h3>Independent</h3>
+              <span class="when">2026 – Now</span>
+            </div>
+            <p class="role-line">Solo Game Developer · Unity 6 · Claude Code</p>
+            <p>Making my own mobile games end to end: design, code, feel, art and store pages.</p>
+            <ul>
+              <li>Built <a href="#games">Magic Sort</a>, a water sort puzzle you can play on this site.</li>
+              <li>Built <a href="#trash-flow">Trash Flow</a>, a mobile puzzle game with 300 levels, ads, analytics and an iOS build.</li>
+              <li>Set up my own harness of skills, agents and hooks to prototype fast with <a href="#claude">Claude
+                  Code</a>.</li>
+            </ul>
+          </article>
+
           <article class="card job" id="zynga">
             <div class="job-head">
               <h3>Zynga Turkey</h3>
