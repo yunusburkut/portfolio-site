@@ -954,6 +954,35 @@
       background: #0a0a0d;
     }
 
+    /* MX Haptics has no screenshot: a drawn mouse whose rings pulse out like its buzz */
+    .project .media.haptic-art {
+      display: grid;
+      place-items: center;
+      color: oklch(.8 .12 var(--h));
+    }
+
+    .haptic-art svg {
+      width: 70%;
+      height: 70%;
+    }
+
+    .haptic-art .ring {
+      opacity: 0;
+      animation: buzz 1.8s ease-out infinite;
+    }
+
+    .haptic-art .r2 { animation-delay: .15s; }
+    .haptic-art .r3 { animation-delay: .3s; }
+
+    @keyframes buzz {
+      0%, 55%, 100% { opacity: 0; }
+      10% { opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .haptic-art .ring { animation: none; opacity: .6; }
+    }
+
     .project .media img,
     .project .media iframe {
       width: 100%;
@@ -2422,6 +2451,38 @@
               <p class="links">
                 <a class="ic" href="https://github.com/yunusburkut/Magic-Sort-Clone" target="_blank" rel="noopener"><svg
                     class="i">
+                    <use href="#i-github" />
+                  </svg>Source code ↗</a>
+              </p>
+            </div>
+          </article>
+
+          <article class="card project" id="mx-haptics" style="--h: 220">
+            <div class="media haptic-art">
+              <!-- a mouse drawn in code, its buzz shown as rings that pulse out from both sides -->
+              <svg viewBox="0 0 320 200" role="img" aria-label="An MX Master 4 style mouse sending out haptic pulses">
+                <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                  <rect x="128" y="42" width="64" height="116" rx="32" />
+                  <path d="M160 42v34" />
+                  <rect x="155" y="56" width="10" height="16" rx="5" />
+                  <path class="ring r1" d="M112 76a40 40 0 0 0 0 48M208 76a40 40 0 0 1 0 48" />
+                  <path class="ring r2" d="M96 64a60 60 0 0 0 0 72M224 64a60 60 0 0 1 0 72" />
+                  <path class="ring r3" d="M80 52a80 80 0 0 0 0 96M240 52a80 80 0 0 1 0 96" />
+                </g>
+              </svg>
+            </div>
+            <div class="body">
+              <h3>MX Haptics for Unity</h3>
+              <p class="mono">Open source Unity package · C# · HID++ · Windows and macOS</p>
+              <p>
+                I got tired of building to my phone just to test a vibration, so I made the Logitech MX Master 4 play
+                my game's haptics right in the Unity Editor. It talks to the mouse directly over HID++, needs no
+                Logi Options+ and adds nothing to phone builds. Ask Claude Code to install it and it mirrors every
+                haptic the project already has.
+              </p>
+              <p class="links">
+                <a class="ic" href="https://github.com/yunusburkut/unity-mx-haptics" target="_blank"
+                  rel="noopener"><svg class="i">
                     <use href="#i-github" />
                   </svg>Source code ↗</a>
               </p>
