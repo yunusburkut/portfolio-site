@@ -29,17 +29,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # Build and deploy are separate jobs: the deploy job starts only after the
+  # artifact upload has fully finished, so deploy-pages always finds it.
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       # LeetCode blocks browser requests (no CORS), so the stats are fetched here.
       # On failure the committed data/leetcode.json is published as it is.
       - name: Fetch LeetCode stats
@@ -54,10 +52,18 @@ jobs:
           jq --arg t "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '. + {fetchedAt: $t}' \
             "$RUNNER_TEMP/leetcode.json" > data/leetcode.json
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           # Upload entire repository
           path: '.'
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
